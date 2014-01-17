@@ -1,0 +1,26 @@
+{
+    "name": "ripaclub/sphinxsearch",
+    "description": "A Zend Framework 2 module that encapsulates Sphinx Search functionalities.",
+    "license": "BSD-2-Clause",
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "authors": [
+        {
+            "name": "Leonardo Di Donato",
+            "email": "leodidonato@gmail.com"
+        },
+        {
+            "name": "Leonardo Grasso",
+            "email": "me@leonardograsso.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "RipaClubSphinxSearch": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}
