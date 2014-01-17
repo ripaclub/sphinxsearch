@@ -19,7 +19,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "RipaClubSphinxSearch": "src/"
+            "SphinxSearch": "src/"
         },
         "classmap": [
             "./Module.php"
