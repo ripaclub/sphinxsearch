@@ -3,7 +3,8 @@
     "description": "A Zend Framework 2 module that encapsulates Sphinx Search functionalities.",
     "license": "BSD-2-Clause",
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "zendframework/zend-modulemanager": ">=2.2"
     },
     "authors": [
         {
@@ -22,5 +23,11 @@
         "classmap": [
             "./Module.php"
         ]
-    }
+    },
+    "keywords": [
+        "zf2",
+        "sphinx",
+        "sphinx search",
+        "search engine"
+    ]
 }

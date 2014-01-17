@@ -3,7 +3,7 @@
  * ZF2 Sphinx Search
  *
  * @link        http://
- * @copyright   2014-2015
+ * @copyright   2014-2015 RipaClub
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 
@@ -14,9 +14,7 @@ use Zend\ModuleManager\Feature;
 /**
  * Module providing typed string utilities.
  */
-class Module implements
-    Feature\AutoloaderProviderInterface,
-    Feature\FilterProviderInterface
+class Module implements Feature\AutoloaderProviderInterface
 {
     /**
      * getAutoloaderConfig(): defined by AutoloaderProviderInterface.
@@ -38,15 +36,4 @@ class Module implements
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilterConfig()
-    {
-        return array(
-            'invokables' => array(
-                'slugify' => 'BaconStringUtils\Filter\Slugify',
-            ),
-        );
-    }
 }
