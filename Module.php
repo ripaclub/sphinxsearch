@@ -3,7 +3,7 @@
  * ZF2 Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
- * @copyright   2014-2015 RipaClub
+ * @copyright   2014 RipaClub
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 
