@@ -15,6 +15,6 @@ class SphinxQL extends AbstractPlatform
 {
     public function __construct()
     {
-        $this->setTypeDecorator('Zend\Db\Sql\Select', ($selectDecorator) ?: new SelectDecorator());
+        $this->setTypeDecorator('Zend\Db\Sql\Select', new SelectDecorator());
     }
 }
