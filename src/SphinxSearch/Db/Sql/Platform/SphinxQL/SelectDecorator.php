@@ -38,6 +38,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      */
     protected function renderTable($table, $alias = null)
     {
+        //FIXME: Sphinx does not support table aliases
         return $table . ' ' . $alias;
     }
 

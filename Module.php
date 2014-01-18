@@ -12,9 +12,11 @@ namespace SphinxSearch;
 use Zend\ModuleManager\Feature;
 
 /**
- * Module providing typed string utilities.
+ *
  */
-class Module implements Feature\AutoloaderProviderInterface
+class Module implements
+    Feature\AutoloaderProviderInterface,
+    Feature\ConfigProviderInterface
 {
     /**
      * getAutoloaderConfig(): defined by AutoloaderProviderInterface.
@@ -36,4 +38,11 @@ class Module implements Feature\AutoloaderProviderInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
 }
