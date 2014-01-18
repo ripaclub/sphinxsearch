@@ -5,7 +5,8 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zend-modulemanager": ">=2.2",
-        "zendframework/zend-db": ">=2.2"
+        "zendframework/zend-db": ">=2.2",
+        "zendframework/zend-servicemanager": ">=2.2"
     },
     "authors": [
         {
