@@ -9,6 +9,7 @@
 
 namespace SphinxSearch\Db\Adapter;
 
+use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
