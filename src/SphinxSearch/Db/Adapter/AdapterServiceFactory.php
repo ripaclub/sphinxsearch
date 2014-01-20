@@ -9,7 +9,7 @@
 
 namespace SphinxSearch\Db\Adapter;
 
-use Zend\Db\Adapter\Adapter as ZendDBAdapter;
+use Zend\Db\Adapter\Adapter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
@@ -25,6 +25,6 @@ class AdapterServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('Config');
-        return new ZendDBAdapter($config['sphinxql'], new SphinxQL());
+        return new Adapter($config['sphinxql'], new SphinxQL());
     }
 }
