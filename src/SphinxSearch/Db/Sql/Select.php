@@ -739,8 +739,8 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         return array(
-            $platform->quoteValue($this->offset),
-            $platform->quoteValue($this->limit)
+            $this->offset,
+            $this->limit
         );
     }
 
