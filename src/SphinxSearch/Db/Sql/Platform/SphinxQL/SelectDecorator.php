@@ -52,11 +52,16 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         foreach (get_object_vars($this->select) as $name => $value) {
             $this->{$name} = $value;
         }
+
+        //Sphinx doesn't support columns with table prefix
+        $this->prefixColumnsWithTable = false;
+
         // set specifications
         unset($this->specifications[self::LIMIT]);
         unset($this->specifications[self::OFFSET]);
 
         $this->specifications['LIMITOFFSET'] = null;
+
         parent::prepareStatement($adapter, $statementContainer);
     }
 
@@ -71,11 +76,15 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $this->{$name} = $value;
         }
 
+        //Sphinx doesn't support columns with table prefix
+        $this->prefixColumnsWithTable = false;
+
         // set specifications
         unset($this->specifications[self::LIMIT]);
         unset($this->specifications[self::OFFSET]);
 
         $this->specifications['LIMITOFFSET'] = null;
+
         return parent::getSqlString($platform);
     }
 
