@@ -60,7 +60,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         unset($this->specifications[self::LIMIT]);
         unset($this->specifications[self::OFFSET]);
 
-        $this->specifications['LIMITOFFSET'] = null;
+        $this->specifications['LIMITOFFSET'] = 'LIMIT %1$s,%2$s';
 
         parent::prepareStatement($adapter, $statementContainer);
     }
@@ -83,7 +83,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         unset($this->specifications[self::LIMIT]);
         unset($this->specifications[self::OFFSET]);
 
-        $this->specifications['LIMITOFFSET'] = null;
+        $this->specifications['LIMITOFFSET'] = 'LIMIT %1$s,%2$s';
 
         return parent::getSqlString($platform);
     }
@@ -102,23 +102,22 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             return null;
         }
 
-        if ($this->offset === null) {
-            $this->offset = 0;
-        }
-
-        if ($this->limit === null) {
-            $this->limit = 0;
-        }
+        $this->offset = (int) $this->offset;
+        $this->limit  = (int) $this->limit;
 
         if ($driver) {
-            $sql = $driver->formatParameterName('offset') . ',' . $driver->formatParameterName('limit');
             $parameterContainer->offsetSet('limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             $parameterContainer->offsetSet('offset', $this->offset, ParameterContainer::TYPE_INTEGER);
-        } else {
-            $sql = $this->offset . ', ' .$this->limit;
+            return array(
+                $driver->formatParameterName('offset'),
+                $driver->formatParameterName('limit')
+            );
         }
 
-        return array($sql);
+        return array(
+            $this->offset,
+            $this->limit
+        );
     }
 
 }
