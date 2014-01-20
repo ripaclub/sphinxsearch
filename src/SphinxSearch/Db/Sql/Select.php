@@ -583,7 +583,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
 
             $columnName = '';
             if ($column === self::SQL_STAR) {
-                $columns[] = array($fromTable . self::SQL_STAR);
+                $columns[] = array(self::SQL_STAR);
                 continue;
             }
 
