@@ -1,7 +1,7 @@
 {
     "name": "ripaclub/sphinxsearch",
     "description": "A Zend Framework 2 module that encapsulates Sphinx Search functionalities.",
-    "license": "BSD-2-Clause",
+        "license": "BSD-2-Clause",
     "require": {
         "php": ">=5.3.3",
         "zendframework/zend-modulemanager": ">=2.2",
