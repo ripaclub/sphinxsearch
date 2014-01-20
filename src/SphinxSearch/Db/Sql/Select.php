@@ -494,7 +494,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * Render table with alias in from/join parts
+     * Render table with alias in from
      *
      * @todo move TableIdentifier concatination here
      * @param string $table
@@ -612,39 +612,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         $separator = $platform->getIdentifierSeparator();
-
-        // process join columns
-        foreach ($this->joins as $join) {
-            foreach ($join['columns'] as $jKey => $jColumn) {
-                $jColumns = array();
-                if ($jColumn instanceof ExpressionInterface) {
-                    $jColumnParts = $this->processExpression(
-                        $jColumn,
-                        $platform,
-                        $driver,
-                        $this->processInfo['paramPrefix'] . ((is_string($jKey)) ? $jKey : 'column')
-                    );
-                    if ($parameterContainer) {
-                        $parameterContainer->merge($jColumnParts->getParameterContainer());
-                    }
-                    $jColumns[] = $jColumnParts->getSql();
-                } else {
-                    $name = (is_array($join['name'])) ? key($join['name']) : $name = $join['name'];
-                    if ($name instanceof TableIdentifier) {
-                        $name = $platform->quoteIdentifier($name->getSchema()) . $separator . $platform->quoteIdentifier($name->getTable());
-                    } else {
-                        $name = $platform->quoteIdentifier($name);
-                    }
-                    $jColumns[] = $name . $separator . $platform->quoteIdentifierInFragment($jColumn);
-                }
-                if (is_string($jKey)) {
-                    $jColumns[] = $platform->quoteIdentifier($jKey);
-                } elseif ($jColumn !== self::SQL_STAR) {
-                    $jColumns[] = $platform->quoteIdentifier($jColumn);
-                }
-                $columns[] = $jColumns;
-            }
-        }
 
         if ($this->quantifier) {
             if ($this->quantifier instanceof Expression) {
