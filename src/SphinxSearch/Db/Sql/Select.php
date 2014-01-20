@@ -17,6 +17,8 @@ use Zend\Db\Adapter\Platform\Sql92 as AdapterSql92Platform;
 use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
+use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Having;
 
 /**
  *
@@ -156,8 +158,8 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $this->tableReadOnly = true;
         }
 
-        $this->where = new Where;
-        $this->having = new Having;
+        $this->where = new Where();
+        $this->having = new Having();
     }
 
     /**
