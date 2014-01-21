@@ -1,12 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
+ * ZF2 Sphinx Search
  *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * @link        https://github.com/ripaclub/zf2-sphinxsearch
+ * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearch\Db\Exception;
 
 class UnexpectedValueException extends \UnexpectedValueException implements ExceptionInterface

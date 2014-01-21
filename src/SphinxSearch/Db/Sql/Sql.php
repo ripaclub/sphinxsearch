@@ -20,6 +20,6 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
-        return new Select(($table) ?: $this->table);
+        return new Select(($table) ? : $this->table);
     }
 }
