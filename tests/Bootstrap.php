@@ -26,7 +26,7 @@ class Bootstrap {
     {
         // Load the user-defined test configuration file, if it exists; otherwise, load
         if (is_readable(__DIR__ . '/test.config.php')) {
-            $testConfig = include __DIR__ . '/test.config.php';
+            $testConfig = include __DIR__ . '/test.config.php.dist';
         } else {
             $testConfig = include __DIR__ . '/test.config.php.dist';
         }
