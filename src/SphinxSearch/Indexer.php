@@ -11,6 +11,7 @@ namespace SphinxSearch;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Replace;
+use SphinxSearch\Db\Sql\Update;
 
 class Indexer {
 
@@ -61,9 +62,39 @@ class Indexer {
         return $this;
     }
 
-    public function update(array $data, $index, $upsert = true)
+    public function insert($index, array $data, $replace = true)
     {
+        $sqlObject = $replace ? $this->sql->replace($index) : $this->sql->insert($index);
+        $sqlObject->values($data);
 
+        return $this->insertWith($sqlObject);
+    }
+
+    public function insertWith(Insert $insert)
+    {
+        $statement = $this->sql->prepareStatementForSqlObject($insert);
+        $result = $statement->execute();
+
+        return $result->getAffectedRows();
+    }
+
+    public function update($index, $set, $where = null)
+    {
+        $update = $this->sql->update($index);
+        $update->set($set);
+        if ($where !== null) {
+            $update->where($where);
+        }
+
+        return $this->updateWith($update);
+    }
+
+    public function updateWith(Update $update)
+    {
+        $statement = $this->sql->prepareStatementForSqlObject($update);
+        $result = $statement->execute();
+
+        return $result->getAffectedRows();
     }
 
 
