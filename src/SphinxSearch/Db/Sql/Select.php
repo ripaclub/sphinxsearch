@@ -579,23 +579,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         return $this->tableReadOnly;
     }
 
-    /**
-     * Render table with alias in from
-     *
-     * @todo move TableIdentifier concatination here
-     * @param string $table
-     * @param string $alias
-     * @return string
-     */
-    protected function renderTable($table, $alias = null)
-    {
-        $sql = $table;
-        if ($alias) {
-            $sql .= ' AS ' . $alias;
-        }
-        return $sql;
-    }
-
     protected function processStatementStart(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
         if ($this->combine !== array()) {
@@ -627,41 +610,27 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         $table = $this->table;
-        $schema = $alias = null;
 
-        //FIXME: fix 'from' syntax
-        if (is_array($table)) {
-            $table = implode(',', $table);
+         // create quoted table name to use in columns processing
+        if ($table instanceof TableIdentifier) {
+            list($table, $schema) = $table->getTableAndSchema();
         }
 
+        //FIXME: check if sphinx allows to pass subselect
+        if ($table instanceof Select) {
+            $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
+        } else {
+            if (is_array($table)) {
+                array_walk($table, function(&$item, $key) use ($platform) {
+                    $item = $platform->quoteIdentifier($item);
+                });
+                $table = implode(', ', $table);
+            } else {
+                $table = $platform->quoteIdentifier($table);
+            }
+        }
 
-//         // create quoted table name to use in columns processing
-//         if ($table instanceof TableIdentifier) {
-//             list($table, $schema) = $table->getTableAndSchema();
-//         }
-
-//         if ($table instanceof Select) {
-//             $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
-//         } else {
-//             $table = $platform->quoteIdentifier($table);
-//         }
-
-//         if ($schema) {
-//             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
-//         }
-
-//         if ($alias) {
-//             $fromTable = $platform->quoteIdentifier($alias);
-//             $table = $this->renderTable($table, $fromTable);
-//         } else {
-//             $fromTable = $table;
-//         }
-
-//         if ($this->prefixColumnsWithTable) {
-//             $fromTable .= $platform->getIdentifierSeparator();
-//         } else {
-//             $fromTable = '';
-//         }
+        $separator = $platform->getIdentifierSeparator();
 
         // process table columns
         $columns = array();
@@ -685,20 +654,24 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
                 }
                 $columnName .= $columnParts->getSql();
             } else {
-                $columnName .= $fromTable . $platform->quoteIdentifier($column);
+                if (strpos($column, $separator) === false) {
+                    $columnName .= $platform->quoteIdentifier($column);
+                } else { //Allow prefix table in column name
+                    $column = explode($separator, $column);
+                    $columnName .= $platform->quoteIdentifier($column[0]) . $separator . $platform->quoteIdentifier($column[1]);
+                }
             }
 
             // process As portion
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
-            } elseif (stripos($columnName, ' as ') === false) {
-                $columnAs = (is_string($column)) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
+            } elseif (stripos($columnName, ' as ') === false && !is_string($column)) {
+                $columnAs = 'Expression' . $expr++;
             }
             $columns[] = (isset($columnAs)) ? array($columnName, $columnAs) : array($columnName);
         }
 
-        $separator = $platform->getIdentifierSeparator();
-
+        //FIXME: check if sphinx allows quantifier
         if ($this->quantifier) {
             if ($this->quantifier instanceof Expression) {
                 $quantifierParts = $this->processExpression($this->quantifier, $platform, $driver, 'quantifier');
