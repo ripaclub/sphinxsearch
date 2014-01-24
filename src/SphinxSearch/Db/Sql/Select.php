@@ -62,11 +62,9 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
                 array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '),
                 null
             ),
-            'SELECT %1$s %2$s FROM %3$s' => array(
-                null,
-                array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '),
-                null
-            ),
+            'SELECT %1$s' => array(
+                array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', ')
+            )
         ),
         self::WHERE  => 'WHERE %1$s',
         self::GROUP  => array(
