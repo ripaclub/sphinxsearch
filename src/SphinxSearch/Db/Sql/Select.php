@@ -37,7 +37,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     const TABLE = 'table';
     const WHERE = 'where';
     const GROUP = 'group';
-    const WITHINGROUPORDERBY = 'withingrouporderby';
+    const WITHINGROUPORDER = 'withingrouporder';
     const HAVING = 'having';
     const ORDER = 'order';
     const LIMIT = 'limit';
@@ -77,7 +77,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
                 array(1 => '%1$s', 'combinedby' => ', ')
             )
         ),
-        self::WITHINGROUPORDERBY  => array(
+        self::WITHINGROUPORDER  => array(
             'WITHIN GROUP ORDER BY %1$s' => array(
                 array(1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ')
             )
@@ -136,7 +136,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     /**
      * @var array
      */
-    protected $withinGroupOrderBy = array();
+    protected $withinGroupOrder = array();
 
     /**
      * @var null|string|array
@@ -276,22 +276,22 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @param string|array $order
      * @return Select
      */
-    public function withinGroupOrderBy($withinGroupOrderBy)
+    public function withinGroupOrder($withinGroupOrder)
     {
-        if (is_string($withinGroupOrderBy)) {
-            if (strpos($withinGroupOrderBy, ',') !== false) {
-                $withinGroupOrderBy = preg_split('#,\s+#', $withinGroupOrderBy);
+        if (is_string($withinGroupOrder)) {
+            if (strpos($withinGroupOrder, ',') !== false) {
+                $withinGroupOrder = preg_split('#,\s+#', $withinGroupOrder);
             } else {
-                $withinGroupOrderBy = (array) $withinGroupOrderBy;
+                $withinGroupOrder = (array) $withinGroupOrder;
             }
-        } elseif (!is_array($withinGroupOrderBy)) {
-            $withinGroupOrderBy = array($withinGroupOrderBy);
+        } elseif (!is_array($withinGroupOrder)) {
+            $withinGroupOrder = array($withinGroupOrder);
         }
-        foreach ($withinGroupOrderBy as $k => $v) {
+        foreach ($withinGroupOrder as $k => $v) {
             if (is_string($k)) {
-                $this->withinGroupOrderBy[$k] = $v;
+                $this->withinGroupOrder[$k] = $v;
             } else {
-                $this->withinGroupOrderBy[] = $v;
+                $this->withinGroupOrder[] = $v;
             }
         }
         return $this;
@@ -451,8 +451,8 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             case self::GROUP:
                 $this->group = null;
                 break;
-            case self::WITHINGROUPORDERBY:
-                $this->withinGroupOrderBy = array();
+            case self::WITHINGROUPORDER:
+                $this->withinGroupOrder = array();
             case self::HAVING:
                 $this->having = new Having;
                 break;
@@ -493,7 +493,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             self::WHERE      => $this->where,
             self::ORDER      => $this->order,
             self::GROUP      => $this->group,
-            self::WITHINGROUPORDERBY => $this->withinGroupOrderBy,
+            self::WITHINGROUPORDER => $this->withinGroupOrder,
             self::HAVING     => $this->having,
             self::LIMIT      => $this->limit,
             self::OPTION     => $this->option,
@@ -721,11 +721,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
 
     protected function processWithinGroupOrderBy(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
-        if (empty($this->withinGroupOrderBy)) {
+        if (empty($this->withinGroupOrder)) {
             return null;
         }
         $withinGroupOrders = array();
-        foreach ($this->withinGroupOrderBy as $k => $v) {
+        foreach ($this->withinGroupOrder as $k => $v) {
             if ($v instanceof Expression) {
                 /** @var $parts \Zend\Db\Adapter\StatementContainer */
                 $orderParts = $this->processExpression($v, $platform, $driver);
