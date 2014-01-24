@@ -59,7 +59,7 @@ class Search {
      * @param string $index
      * @return Select
      */
-    public function select($index = null)
+    public function getSelect($index = null)
     {
         return $this->sql->select($index);
     }
@@ -68,7 +68,7 @@ class Search {
      * @param Select $select
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
-    public function search(Select $select)
+    public function searchWith(Select $select)
     {
          // prepare and execute
         $statement = $this->sql->prepareStatementForSqlObject($select);
