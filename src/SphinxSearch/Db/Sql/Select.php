@@ -104,11 +104,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     protected $tableReadOnly = false;
 
     /**
-     * @var bool
-     */
-    protected $prefixColumnsWithTable = false;
-
-    /**
      * @var string|array|TableIdentifier
      */
     protected $table = null;
@@ -235,13 +230,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      *     value can be string or Expression objects
      *
      * @param  array $columns
-     * @param  bool  $prefixColumnsWithTable
      * @return Select
      */
-    public function columns(array $columns, $prefixColumnsWithTable = true)
+    public function columns(array $columns)
     {
         $this->columns = $columns;
-        $this->prefixColumnsWithTable = (bool) $prefixColumnsWithTable;
         return $this;
     }
 
