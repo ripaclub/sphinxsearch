@@ -37,6 +37,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     const TABLE = 'table';
     const WHERE = 'where';
     const GROUP = 'group';
+    const WITHINGROUPORDERBY = 'withingrouporderby';
     const HAVING = 'having';
     const ORDER = 'order';
     const LIMIT = 'limit';
@@ -74,6 +75,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         self::GROUP  => array(
             'GROUP BY %1$s' => array(
                 array(1 => '%1$s', 'combinedby' => ', ')
+            )
+        ),
+        self::WITHINGROUPORDERBY  => array(
+            'WITHIN GROUP ORDER BY %1$s' => array(
+                array(1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ')
             )
         ),
         self::HAVING => 'HAVING %1$s',
@@ -123,7 +129,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     protected $where = null;
 
     /**
-     * @var null|string
+     * @var array
      */
     protected $order = array();
 
@@ -131,6 +137,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @var null|array
      */
     protected $group = null;
+
+    /**
+     * @var array
+     */
+    protected $withinGroupOrderBy = array();
 
     /**
      * @var null|string|array
@@ -252,6 +263,10 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         return $this;
     }
 
+    /**
+     * @param string|array $group
+     * @return Select
+     */
     public function group($group)
     {
         if (is_array($group)) {
@@ -260,6 +275,31 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             }
         } else {
             $this->group[] = $group;
+        }
+        return $this;
+    }
+
+    /**
+     * @param string|array $order
+     * @return Select
+     */
+    public function withinGroupOrderBy($withinGroupOrderBy)
+    {
+        if (is_string($withinGroupOrderBy)) {
+            if (strpos($withinGroupOrderBy, ',') !== false) {
+                $withinGroupOrderBy = preg_split('#,\s+#', $withinGroupOrderBy);
+            } else {
+                $withinGroupOrderBy = (array) $withinGroupOrderBy;
+            }
+        } elseif (!is_array($withinGroupOrderBy)) {
+            $withinGroupOrderBy = array($withinGroupOrderBy);
+        }
+        foreach ($withinGroupOrderBy as $k => $v) {
+            if (is_string($k)) {
+                $this->withinGroupOrderBy[$k] = $v;
+            } else {
+                $this->withinGroupOrderBy[] = $v;
+            }
         }
         return $this;
     }
@@ -704,6 +744,39 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $groups[] = $columnSql;
         }
         return array($groups);
+    }
+
+    protected function processWithinGroupOrderBy(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    {
+        if (empty($this->withinGroupOrderBy)) {
+            return null;
+        }
+        $withinGroupOrders = array();
+        foreach ($this->withinGroupOrderBy as $k => $v) {
+            if ($v instanceof Expression) {
+                /** @var $parts \Zend\Db\Adapter\StatementContainer */
+                $orderParts = $this->processExpression($v, $platform, $driver);
+                if ($parameterContainer) {
+                    $parameterContainer->merge($orderParts->getParameterContainer());
+                }
+                $withinGroupOrders[] = array($orderParts->getSql());
+                continue;
+            }
+            if (is_int($k)) {
+                if (strpos($v, ' ') !== false) {
+                    list($k, $v) = preg_split('# #', $v, 2);
+                } else {
+                    $k = $v;
+                    $v = self::ORDER_ASCENDING;
+                }
+            }
+            if (strtoupper($v) == self::ORDER_DESCENDING) {
+                $withinGroupOrders[] = array($platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING);
+            } else {
+                $withinGroupOrders[] = array($platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING);
+            }
+        }
+        return array($withinGroupOrders);
     }
 
     protected function processHaving(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
