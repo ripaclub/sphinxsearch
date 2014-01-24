@@ -32,7 +32,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @const
      */
     const SELECT = 'select';
-    const QUANTIFIER = 'quantifier';
     const COLUMNS = 'columns';
     const TABLE = 'table';
     const WHERE = 'where';
@@ -44,8 +43,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     const OFFSET = 'offset';
     const LIMITOFFSET = 'limitoffset';
     const OPTION = 'option';
-    const QUANTIFIER_DISTINCT = 'DISTINCT';
-    const QUANTIFIER_ALL = 'ALL';
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
@@ -107,11 +104,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @var string|array|TableIdentifier
      */
     protected $table = null;
-
-    /**
-     * @var null|string|Expression
-     */
-    protected $quantifier = null;
 
     /**
      * @var array
@@ -197,21 +189,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         $this->table = $table;
-        return $this;
-    }
-
-    /**
-     * @param string|Expression $quantifier DISTINCT|ALL
-     * @return Select
-     */
-    public function quantifier($quantifier)
-    {
-        if (!is_string($quantifier) && !$quantifier instanceof Expression) {
-            throw new Exception\InvalidArgumentException(
-                'Quantifier must be one of DISTINCT, ALL, or some platform specific Expression object'
-            );
-        }
-        $this->quantifier = $quantifier;
         return $this;
     }
 
@@ -439,9 +416,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
                 }
                 $this->table = null;
                 break;
-            case self::QUANTIFIER:
-                $this->quantifier = null;
-                break;
             case self::COLUMNS:
                 $this->columns = array();
                 break;
@@ -488,7 +462,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     {
         $rawState = array(
             self::TABLE      => $this->table,
-            self::QUANTIFIER => $this->quantifier,
             self::COLUMNS    => $this->columns,
             self::WHERE      => $this->where,
             self::ORDER      => $this->order,
@@ -664,24 +637,9 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $columns[] = (isset($columnAs)) ? array($columnName, $columnAs) : array($columnName);
         }
 
-        //FIXME: check if sphinx allows quantifier
-        if ($this->quantifier) {
-            if ($this->quantifier instanceof Expression) {
-                $quantifierParts = $this->processExpression($this->quantifier, $platform, $driver, 'quantifier');
-                if ($parameterContainer) {
-                    $parameterContainer->merge($quantifierParts->getParameterContainer());
-                }
-                $quantifier = $quantifierParts->getSql();
-            } else {
-                $quantifier = $this->quantifier;
-            }
-        }
 
-        if (isset($quantifier)) {
-            return array($quantifier, $columns, $table);
-        } else {
-            return array($columns, $table);
-        }
+        return array($columns, $table);
+
     }
 
     protected function processWhere(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
