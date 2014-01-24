@@ -458,17 +458,22 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             case self::GROUP:
                 $this->group = null;
                 break;
+            case self::WITHINGROUPORDERBY:
+                $this->withinGroupOrderBy = array();
             case self::HAVING:
                 $this->having = new Having;
                 break;
             case self::LIMIT:
                 $this->limit = null;
                 break;
+            case self::OPTION:
+                $this->option = array();
+                break;
             case self::OFFSET:
                 $this->offset = null;
                 break;
             case self::ORDER:
-                $this->order = null;
+                $this->order = array();
                 break;
             case self::COMBINE:
                 $this->combine = array();
@@ -495,8 +500,10 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             self::WHERE      => $this->where,
             self::ORDER      => $this->order,
             self::GROUP      => $this->group,
+            self::WITHINGROUPORDERBY => $this->withinGroupOrderBy,
             self::HAVING     => $this->having,
             self::LIMIT      => $this->limit,
+            self::OPTION     => $this->option,
             self::OFFSET     => $this->offset,
             self::COMBINE    => $this->combine
         );
