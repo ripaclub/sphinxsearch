@@ -42,6 +42,7 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
     const LIMIT = 'limit';
     const OFFSET = 'offset';
     const LIMITOFFSET = 'limitoffset';
+    const OPTION = 'option';
     const QUANTIFIER_DISTINCT = 'DISTINCT';
     const QUANTIFIER_ALL = 'ALL';
     const SQL_STAR = '*';
@@ -82,6 +83,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             )
         ),
         self::LIMITOFFSET  => 'LIMIT %1$s,%2$s',
+        self::OPTION       => array(
+            'OPTION %1$s' => array(
+                array(2 => '%1$s = %2$s', 'combinedby' => ', ')
+            )
+        ),
         'statementEnd' => '%1$s',
         self::COMBINE => '%1$s ( %2$s )',
     );
@@ -140,6 +146,11 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @var int|null
      */
     protected $offset = null;
+
+    /**
+     * @var array
+     */
+    protected $option = null;
 
     /**
      * @var array
@@ -328,6 +339,34 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
         }
 
         $this->offset = $offset;
+        return $this;
+    }
+
+    /**
+     * Set key/value pairs to option
+     *
+     * @param  array $values Associative array of key values
+     * @param  string $flag One of the VALUES_* constants
+     * @throws Exception\InvalidArgumentException
+     * @return Select
+     */
+    public function option(array $values, $flag = self::VALUES_SET)
+    {
+        if ($values == null) {
+            throw new Exception\InvalidArgumentException('option() expects an array of values');
+        }
+
+        if ($flag == self::VALUES_SET) {
+            $this->option = array();
+        }
+
+        foreach ($values as $k => $v) {
+            if (!is_string($k)) {
+                throw new Exception\InvalidArgumentException('option() expects a string for the value key');
+            }
+            $this->option[$k] = $v;
+        }
+
         return $this;
     }
 
@@ -742,6 +781,29 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $this->offset,
             $this->limit
         );
+    }
+
+    protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    {
+        if ($this->option === array()) {
+            return null;
+        }
+        // process table columns
+        $options = array();
+        foreach ($this->option as $optName => $optValue) {
+            $optionSql = '';
+            if ($optValue instanceof Expression) {
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $this->processInfo['paramPrefix'] . 'option');
+                if ($parameterContainer) {
+                    $parameterContainer->merge($optionParts->getParameterContainer());
+                }
+                $optionSql .= $optionParts->getSql();
+            } else {
+                $optionSql .= $platform->quoteValue($optValue);
+            }
+            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
+        }
+        return array($options);
     }
 
     protected function processCombine(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
