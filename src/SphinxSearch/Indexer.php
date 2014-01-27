@@ -10,7 +10,6 @@
 namespace SphinxSearch;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Sql\Sql;
-use SphinxSearch\Db\Sql\Replace;
 use SphinxSearch\Db\Sql\Update;
 
 class Indexer {
