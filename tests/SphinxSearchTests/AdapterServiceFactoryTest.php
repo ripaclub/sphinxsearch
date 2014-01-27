@@ -20,7 +20,7 @@ class AdapterServiceFactoryTest extends AbstractTestCase
 
         $this->assertTrue(
             $factory->createService($this->getServiceLocator()) instanceof ZendDBAdapter,
-            'ServiceLocator can\'t create adapter through factory.'
+            'ServiceFactory should return an instance of Zend\Db\Adapter\Adapter.'
         );
 
         // Through SM registration
