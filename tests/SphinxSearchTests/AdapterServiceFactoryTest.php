@@ -9,16 +9,28 @@
 
 namespace SphinxSearchTests;
 
+use SphinxSearch\Db\Adapter\AdapterServiceFactory;
+use Zend\Db\Adapter\Adapter as ZendDBAdapter;
+
 class AdapterServiceFactoryTest extends AbstractTestCase
 {
-
     public function testCreateService()
     {
-        $factory = $this->getServiceLocator()->get('SphinxSearch\Db\Adapter\Adapter');
-        var_dump($factory);
+        $factory = new AdapterServiceFactory();
 
         $this->assertTrue(
-            $factory->createService($this->getServiceLocator()),
+            $factory->createService($this->getServiceLocator()) instanceof ZendDBAdapter,
+            'ServiceLocator can\'t create adapter through factory.'
+        );
+
+        // Through SM registration
+
+        $sm = clone $this->getServiceLocator();
+
+        $sm->setFactory('__TEST_FACTORY_ALAIS__', $factory);
+
+        $this->assertTrue(
+            $sm->get('__TEST_FACTORY_ALAIS__') instanceof ZendDBAdapter,
             'ServiceLocator can\'t create adapter through factory.'
         );
     }

@@ -9,11 +9,42 @@
 
 namespace SphinxSearchTests;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class AbstractTestCase
+ * @package SphinxSearchTests
+ */
 abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ServiceLocatorInterface
+     */
+    protected $serviceLocator = null;
 
-    use ServiceLocatorAwareTrait;
+    /**
+     * Set service locator
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return mixed
+     */
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
+
+        return $this;
+    }
+
+    /**
+     * Get service locator
+     *
+     * @return ServiceManager
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
+    }
 
     public function setUp()
     {
