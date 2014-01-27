@@ -15,6 +15,7 @@ class AdapterServiceFactoryTest extends AbstractTestCase
     public function testCreateService()
     {
         $factory = $this->getServiceLocator()->get('SphinxSearch\Db\Adapter\Adapter');
+        var_dump($factory);
 
         $this->assertTrue(
             $factory->createService($this->getServiceLocator()),

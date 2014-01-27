@@ -19,5 +19,12 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->setServiceLocator(Bootstrap::getServiceManager());
     }
-    
+
+    /**
+     * @return array|object
+     */
+    public function getConfig()
+    {
+        return $this->getServiceLocator()->get('Config');
+    }
 } 
