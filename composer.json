@@ -5,14 +5,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-modulemanager": ">=2.2",
-        "zendframework/zend-db": ">=2.2",
-        "zendframework/zend-servicemanager": ">=2.2"
+        "zendframework/zend-modulemanager": "2.2.*",
+        "zendframework/zend-db": "2.2.*",
+        "zendframework/zend-servicemanager": "2.2.*"
     },
     "require-dev": {
-        "zendframework/zendframework": ">= 2.2",
         "phpunit/phpunit": "3.8.*",
-        "phpunit/dbunit": ">=1.2",
+        "phpunit/dbunit": "1.2.*",
         "squizlabs/php_codesniffer": "1.5.*",
         "phpmd/phpmd": "1.4.*"
     },
