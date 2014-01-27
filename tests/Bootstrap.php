@@ -24,28 +24,30 @@ class Bootstrap {
 
     public static function init()
     {
-        // Load the user-defined test configuration file, if it exists; otherwise, load
+        // Load the user-defined test configuration file, if it exists
+        // Otherwise load
         if (is_readable(__DIR__ . '/test.config.php')) {
-            $testConfig = include __DIR__ . '/test.config.php.dist';
+            $testConfig = include __DIR__ . '/test.config.php';
         } else {
             $testConfig = include __DIR__ . '/test.config.php.dist';
         }
 
-        $zf2ModulePaths = array();
+        $zfModulePaths = array();
         if (($path = static::findParentPath('vendor'))) {
-            $zf2ModulePaths[] = $path;
+            $zfModulePaths[] = $path;
         }
         if ($path = static::findParentPath('module')) {
-            $zf2ModulePaths[] = $path;
+            $zfModulePaths[] = $path;
         }
         if ($path = static::findParentPath('src')) {
-            $zf2ModulePaths[] = $path;
+            $zfModulePaths[] = $path;
         }
 
-        $zf2ModulePaths = array_unique($zf2ModulePaths);
+        $zfModulePaths = array_unique($zfModulePaths);
 
-        $zf2ModulePaths  = implode(PATH_SEPARATOR, $zf2ModulePaths) . PATH_SEPARATOR;
-        $zf2ModulePaths .= getenv('ZF2_MODULES_TEST_PATHS') ?: (defined('ZF2_MODULES_TEST_PATHS') ? ZF2_MODULES_TEST_PATHS : '');
+        $zfModulePaths  = implode(PATH_SEPARATOR, $zfModulePaths) . PATH_SEPARATOR;
+        $zfModulePaths .= getenv('ZF2_MODULES_TEST_PATHS') ? :
+            (defined('ZF2_MODULES_TEST_PATHS') ? ZF2_MODULES_TEST_PATHS : '');
 
         static::initAutoloader();
 
@@ -53,7 +55,7 @@ class Bootstrap {
         $baseConfig = array(
             'modules' => array(),
             'module_listener_options' => array(
-                'module_paths' => explode(PATH_SEPARATOR, $zf2ModulePaths),
+                'module_paths' => explode(PATH_SEPARATOR, $zfModulePaths),
             ),
         );
 
