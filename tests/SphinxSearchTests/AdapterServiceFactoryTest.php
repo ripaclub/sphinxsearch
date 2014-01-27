@@ -17,21 +17,20 @@ class AdapterServiceFactoryTest extends AbstractTestCase
     public function testCreateService()
     {
         $factory = new AdapterServiceFactory();
-
+        // Assertion
         $this->assertTrue(
             $factory->createService($this->getServiceLocator()) instanceof ZendDBAdapter,
-            'ServiceLocator can\'t create adapter through factory.'
+            'ServiceLocator can\'t create adapter through service factory.'
         );
 
         // Through SM registration
-
-        $sm = clone $this->getServiceLocator();
-
-        $sm->setFactory('__TEST_FACTORY_ALAIS__', $factory);
-
+        // NOTE: clone the service locator because it has not been destroyed in a tear down method
+        $smanager = clone $this->getServiceLocator();
+        $smanager->setFactory('__TEST_FACTORY_ALIAS__', $factory);
+        // Assertion
         $this->assertTrue(
-            $sm->get('__TEST_FACTORY_ALAIS__') instanceof ZendDBAdapter,
-            'ServiceLocator can\'t create adapter through factory.'
+            $smanager->get('__TEST_FACTORY_ALIAS__') instanceof ZendDBAdapter,
+            'ServiceLocator can\'t create adapter through service factory.'
         );
     }
 
