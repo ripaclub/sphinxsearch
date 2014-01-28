@@ -10,8 +10,8 @@ namespace SphinxSearchTests\Db\Sql;
 
 use SphinxSearch\Db\Sql\Sql;
 use Zend\Db\Adapter\AdapterInterface;
-use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
 
 class SqlTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
+        $this->serviceManager = new ServiceManager(new Config(array(
             'factories' => array(
                 'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
             )
@@ -98,4 +98,3 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     }
 
 }
- 
