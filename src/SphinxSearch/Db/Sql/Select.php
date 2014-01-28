@@ -51,6 +51,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     const COMBINE_UNION = 'union';
     const COMBINE_EXCEPT = 'except';
     const COMBINE_INTERSECT = 'intersect';
+    const VALUES_SET = 'VALUES_SET';
     /**#@-*/
 
     /**

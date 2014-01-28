@@ -71,7 +71,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox: unit test: test limit()
+     * @testdox Method limit()
      * @covers SphinxSearch\Db\Sql\Select::limit
      */
     public function testLimit()
@@ -82,7 +82,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox: unit test: Test getRawState() returns information populated via limit()
+     * @testdox Method getRawState() returns information populated via limit()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testLimit
      */
@@ -92,7 +92,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox: unit test: test offset()
+     * @testdox Method test offset()
      * @covers SphinxSearch\Db\Sql\Select::offset
      */
     public function testOffset()
@@ -103,7 +103,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox: unit test: Test getRawState() returns information populated via offset()
+     * @testdox Method getRawState() returns information populated via offset()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testOffset
      */
@@ -114,7 +114,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * @testdox unit test: Test group() returns same Select object (is chainable)
+     * @testdox Method group() returns same Select object (is chainable)
      * @covers SphinxSearch\Db\Sql\Select::group
      */
     public function testGroup()
@@ -127,7 +127,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox unit test: Test getRawState() returns information populated via group()
+     * @testdox Method getRawState() returns information populated via group()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testGroup
      */
@@ -140,7 +140,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox unit test: Test having() returns same Select object (is chainable)
+     * @testdox Method having() returns same Select object (is chainable)
      * @covers SphinxSearch\Db\Sql\Select::having
      */
     public function testHaving()
@@ -153,7 +153,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox unit test: Test getRawState() returns information populated via having()
+     * @testdox Method getRawState() returns information populated via having()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testHaving
      */
@@ -231,10 +231,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(10, $select->getRawState(Select::OFFSET));
         $select->reset(Select::OFFSET);
         $this->assertNull($select->getRawState(Select::OFFSET));
+
+        // option
+        $select->option(array('ranker' => 'bm25'));
+        $this->assertEquals(array('ranker' => 'bm25'), $select->getRawState(Select::OPTION));
+        $select->reset(Select::OPTION);
+        $this->assertEmpty($select->getRawState(Select::OPTION));
     }
 
     /**
-     * @testdox unit test: Test getSqlString() will produce expected sql and parameters based on a variety of provided arguments [uses data provider]
+     * @testdox Method getSqlString() will produce expected sql and parameters based on a variety of provided arguments [uses data provider]
      * @covers SphinxSearch\Db\Sql\Select::getSqlString
      * @dataProvider providerData
      */
