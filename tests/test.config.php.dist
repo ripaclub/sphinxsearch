@@ -2,7 +2,7 @@
 return array(
     'sphinxql' => array(
         'adapters' => array(
-            'sphinxql-1' => array(
+            'sphinxql1' => array(
                 'host' => '127.0.0.1',
                 'port' => 9306,
                 'driver' => 'pdo_mysql',
@@ -15,12 +15,6 @@ return array(
     'service_manager' => array(
         'abstract_factories' => array(
             'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
-        ),
-        'factories' => array(
-            'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
-        ),
-        'alias' => array(
-            'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-        ),
+        )
     )
 );
