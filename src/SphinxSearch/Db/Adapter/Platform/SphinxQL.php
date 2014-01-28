@@ -14,6 +14,7 @@ use Zend\Db\Adapter\Platform\Mysql;
 
 class SphinxQL extends Mysql implements PlatformInterface
 {
+    
     /**
      * @return string
      */
@@ -21,4 +22,5 @@ class SphinxQL extends Mysql implements PlatformInterface
     {
         return 'SphinxQL';
     }
+
 }
