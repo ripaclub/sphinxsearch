@@ -60,6 +60,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     public function createServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
     {
         $config = $this->getConfig($services);
+        
         return new ZendDBAdapter($config[$requestedName], new SphinxQL());
     }
 
