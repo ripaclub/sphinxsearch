@@ -5,7 +5,7 @@ A Zend Framework 2 module that encapsulates Sphinx Search functionalities.
 
 ## Testing
 
-Once installerd development dependencies through composer, run `phpunit`:
+Once installed development dependencies through composer you can run `phpunit`:
 
 ```{bash}
 ./vendor/bin/phpunit -c ./tests/
