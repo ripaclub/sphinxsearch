@@ -5,7 +5,7 @@
  * Time: 13.20
  */
 
-namespace SphinxSearchTests;
+namespace SphinxSearchTests\Db\Adapter;
 
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
@@ -22,7 +22,7 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      *
      * @see PHPUnit_Framework_TestCase::setUp()
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
             'factories' => array(
@@ -32,12 +32,11 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
                 'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
             )
         )));
-
         $this->serviceManager->setService('Config', array(
                 'sphinxql' => array(
                     'driver' => 'pdo_mysql',
                 ),
-            ));
+        ));
     }
 
     /**

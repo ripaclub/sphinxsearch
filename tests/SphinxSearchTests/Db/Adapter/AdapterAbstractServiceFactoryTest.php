@@ -5,7 +5,7 @@
  * Time: 0.09
  */
 
-namespace SphinxSearchTests;
+namespace SphinxSearchTests\Db\Adapter;
 
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
@@ -22,12 +22,11 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      *
      * @see PHPUnit_Framework_TestCase::setUp()
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
             'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
         )));
-
         $this->serviceManager->setService('Config', array(
             'sphinxql' => array(
                 'adapters' => array(

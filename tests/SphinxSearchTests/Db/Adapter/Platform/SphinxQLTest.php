@@ -5,7 +5,7 @@
  * Time: 15.59
  */
 
-namespace SphinxSearchTests\Platform;
+namespace SphinxSearchTests\Db\Adapter\Platform;
 
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 

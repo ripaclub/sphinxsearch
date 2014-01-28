@@ -12,6 +12,7 @@ use Zend\Db\Sql\Sql as ZendSql;
 
 class Sql extends ZendSql
 {
+
     public function select($table = null)
     {
         if ($this->table !== null && $table !== null) {
@@ -31,7 +32,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
-        return new Replace(($table) ?: $this->table);
+        return new Replace(($table) ? : $this->table);
     }
 
     public function update($table = null)
@@ -42,6 +43,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
-        return new Update(($table) ?: $this->table);
+        return new Update(($table) ? : $this->table);
     }
+
 }
