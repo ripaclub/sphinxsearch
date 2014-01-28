@@ -66,6 +66,7 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     /**
      * @param string $service
      * @dataProvider providerValidService
+     * @testdox Creates one or more adapters through their aliases
      */
     public function testValidService($service)
     {
@@ -77,6 +78,7 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      * @param string $service
      * @dataProvider providerInvalidService
      * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
+     * @testdox Does not create an invalid/unknow adapter
      */
     public function testInvalidService($service)
     {
