@@ -26,7 +26,7 @@ class AdapterServiceFactoryTest extends AbstractTestCase
         // Through SM registration
         // NOTE: clone the service locator because it has not been destroyed in a tear down method
         $smanager = clone $this->getServiceLocator();
-        $smanager->setFactory('__TEST_FACTORY_ALIAS__', $factory);
+        $smanager->setFactory('__TEST_FACTORY_ALIAS__', $factory); // registration
         // Assertion
         $this->assertTrue(
             $smanager->get('__TEST_FACTORY_ALIAS__') instanceof ZendDBAdapter,
