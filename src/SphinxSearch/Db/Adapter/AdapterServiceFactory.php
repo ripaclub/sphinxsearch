@@ -25,6 +25,6 @@ class AdapterServiceFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('Config');
-        return new ZendDBAdapter($config['sphinxql'], new SphinxQL());
+        return new ZendDBAdapter($config['sphinxql']['adapters'], new SphinxQL());
     }
 }
