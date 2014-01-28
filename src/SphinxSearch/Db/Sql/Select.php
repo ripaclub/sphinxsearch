@@ -307,7 +307,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             } else {
                 if (strpos($column, $separator) === false) {
                     $columnName .= $platform->quoteIdentifier($column);
-                } else { //Allow prefix table in column name
+                } else { // Allow prefix table in column name
                     $column = explode($separator, $column);
                     $columnName .= $platform->quoteIdentifier($column[0]) . $separator . $platform->quoteIdentifier($column[1]);
                 }

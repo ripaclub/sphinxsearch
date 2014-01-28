@@ -19,7 +19,6 @@ use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\Where;
 
 /**
- *
  * @property Where $where
  */
 class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface

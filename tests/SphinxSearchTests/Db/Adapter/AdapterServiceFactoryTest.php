@@ -1,14 +1,15 @@
 <?php
 /**
- * User: leodido
- * Date: 28/01/14
- * Time: 13.20
+ * ZF2 Sphinx Search
+ *
+ * @link        https://github.com/ripaclub/zf2-sphinxsearch
+ * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
+namespace SphinxSearchTests\Db\Adapter;
 
-namespace SphinxSearchTests;
-
+use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\Config;
 
 class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
 
@@ -22,9 +23,9 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      *
      * @see PHPUnit_Framework_TestCase::setUp()
      */
-    public function setUp()
+    protected function setUp()
     {
-        $this->serviceManager = new ServiceManager(new Config(array(
+        $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
             'factories' => array(
                 'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
             ),
@@ -32,12 +33,11 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
                 'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
             )
         )));
-
         $this->serviceManager->setService('Config', array(
                 'sphinxql' => array(
                     'driver' => 'pdo_mysql',
                 ),
-            ));
+        ));
     }
 
     /**
@@ -63,6 +63,7 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     /**
      * @param string $service
      * @dataProvider providerValidService
+     * @testdox Instantiates an adapter
      */
     public function testValidService($service)
     {
@@ -74,6 +75,7 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      * @param string $service
      * @dataProvider providerInvalidService
      * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
+     * @testdox Does not instantiate an invalid/unknow adapter
      */
     public function testInvalidService($service)
     {
@@ -82,3 +84,4 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     }
 
 }
+ 
