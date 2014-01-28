@@ -7,8 +7,8 @@
 
 namespace SphinxSearchTests;
 
-use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
 
 class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
 
@@ -24,7 +24,7 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
      */
     public function setUp()
     {
-        $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
+        $this->serviceManager = new ServiceManager(new Config(array(
             'factories' => array(
                 'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
             ),
@@ -82,4 +82,3 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     }
 
 }
- 
