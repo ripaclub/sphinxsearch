@@ -2,7 +2,7 @@
 /**
  * User: leodido
  * Date: 28/01/14
- * Time: 0.09
+ * Time: 13.20
  */
 
 namespace SphinxSearchTests;
@@ -10,7 +10,7 @@ namespace SphinxSearchTests;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
 
-class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
+class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @var \Zend\ServiceManager\ServiceLocatorInterface
@@ -25,21 +25,19 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     public function setUp()
     {
         $this->serviceManager = new ServiceManager(new ServiceManagerConfig(array(
-            'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
+            'factories' => array(
+                'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+            ),
+            'alias' => array(
+                'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+            )
         )));
 
         $this->serviceManager->setService('Config', array(
-            'sphinxql' => array(
-                'adapters' => array(
-                    'SphinxSearch\Db\Adapter\One' => array(
-                        'driver' => 'pdo_mysql',
-                    ),
-                    'SphinxSearch\Db\Adapter\Two' => array(
-                        'driver' => 'pdo_mysql',
-                    ),
+                'sphinxql' => array(
+                    'driver' => 'pdo_mysql',
                 ),
-            ),
-        ));
+            ));
     }
 
     /**
@@ -48,8 +46,7 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     public function providerValidService()
     {
         return array(
-            array('SphinxSearch\Db\Adapter\One'),
-            array('SphinxSearch\Db\Adapter\Two'),
+            array('SphinxSearch\Db\Adapter\Adapter')
         );
     }
 
@@ -85,3 +82,4 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     }
 
 }
+ 

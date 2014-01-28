@@ -59,27 +59,4 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
         return $this->getServiceLocator()->get('Config');
     }
 
-    /**
-     * @param int $index
-     * @return null|array
-     */
-    public function getDriverConfig($index = 0)
-    {
-
-        $driver = null;
-        $counter = 0;
-        $config = $this->getConfig();
-        foreach ($config['sphinxql']['adapters'] as $alias => $driver) {
-            if ($index == $counter) {
-                return array(
-                    'alias'     =>  $alias,
-                    'driver'    =>  $driver
-                );
-            }
-            ++$counter;
-        }
-
-        return null;
-    }
-
 } 
