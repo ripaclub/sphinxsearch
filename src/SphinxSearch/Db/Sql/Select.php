@@ -141,11 +141,17 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      *     value can be string or Expression objects
      *
      * @param  array $columns
+     * @param  bool  $prefixColumnsWithTable
      * @return Select
      */
-    public function columns(array $columns)
+    public function columns(array $columns, $prefixColumnsWithTable = false)
     {
         $this->columns = $columns;
+
+        if ($prefixColumnsWithTable) {
+            throw new \InvalidArgumentException('SphinxQL syntax does not support prefixing columns with table name');
+        }
+
         return $this;
     }
 
@@ -242,7 +248,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $this->offset = null;
                 break;
             case self::ORDER:
-                $this->order = array();
+                $this->order = null;
                 break;
             case self::COMBINE:
                 $this->combine = array();
@@ -351,7 +357,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return array($columns);
     }
 
-    protected function processWithinGroupOrderBy(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
+    protected function processWithinGroupOrder(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
         if (empty($this->withinGroupOrder)) {
             return null;
@@ -418,7 +424,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
     protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
-        if ($this->option === array()) {
+        if (!$this->option) {
             return null;
         }
         // process table columns
