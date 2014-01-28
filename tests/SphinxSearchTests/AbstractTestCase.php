@@ -68,7 +68,8 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
 
         $driver = null;
         $counter = 0;
-        foreach ($this->getConfig()['sphinxql']['adapters'] as $alias => $driver) {
+        $config = $this->getConfig();
+        foreach ($config['sphinxql']['adapters'] as $alias => $driver) {
             if ($index == $counter) {
                 return array(
                     'alias'     =>  $alias,
