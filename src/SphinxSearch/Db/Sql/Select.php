@@ -20,6 +20,7 @@ use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
+use Zend\Db\Sql\TableIdentifier;
 
 /**
  *
@@ -51,7 +52,9 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     const COMBINE_UNION = 'union';
     const COMBINE_EXCEPT = 'except';
     const COMBINE_INTERSECT = 'intersect';
-    const VALUES_SET = 'VALUES_SET';
+
+    const OPTIONS_MERGE = 'merge';
+    const OPTIONS_SET = 'set';
     /**#@-*/
 
     /**
@@ -185,17 +188,17 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * Set key/value pairs to option
      *
      * @param  array $values Associative array of key values
-     * @param  string $flag One of the VALUES_* constants
+     * @param  string $flag One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
      * @return Select
      */
-    public function option(array $values, $flag = self::VALUES_SET)
+    public function option(array $values, $flag = self::OPTIONS_SET)
     {
         if ($values == null) {
             throw new Exception\InvalidArgumentException('option() expects an array of values');
         }
 
-        if ($flag == self::VALUES_SET) {
+        if ($flag == self::OPTIONS_SET) {
             $this->option = array();
         }
 
