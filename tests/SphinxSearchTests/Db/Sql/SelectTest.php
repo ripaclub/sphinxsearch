@@ -1013,7 +1013,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox Tables have to be strings, array, TableIdentifier objects or a Select objects
+     * @testdox Tables have to be strings, array, TableIdentifier objects or Select objects
      */
     public function testTableType()
     {
@@ -1027,13 +1027,27 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
      * @testdox Tables defined in construction phase are read only
      */
     public function testTableReadOnly()
     {
         $select = new Select('foo');
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException'
+        );
         $select->from('foo');
+    }
+
+    /**
+     * @testdox Can not reset read only table
+     */
+    public function testResetReadOnlyTable()
+    {
+        $select = new Select('foo');
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException'
+        );
+        $select->reset(Select::TABLE);
     }
 
 }
