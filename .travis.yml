@@ -6,11 +6,10 @@ php:
   - 5.5
 
 before_script:
- - composer install --dev
- - cd tests
+ - composer install
 
 script:
- - vendor/bin/phpunit.php -c tests
+ - vendor/bin/phpunit -c tests
 
 notifications:
   email: false
