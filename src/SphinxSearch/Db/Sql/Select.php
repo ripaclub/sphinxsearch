@@ -417,22 +417,19 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             return null;
         }
 
-        $this->offset = (int) $this->offset;
-        $this->limit  = (int) $this->limit;
+        $offset = (int) $this->offset;
+        $limit  = (int) $this->limit;
 
         if ($driver) {
-            $parameterContainer->offsetSet('limit', $this->limit, ParameterContainer::TYPE_INTEGER);
-            $parameterContainer->offsetSet('offset', $this->offset, ParameterContainer::TYPE_INTEGER);
+            $parameterContainer->offsetSet('limit', $limit, ParameterContainer::TYPE_INTEGER);
+            $parameterContainer->offsetSet('offset', $offset, ParameterContainer::TYPE_INTEGER);
             return array(
                 $driver->formatParameterName('offset'),
                 $driver->formatParameterName('limit')
             );
         }
 
-        return array(
-            $this->offset,
-            $this->limit
-        );
+        return array($offset, $limit);
     }
 
     protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)

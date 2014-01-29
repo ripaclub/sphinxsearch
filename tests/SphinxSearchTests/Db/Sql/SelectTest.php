@@ -478,15 +478,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('(COUNT(`some_column`) + ?) AS `bar`')), '`foo`')
         );
 
-//         // joins (plain)
-//         $select10 = new Select;
-//         $select10->from('foo')->join('zac', 'm = n');
-//         $sqlPrep10 = // same
-//         $sqlStr10 = 'SELECT `foo`.*, `zac`.* FROM `foo` INNER JOIN `zac` ON `m` = `n`';
-//         $internalTests10 = array(
-//             'processSelect' => array(array(array('`foo`.*'), array('`zac`.*')), '`foo`'),
-//             'processJoins'   => array(array(array('INNER', '`zac`', '`m` = `n`')))
-//         );
+        // select without from
+        $select10 = new Select;
+        $select10->columns(array('foo' => new Expression('1+1')));
+        $sqlPrep10 = // same
+        $sqlStr10 = 'SELECT 1+1 AS `foo`';
+        $internalTests10 = array(
+            'processSelect' => array(array(array('1+1', '`foo`')))
+        );
 
 //         // join with columns
 //         $select11 = new Select;
@@ -528,123 +527,123 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             'processJoins' => array(array(array('INNER', '`bar` AS `b`', '`b`.`foo_id` = `foo`.`foo_id`')))
 //         );
 
-//         // where (simple string)
-//         $select15 = new Select;
-//         $select15->from('foo')->where('x = 5');
-//         $sqlPrep15 = // same
-//         $sqlStr15 = 'SELECT `foo`.* FROM `foo` WHERE x = 5';
-//         $internalTests15 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processWhere'  => array('x = 5')
-//         );
+        // where (simple string)
+        $select15 = new Select;
+        $select15->from('foo')->where('x = 5');
+        $sqlPrep15 = // same
+        $sqlStr15 = 'SELECT * FROM `foo` WHERE x = 5';
+        $internalTests15 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processWhere'  => array('x = 5')
+        );
 
-//         // where (returning parameters)
-//         $select16 = new Select;
-//         $select16->from('foo')->where(array('x = ?' => 5));
-//         $sqlPrep16 = 'SELECT `foo`.* FROM `foo` WHERE x = ?';
-//         $sqlStr16 = 'SELECT `foo`.* FROM `foo` WHERE x = \'5\'';
-//         $params16 = array('where1' => 5);
-//         $internalTests16 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processWhere'  => array('x = ?')
-//         );
+        // where (returning parameters)
+        $select16 = new Select;
+        $select16->from('foo')->where(array('x = ?' => 5));
+        $sqlPrep16 = 'SELECT * FROM `foo` WHERE x = ?';
+        $sqlStr16 = 'SELECT * FROM `foo` WHERE x = \'5\'';
+        $params16 = array('where1' => 5);
+        $internalTests16 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processWhere'  => array('x = ?')
+        );
 
-//         // group
-//         $select17 = new Select;
-//         $select17->from('foo')->group(array('col1', 'col2'));
-//         $sqlPrep17 = // same
-//         $sqlStr17 = 'SELECT `foo`.* FROM `foo` GROUP BY `col1`, `col2`';
-//         $internalTests17 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processGroup'  => array(array('`col1`', '`col2`'))
-//         );
+        // group
+        $select17 = new Select;
+        $select17->from('foo')->group(array('col1', 'col2'));
+        $sqlPrep17 = // same
+        $sqlStr17 = 'SELECT * FROM `foo` GROUP BY `col1`, `col2`';
+        $internalTests17 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`col1`', '`col2`'))
+        );
 
-//         $select18 = new Select;
-//         $select18->from('foo')->group('col1')->group('col2');
-//         $sqlPrep18 = // same
-//         $sqlStr18 = 'SELECT `foo`.* FROM `foo` GROUP BY `col1`, `col2`';
-//         $internalTests18 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processGroup'  => array(array('`col1`', '`col2`'))
-//         );
+        $select18 = new Select;
+        $select18->from('foo')->group('col1')->group('col2');
+        $sqlPrep18 = // same
+        $sqlStr18 = 'SELECT * FROM `foo` GROUP BY `col1`, `col2`';
+        $internalTests18 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`col1`', '`col2`'))
+        );
 
-//         $select19 = new Select;
-//         $select19->from('foo')->group(new Expression('DAY(?)', array('col1'), array(Expression::TYPE_IDENTIFIER)));
-//         $sqlPrep19 = // same
-//         $sqlStr19 = 'SELECT `foo`.* FROM `foo` GROUP BY DAY(`col1`)';
-//         $internalTests19 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processGroup'  => array(array('DAY(`col1`)'))
-//         );
+        $select19 = new Select;
+        $select19->from('foo')->group(new Expression('DAY(?)', array('col1'), array(Expression::TYPE_IDENTIFIER)));
+        $sqlPrep19 = // same
+        $sqlStr19 = 'SELECT * FROM `foo` GROUP BY DAY(`col1`)';
+        $internalTests19 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('DAY(`col1`)'))
+        );
 
-//         // having (simple string)
-//         $select20 = new Select;
-//         $select20->from('foo')->having('x = 5');
-//         $sqlPrep20 = // same
-//         $sqlStr20 = 'SELECT `foo`.* FROM `foo` HAVING x = 5';
-//         $internalTests20 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processHaving'  => array('x = 5')
-//         );
+        // having (simple string)
+        $select20 = new Select;
+        $select20->from('foo')->having('x = 5');
+        $sqlPrep20 = // same
+        $sqlStr20 = 'SELECT * FROM `foo` HAVING x = 5';
+        $internalTests20 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processHaving'  => array('x = 5')
+        );
 
-//         // having (returning parameters)
-//         $select21 = new Select;
-//         $select21->from('foo')->having(array('x = ?' => 5));
-//         $sqlPrep21 = 'SELECT `foo`.* FROM `foo` HAVING x = ?';
-//         $sqlStr21 = 'SELECT `foo`.* FROM `foo` HAVING x = \'5\'';
-//         $params21 = array('having1' => 5);
-//         $internalTests21 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processHaving'  => array('x = ?')
-//         );
+        // having (returning parameters)
+        $select21 = new Select;
+        $select21->from('foo')->having(array('x = ?' => 5));
+        $sqlPrep21 = 'SELECT * FROM `foo` HAVING x = ?';
+        $sqlStr21 = 'SELECT * FROM `foo` HAVING x = \'5\'';
+        $params21 = array('having1' => 5);
+        $internalTests21 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processHaving'  => array('x = ?')
+        );
 
-//         // order
-//         $select22 = new Select;
-//         $select22->from('foo')->order('c1');
-//         $sqlPrep22 = //
-//         $sqlStr22 = 'SELECT `foo`.* FROM `foo` ORDER BY `c1` ASC';
-//         $internalTests22 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING)))
-//         );
+        // order
+        $select22 = new Select;
+        $select22->from('foo')->order('c1');
+        $sqlPrep22 = //
+        $sqlStr22 = 'SELECT * FROM `foo` ORDER BY `c1` ASC';
+        $internalTests22 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING)))
+        );
 
-//         $select23 = new Select;
-//         $select23->from('foo')->order(array('c1', 'c2'));
-//         $sqlPrep23 = // same
-//         $sqlStr23 = 'SELECT `foo`.* FROM `foo` ORDER BY `c1` ASC, `c2` ASC';
-//         $internalTests23 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
-//         );
+        $select23 = new Select;
+        $select23->from('foo')->order(array('c1', 'c2'));
+        $sqlPrep23 = // same
+        $sqlStr23 = 'SELECT * FROM `foo` ORDER BY `c1` ASC, `c2` ASC';
+        $internalTests23 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
 
-//         $select24 = new Select;
-//         $select24->from('foo')->order(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
-//         $sqlPrep24 = // same
-//         $sqlStr24 = 'SELECT `foo`.* FROM `foo` ORDER BY `c1` DESC, `c2` ASC';
-//         $internalTests24 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
-//         );
+        $select24 = new Select;
+        $select24->from('foo')->order(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
+        $sqlPrep24 = // same
+        $sqlStr24 = 'SELECT * FROM `foo` ORDER BY `c1` DESC, `c2` ASC';
+        $internalTests24 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
 
-//         $select25 = new Select;
-//         $select25->from('foo')->order(array('c1' => 'asc'))->order('c2 desc'); // notice partially lower case ASC
-//         $sqlPrep25 = // same
-//         $sqlStr25 = 'SELECT `foo`.* FROM `foo` ORDER BY `c1` ASC, `c2` DESC';
-//         $internalTests25 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
-//         );
+        $select25 = new Select;
+        $select25->from('foo')->order(array('c1' => 'asc'))->order('c2 desc'); // notice partially lower case ASC
+        $sqlPrep25 = // same
+        $sqlStr25 = 'SELECT * FROM `foo` ORDER BY `c1` ASC, `c2` DESC';
+        $internalTests25 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
+        );
 
-//         // limit
-//         $select26 = new Select;
-//         $select26->from('foo')->limit(5);
-//         $sqlPrep26 = 'SELECT `foo`.* FROM `foo` LIMIT ?';
-//         $sqlStr26 = 'SELECT `foo`.* FROM `foo` LIMIT \'5\'';
-//         $params26 = array('limit' => 5);
-//         $internalTests26 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processLimit'  => array('?')
-//         );
+        // limit
+        $select26 = new Select;
+        $select26->from('foo')->limit(5);
+        $sqlPrep26 = 'SELECT * FROM `foo` LIMIT ?,?';
+        $sqlStr26 = 'SELECT * FROM `foo` LIMIT 0,5';
+        $params26 = array('limit' => 5, 'offset' => 0);
+        $internalTests26 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processLimit'  => array('?')
+        );
 
 //         // limit with offset
 //         $select27 = new Select;
@@ -882,23 +881,23 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select7,  $sqlPrep7,  array(),    $sqlStr7,  $internalTests7),
             array($select8,  $sqlPrep8,  array(),    $sqlStr8,  $internalTests8),
             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
-//             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
+            array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
 //             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
 //             array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
 //             array($select13, $sqlPrep13, array(),    $sqlStr13, $internalTests13),
 //             array($select14, $sqlPrep14, array(),    $sqlStr14, $internalTests14),
-//             array($select15, $sqlPrep15, array(),    $sqlStr15, $internalTests15),
-//             array($select16, $sqlPrep16, $params16,  $sqlStr16, $internalTests16),
-//             array($select17, $sqlPrep17, array(),    $sqlStr17, $internalTests17),
-//             array($select18, $sqlPrep18, array(),    $sqlStr18, $internalTests18),
-//             array($select19, $sqlPrep19, array(),    $sqlStr19, $internalTests19),
-//             array($select20, $sqlPrep20, array(),    $sqlStr20, $internalTests20),
-//             array($select21, $sqlPrep21, $params21,  $sqlStr21, $internalTests21),
-//             array($select22, $sqlPrep22, array(),    $sqlStr22, $internalTests22),
-//             array($select23, $sqlPrep23, array(),    $sqlStr23, $internalTests23),
-//             array($select24, $sqlPrep24, array(),    $sqlStr24, $internalTests24),
-//             array($select25, $sqlPrep25, array(),    $sqlStr25, $internalTests25),
-//             array($select26, $sqlPrep26, $params26,  $sqlStr26, $internalTests26),
+            array($select15, $sqlPrep15, array(),    $sqlStr15, $internalTests15),
+            array($select16, $sqlPrep16, $params16,  $sqlStr16, $internalTests16),
+            array($select17, $sqlPrep17, array(),    $sqlStr17, $internalTests17),
+            array($select18, $sqlPrep18, array(),    $sqlStr18, $internalTests18),
+            array($select19, $sqlPrep19, array(),    $sqlStr19, $internalTests19),
+            array($select20, $sqlPrep20, array(),    $sqlStr20, $internalTests20),
+            array($select21, $sqlPrep21, $params21,  $sqlStr21, $internalTests21),
+            array($select22, $sqlPrep22, array(),    $sqlStr22, $internalTests22),
+            array($select23, $sqlPrep23, array(),    $sqlStr23, $internalTests23),
+            array($select24, $sqlPrep24, array(),    $sqlStr24, $internalTests24),
+            array($select25, $sqlPrep25, array(),    $sqlStr25, $internalTests25),
+            array($select26, $sqlPrep26, $params26,  $sqlStr26, $internalTests26),
 //             array($select27, $sqlPrep27, $params27,  $sqlStr27, $internalTests27),
 //             array($select28, $sqlPrep28, array(),    $sqlStr28, $internalTests28),
 //             array($select29, $sqlPrep29, array(),    $sqlStr29, $internalTests29),
