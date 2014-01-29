@@ -411,7 +411,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @param $parameters
      * @return null
      */
-    protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null, &$sqls, &$parameters)
+    protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
         if ($this->limit === null && $this->offset === null) {
             return null;

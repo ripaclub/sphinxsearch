@@ -652,20 +652,19 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $params26 = array('limit' => 5, 'offset' => 0);
         $internalTests26 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processLimit'  => array('?')
+            'processLimitOffset'  => array('?', '?')
         );
 
-//         // limit with offset
-//         $select27 = new Select;
-//         $select27->from('foo')->limit(5)->offset(10);
-//         $sqlPrep27 = 'SELECT `foo`.* FROM `foo` LIMIT ? OFFSET ?';
-//         $sqlStr27 = 'SELECT `foo`.* FROM `foo` LIMIT \'5\' OFFSET \'10\'';
-//         $params27 = array('limit' => 5, 'offset' => 10);
-//         $internalTests27 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processLimit'  => array('?'),
-//             'processOffset' => array('?')
-//         );
+        // limit with offset
+        $select27 = new Select;
+        $select27->from('foo')->limit(5)->offset(10);
+        $sqlPrep27 = 'SELECT * FROM `foo` LIMIT ?,?';
+        $sqlStr27 = 'SELECT * FROM `foo` LIMIT 10,5';
+        $params27 = array('limit' => 5, 'offset' => 10);
+        $internalTests27 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processLimitOffset'  => array('?', '?')
+        );
 
 //         // joins with a few keywords in the on clause
 //         $select28 = new Select;
@@ -908,7 +907,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select24, $sqlPrep24, array(),    $sqlStr24, $internalTests24),
             array($select25, $sqlPrep25, array(),    $sqlStr25, $internalTests25),
             array($select26, $sqlPrep26, $params26,  $sqlStr26, $internalTests26),
-//             array($select27, $sqlPrep27, $params27,  $sqlStr27, $internalTests27),
+            array($select27, $sqlPrep27, $params27,  $sqlStr27, $internalTests27),
 //             array($select28, $sqlPrep28, array(),    $sqlStr28, $internalTests28),
 //             array($select29, $sqlPrep29, array(),    $sqlStr29, $internalTests29),
 //             array($select30, $sqlPrep30, array(),    $sqlStr30, $internalTests30),
