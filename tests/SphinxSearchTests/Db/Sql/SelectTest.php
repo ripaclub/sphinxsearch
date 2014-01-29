@@ -887,32 +887,35 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processWithinGroupOrder'   => array(array(array('`c1`', Select::ORDER_ASCENDING)))
         );
 
-//         $select23 = new Select;
-//         $select23->from('foo')->order(array('c1', 'c2'));
-//         $sqlPrep23 = // same
-//         $sqlStr23 = 'SELECT * FROM `foo` ORDER BY `c1` ASC, `c2` ASC';
-//         $internalTests23 = array(
-//             'processSelect' => array(array(array('*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
-//         );
+        $select47 = new Select;
+        $select47->from('foo')->group('c0')->withinGroupOrder(array('c1', 'c2'));
+        $sqlPrep47 = // same
+        $sqlStr47 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` ASC';
+        $internalTests47 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
 
-//         $select24 = new Select;
-//         $select24->from('foo')->order(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
-//         $sqlPrep24 = // same
-//         $sqlStr24 = 'SELECT * FROM `foo` ORDER BY `c1` DESC, `c2` ASC';
-//         $internalTests24 = array(
-//             'processSelect' => array(array(array('*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
-//         );
+        $select48 = new Select;
+        $select48->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
+        $sqlPrep48 = // same
+        $sqlStr48 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` DESC, `c2` ASC';
+        $internalTests48 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
 
-//         $select25 = new Select;
-//         $select25->from('foo')->order(array('c1' => 'asc'))->order('c2 desc'); // notice partially lower case ASC
-//         $sqlPrep25 = // same
-//         $sqlStr25 = 'SELECT * FROM `foo` ORDER BY `c1` ASC, `c2` DESC';
-//         $internalTests25 = array(
-//             'processSelect' => array(array(array('*')), '`foo`'),
-//             'processOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
-//         );
+        $select49 = new Select;
+        $select49->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc'); // notice partially lower case ASC
+        $sqlPrep49 = // same
+        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC';
+        $internalTests49 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
+        );
 
 
         /**
@@ -972,6 +975,9 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             array($select44, $sqlPrep44, array(),    $sqlStr44, $internalTests44),
             array($select45, $sqlPrep45, $params45,  $sqlStr45, $internalTests45),
             array($select46, $sqlPrep46, array(),    $sqlStr46, $internalTests46),
+            array($select47, $sqlPrep47, array(),    $sqlStr47, $internalTests47),
+            array($select48, $sqlPrep48, array(),    $sqlStr48, $internalTests48),
+            array($select49, $sqlPrep49, array(),    $sqlStr49, $internalTests49),
         );
     }
 
