@@ -99,7 +99,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers SphinxSearch\Search::search
-     * @covers SphinxSearch\Search::seatchWith
+     * @covers SphinxSearch\Search::searchWith
      */
     public function testSearchWithNoWhere()
     {
