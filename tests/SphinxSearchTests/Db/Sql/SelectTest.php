@@ -376,10 +376,10 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
         $parameterContainer = new ParameterContainer();
 
-        $sr = new \ReflectionObject($select);
+        $selectReflect = new \ReflectionObject($select);
 
         foreach ($internalTests as $method => $expected) {
-            $mr = $sr->getMethod($method);
+            $mr = $selectReflect->getMethod($method);
             $mr->setAccessible(true);
             $return = $mr->invokeArgs($select, array(new TrustedSphinxQL(), $mockDriver, $parameterContainer));
             $this->assertEquals($expected, $return);
