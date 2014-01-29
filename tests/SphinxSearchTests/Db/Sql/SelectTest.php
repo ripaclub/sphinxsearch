@@ -982,6 +982,20 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @testdox Tables have to be strings, array, TableIdentifier objects or a Select objects
+     */
+    public function testTableType()
+    {
+        $select = new Select;
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            '$table must be a string, array, an instance of TableIdentifier, or an instance of Select'
+        );
+        $table = new \stdClass();
+        $select->from($table);
+    }
+
+    /**
      * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
      * @testdox Tables defined in construction phase are read only
      */

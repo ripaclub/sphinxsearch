@@ -124,7 +124,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         }
 
         if (!is_string($table) && !is_array($table) && !$table instanceof TableIdentifier && !$table instanceof Select) {
-            throw new Exception\InvalidArgumentException('$table must be a string, array, or an instance of TableIdentifier');
+            throw new Exception\InvalidArgumentException('$table must be a string, array, an instance of TableIdentifier, or an instance of Select');
         }
 
         $this->table = $table;
