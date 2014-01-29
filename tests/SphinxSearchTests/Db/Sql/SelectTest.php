@@ -240,7 +240,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         return $select;
     }
 
-
     /**
      * @testdox Method option() with OPTIONS_SET flag
      * @covers SphinxSearch\Db\Sql\Select::option
@@ -254,6 +253,26 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array('opt_name3' => 'opt_value3'),
             $select->getRawState('option')
         );
+    }
+
+    /**
+     * @testdox Method option() launch exception with null values
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @depends testGetRawOption
+     */
+    public function testNullOptionValues(Select $select)
+    {
+        $select->option(array());
+    }
+
+    /**
+     * @testdox Method option() launch exception when value keys are not strings
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @depends testGetRawOption
+     */
+    public function testNotStringOptionValueKeys(Select $select)
+    {
+        $select->option(array(1 => 'opt_values4'));
     }
 
     /**
