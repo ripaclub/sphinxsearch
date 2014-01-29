@@ -39,10 +39,8 @@ class Search {
     public function __construct(ZendDBAdapter $adapter, ResultSetInterface $resultSetPrototype = null, Sql $sql = null)
     {
         $this->adapter = $adapter;
-
         // result prototype
-        $this->resultSetPrototype = ($resultSetPrototype) ?: new ResultSet();
-
+        $this->resultSetPrototype = ($resultSetPrototype) ? : new ResultSet();
         $this->sql     = $sql ? $sql : new Sql($adapter);
     }
 

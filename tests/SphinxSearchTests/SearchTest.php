@@ -12,13 +12,14 @@ namespace SphinxSearchTests;
 use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\ResultSet\ResultSet;
 class SearchTest extends \PHPUnit_Framework_TestCase
 {
 
     protected $mockAdapter = null;
 
-    public function setup()
+    public function setUp()
     {
         // mock the adapter, driver, and parts
         $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
@@ -28,30 +29,28 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
-
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new SphinxQL()));
+        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
     }
 
+    /**
+     * @testdox Instantiation
+     */
     public function test__construct()
     {
         // constructor with only required args
         $search = new Search(
             $this->mockAdapter
         );
-
-
         $this->assertSame($this->mockAdapter, $search->getAdapter());
         $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $search->getResultSetPrototype());
         $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $search->getSql());
-
         // injecting all args
         $search = new Search(
             $this->mockAdapter,
             $resultSet = new ResultSet,
             $sql = new Sql($this->mockAdapter)
         );
-
         $this->assertSame($this->mockAdapter, $search->getAdapter());
         $this->assertSame($resultSet, $search->getResultSetPrototype());
         $this->assertSame($sql, $search->getSql());
