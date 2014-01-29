@@ -11,6 +11,7 @@ namespace SphinxSearchTests\Db\Sql;
 
 
 use SphinxSearch\Db\Sql\Sql;
+use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 
 class SqlTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,9 +35,9 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver));
+        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));// FIXME: give here the platform?
 
-        $this->sql = new Sql($this->mockAdapter, 'foo'); // FIXME: append SphinxQL platform?
+        $this->sql = new Sql($this->mockAdapter, 'foo'); // FIXME: append SphinxQL platform as 3 parameter ?
     }
 
     /**
@@ -52,6 +53,37 @@ class SqlTest extends \PHPUnit_Framework_TestCase
             'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->select('bar');
+    }
+
+    /**
+     * @covers SphinxSearch\Db\Sql\Sql::replace
+     */
+    public function testReplace()
+    {
+        $insert = $this->sql->replace();
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Replace', $insert);
+        $this->assertSame('foo', $insert->getRawState('table'));
+
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            'This Sql object is intended to work with only the table "foo" provided at construction time.');
+        $this->sql->replace('bar');
+    }
+
+    /**
+     * @covers SphinxSearch\Db\Sql\Sql::update
+     */
+    public function testUpdate()
+    {
+        $update = $this->sql->update();
+        $this->assertInstanceOf('Zend\Db\Sql\Update', $update);
+        $this->assertSame('foo', $update->getRawState('table'));
+
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            'This Sql object is intended to work with only the table "foo" provided at construction time.');
+        $this->sql->update('bar');
+
     }
 
 }
