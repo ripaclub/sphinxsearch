@@ -499,13 +499,13 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('(COUNT(`some_column`) + ?) AS `bar`')), '`foo`')
         );
 
-        // select without from
+        // select without from and expression in column without alias
         $select10 = new Select;
-        $select10->columns(array('foo' => new Expression('1+1')));
+        $select10->columns(array(new Expression('1+1')));
         $sqlPrep10 = // same
-        $sqlStr10 = 'SELECT 1+1 AS `foo`';
+        $sqlStr10 = 'SELECT 1+1 AS `Expression1`';
         $internalTests10 = array(
-            'processSelect' => array(array(array('1+1', '`foo`')))
+            'processSelect' => array(array(array('1+1', '`Expression1`')))
         );
 
 //         // join with columns

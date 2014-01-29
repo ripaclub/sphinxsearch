@@ -316,22 +316,28 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $columnName .= $columnParts->getSql();
             } else {
-                if (strpos($column, $separator) === false) {
-                    $columnName .= $platform->quoteIdentifier($column);
-                } else { // Allow prefix table in column name
-                    $column = explode($separator, $column);
-                    $columnName .= $platform->quoteIdentifier($column[0]) . $separator . $platform->quoteIdentifier($column[1]);
-                }
+
+                //TODO: Sphinx doesn't not support prefix column with table, yet
+
+//                 if (strpos($column, $separator) === false) {
+//                     $columnName .= $platform->quoteIdentifier($column);
+//                 } else { // Allow prefix table in column name
+//                     $column = explode($separator, $column);
+//                     $columnName .= $platform->quoteIdentifier($column[0]) . $separator . $platform->quoteIdentifier($column[1]);
+//                 }
+
+                $columnName .= $platform->quoteIdentifier($column);
             }
 
             // process As portion
             $columnAs = null;
             if (is_string($columnIndexOrAs)) {
-                $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
+                $columnAs = $columnIndexOrAs;
             } elseif (stripos($columnName, ' as ') === false && !is_string($column)) {
                 $columnAs = 'Expression' . $expr++;
             }
-            $columns[] = (isset($columnAs)) ? array($columnName, $columnAs) : array($columnName);
+
+            $columns[] = (isset($columnAs)) ? array($columnName, $platform->quoteIdentifier($columnAs)) : array($columnName);
         }
 
 
