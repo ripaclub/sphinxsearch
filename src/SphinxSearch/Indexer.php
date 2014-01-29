@@ -69,7 +69,7 @@ class Indexer {
         return $this;
     }
 
-    public function insert($index, array $data, $replace = true)
+    public function insert($index, array $data, $replace = false)
     {
         $sqlObject = $replace ? $this->sql->replace($index) : $this->sql->insert($index);
         $sqlObject->values($data);
