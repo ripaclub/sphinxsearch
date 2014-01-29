@@ -460,23 +460,23 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('COUNT(some_column) AS bar')), '`foo`')
         );
 
-//         // columns where value is Expression with parameters
-//         $select9 = new Select;
-//         $select9->from('foo')->columns(
-//             array(
-//                 new Expression(
-//                     '(COUNT(?) + ?) AS ?',
-//                     array('some_column', 5, 'bar'),
-//                     array(Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER)
-//                 )
-//             )
-//         );
-//         $sqlPrep9 = 'SELECT (COUNT(`some_column`) + ?) AS `bar` FROM `foo`';
-//         $sqlStr9 = 'SELECT (COUNT(`some_column`) + \'5\') AS `bar` FROM `foo`';
-//         $params9 = array('column1' => 5);
-//         $internalTests9 = array(
-//             'processSelect' => array(array(array('(COUNT(`some_column`) + ?) AS `bar`')), '`foo`')
-//         );
+        // columns where value is Expression with parameters
+        $select9 = new Select;
+        $select9->from('foo')->columns(
+            array(
+                new Expression(
+                    '(COUNT(?) + ?) AS ?',
+                    array('some_column', 5, 'bar'),
+                    array(Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER)
+                )
+            )
+        );
+        $sqlPrep9 = 'SELECT (COUNT(`some_column`) + ?) AS `bar` FROM `foo`';
+        $sqlStr9 = 'SELECT (COUNT(`some_column`) + \'5\') AS `bar` FROM `foo`';
+        $params9 = array('column1' => 5);
+        $internalTests9 = array(
+            'processSelect' => array(array(array('(COUNT(`some_column`) + ?) AS `bar`')), '`foo`')
+        );
 
 //         // joins (plain)
 //         $select10 = new Select;
@@ -881,7 +881,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select6,  $sqlPrep6,  array(),    $sqlStr6,  $internalTests6),
             array($select7,  $sqlPrep7,  array(),    $sqlStr7,  $internalTests7),
             array($select8,  $sqlPrep8,  array(),    $sqlStr8,  $internalTests8),
-//             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
+            array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
 //             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
 //             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
 //             array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
