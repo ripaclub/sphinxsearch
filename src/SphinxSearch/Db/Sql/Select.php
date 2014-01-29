@@ -21,6 +21,7 @@ use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Expression;
 
 /**
  *
