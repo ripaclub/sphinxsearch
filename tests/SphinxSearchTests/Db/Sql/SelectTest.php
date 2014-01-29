@@ -312,7 +312,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * @testdox unit test: Test prepareStatement() will produce expected sql and parameters based on a variety of provided arguments [uses data provider]
+     * @testdox Method prepareStatement() will produce expected sql and parameters based on a variety of provided arguments [uses data provider]
      * @covers SphinxSearch\Db\Sql\Select::prepareStatement
      * @dataProvider providerData
      */
@@ -349,7 +349,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox unit test: Text process*() methods will return proper array when internally called, part of extension API
+     * @testdox Method process*() methods will return proper array when internally called, part of extension API
      * @dataProvider providerData
      * @covers SphinxSearch\Db\Sql\Select::processSelect
      * @covers SphinxSearch\Db\Sql\Select::processWithinGroupOrder
