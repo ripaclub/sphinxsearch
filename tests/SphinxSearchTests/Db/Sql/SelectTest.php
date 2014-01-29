@@ -918,22 +918,22 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
         );
 
-        $select49 = new Select;
-        $select49->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc'); // notice partially lower case ASC
+        $select49 = new Select; //testing all features for code coverage (i.e. Sphinx doesn't support Expression in order yet)
+        $select49->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc')->withinGroupOrder(array('c3', 'c4 DESC'))->withinGroupOrder(new Expression('WEIGHT()'));
         $sqlPrep49 = // same
-        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC';
+        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC, `c3` ASC, `c4` DESC, WEIGHT()';
         $internalTests49 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
             'processGroup'  => array(array('`c0`')),
-            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING), array('`c3`', Select::ORDER_ASCENDING), array('`c4`', Select::ORDER_DESCENDING), array('WEIGHT()')))
         );
 
         // option
-        $select49 = new Select;
-        $select49->from('foo')->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
-        $sqlPrep49 = // same
-        $sqlStr49 = 'SELECT * FROM `foo` OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)';
-        $internalTests49 = array(
+        $select50 = new Select;
+        $select50->from('foo')->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+        $sqlPrep50 = // same
+        $sqlStr50 = 'SELECT * FROM `foo` OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)';
+        $internalTests50 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
             'processOption'  => array(array(array('`ranker`', '\'bm25\''), array('`max_matches`', 3000), array('`field_weights`', '(title=10, body=3)')))
         );
@@ -999,6 +999,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select47, $sqlPrep47, array(),    $sqlStr47, $internalTests47),
             array($select48, $sqlPrep48, array(),    $sqlStr48, $internalTests48),
             array($select49, $sqlPrep49, array(),    $sqlStr49, $internalTests49),
+            array($select50, $sqlPrep50, array(),    $sqlStr50, $internalTests50),
         );
     }
 
