@@ -346,10 +346,14 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
             } else {
 
-                if (strpos($table, ',') !== false) {
-                    $table = preg_split('#,\s+#', $table);
-                } else {
-                    $table = (array) $table;
+                if (is_string($table)) {
+                    if (strpos($table, ',') !== false) {
+                        $table = preg_split('#,\s+#', $table);
+                    } else {
+                        $table = (array) $table;
+                    }
+                } elseif (!is_array($table)) {
+                    $table = array($table);
                 }
 
                 array_walk($table, function(&$item, $key) use ($platform) {
