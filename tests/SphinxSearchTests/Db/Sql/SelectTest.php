@@ -63,16 +63,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
-     * @testdox Columns cannot be prefixed with the table name
-     */
-    public function testPrefixColumnsWithTable()
-    {
-        $select = new Select;
-        $select->columns(array('uid'), true);
-    }
-
-    /**
      * @testdox Method getRawState() returns information populated via columns()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testColumns
@@ -931,6 +921,26 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             array($select44, $sqlPrep44, array(),    $sqlStr44, $internalTests44),
 //             array($select45, $sqlPrep45, $params45,  $sqlStr45, $internalTests45),
         );
+    }
+
+    /**
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @testdox Columns cannot be prefixed with the table name
+     */
+    public function testPrefixColumnsWithTable()
+    {
+        $select = new Select;
+        $select->columns(array('uid'), true);
+    }
+
+    /**
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @testdox Tables defined in construction phase are read only
+     */
+    public function testTableReadOnly()
+    {
+        $select = new Select('foo');
+        $select->from('foo');
     }
 
 }
