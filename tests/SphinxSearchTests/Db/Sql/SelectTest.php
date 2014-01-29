@@ -235,6 +235,50 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @testdox Method option() returns same Select object (is chainable)
+     * @covers SphinxSearch\Db\Sql\Select::option
+     */
+    public function testOption()
+    {
+        $select = new Select;
+        $return = $select->option(array('opt_name' => 'opt_value'));
+        $this->assertSame($select, $return);
+
+        return $return;
+    }
+
+    /**
+     * @testdox Method getRawState() returns information populated via option()
+     * @covers SphinxSearch\Db\Sql\Select::getRawState
+     * @depends testOption
+     */
+    public function testGetRawOption(Select $select)
+    {
+        $this->assertEquals(
+            array('opt_name' => 'opt_value'),
+            $select->getRawState('option')
+        );
+
+        return $select;
+    }
+
+
+    /**
+     * @testdox Method option() with OPTIONS_MERGE flag
+     * @covers SphinxSearch\Db\Sql\Select::option
+     * @covers SphinxSearch\Db\Sql\Select::getRawState
+     * @depends testGetRawOption
+     */
+    public function testOptionMerge(Select $select)
+    {
+        $select->option(array('opt_name2' => 'opt_value2'), $select::OPTIONS_MERGE);
+        $this->assertEquals(
+            array('opt_name' => 'opt_value', 'opt_name2' => 'opt_value2'),
+            $select->getRawState('option')
+        );
+    }
+
 
     /**
      * @testdox Method reset() resets internal stat of Select object, based on input
