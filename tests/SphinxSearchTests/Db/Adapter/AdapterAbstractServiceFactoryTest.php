@@ -87,21 +87,49 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @return array
+     * @param string $service
+     * @dataProvider providerValidService
+     * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
+     * @testdox Launch exception when there isn't a configuration node
      */
-    public function providerEmptyConfig()
+    public function testNullConfig($service)
     {
-        return array();
+        $sManager = new ServiceManager(new Config(array(
+            'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
+        )));
+        $sManager->get($service);
     }
 
     /**
      * @param string $service
-     * @dataProvider providerEmptyConfig
+     * @dataProvider providerValidService
+     * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
+     * @testdox Launch exception when configuration node is empty
      */
     public function testEmptyConfig($service)
     {
-        $actual = $this->serviceManager->get($service);
-        $this->assertFalse($actual);
+        $sManager = new ServiceManager(new Config(array(
+            'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
+        )));
+        $sManager->setService('Config',  array());
+        $sManager->get($service);
+    }
+
+    /**
+     * @param string $service
+     * @dataProvider providerValidService
+     * @expectedException \Zend\ServiceManager\Exception\ServiceNotFoundException
+     * @testdox Launch exception when sphinxql configuration node is empty
+     */
+    public function testEmptySphinxQLConfig($service)
+    {
+        $sManager = new ServiceManager(new Config(array(
+            'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
+        )));
+        $sManager->setService('Config',  array(
+            'sphinxql' => array()
+        ));
+        $sManager->get($service);
     }
 
 }
