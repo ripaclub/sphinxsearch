@@ -47,6 +47,22 @@ class Search {
     }
 
     /**
+     * @return \Zend\Db\Adapter\Adapter
+     */
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
+
+    /**
+     * @return \Zend\Db\ResultSet\ResultSetInterface
+     */
+    public function getResultSetPrototype()
+    {
+        return $this->resultSetPrototype;
+    }
+
+    /**
      * @return Sql
      */
     public function getSql()
