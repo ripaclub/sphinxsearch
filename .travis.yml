@@ -12,7 +12,7 @@ before_script:
  - cd tests
 
 script:
- - vendor/phpunit/phpunit/phpunit.php -c tests/phpunit.xml
+ - vendor/bin/phpunit.php -c tests
 
 notifications:
   email: false
