@@ -154,7 +154,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         $this->columns = $columns;
 
         if ($prefixColumnsWithTable) {
-            throw new \InvalidArgumentException('SphinxQL syntax does not support prefixing columns with table name');
+            throw new Exception\InvalidArgumentException('SphinxQL syntax does not support prefixing columns with table name');
         }
 
         return $this;
