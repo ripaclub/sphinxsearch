@@ -706,40 +706,44 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             'processJoins'   => array(array(array('INNER', '`zac`', '(m = n AND c.x) BETWEEN x AND y.z')))
 //         );
 
-//         $select32subselect = new Select;
-//         $select32subselect->from('bar')->where->like('y', '%Foo%');
-//         $select32 = new Select;
-//         $select32->from(array('x' => $select32subselect));
-//         $sqlPrep32 = 'SELECT `x`.* FROM (SELECT `bar`.* FROM `bar` WHERE `y` LIKE ?) AS `x`';
-//         $sqlStr32 = 'SELECT `x`.* FROM (SELECT `bar`.* FROM `bar` WHERE `y` LIKE \'%Foo%\') AS `x`';
-//         $internalTests32 = array(
-//             'processSelect' => array(array(array('`x`.*')), '(SELECT `bar`.* FROM `bar` WHERE `y` LIKE ?) AS `x`'),
-//         );
+        $select32subselect = new Select;
+        $select32subselect->from('bar')->where(array('y' => 1));
+        $select32 = new Select;
+        $select32->from($select32subselect)->order('x');
+        $sqlPrep32 = 'SELECT * FROM (SELECT * FROM `bar` WHERE `y` = ?) ORDER BY `x` ASC';
+        $sqlStr32 = 'SELECT * FROM (SELECT * FROM `bar` WHERE `y` = \'1\') ORDER BY `x` ASC';
+        $internalTests32 = array(
+            'processSelect' => array(array(array('*')), '(SELECT * FROM `bar` WHERE `y` = ?)'),
+        );
 
-//         $select33 = new Select;
-//         $select33->from('table')->columns(array('*'))->where(array(
-//             'c1' => null,
-//             'c2' => array(1, 2, 3),
-//             new \Zend\Db\Sql\Predicate\IsNotNull('c3')
-//         ));
-//         $sqlPrep33 = 'SELECT `table`.* FROM `table` WHERE `c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL';
-//         $sqlStr33 = 'SELECT `table`.* FROM `table` WHERE `c1` IS NULL AND `c2` IN (\'1\', \'2\', \'3\') AND `c3` IS NOT NULL';
-//         $internalTests33 = array(
-//             'processSelect' => array(array(array('`table`.*')), '`table`'),
-//             'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')
-//         );
 
-//         // @author Demian Katz
-//         $select34 = new Select;
-//         $select34->from('table')->order(array(
-//             new Expression('isnull(?) DESC', array('name'), array(Expression::TYPE_IDENTIFIER)),
-//             'name'
-//         ));
-//         $sqlPrep34 = 'SELECT `table`.* FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
-//         $sqlStr34 = 'SELECT `table`.* FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
-//         $internalTests34 = array(
-//             'processOrder'  => array(array(array('isnull(`name`) DESC'), array('`name`', Select::ORDER_ASCENDING)))
-//         );
+
+        //Not yet supported by Sphinx
+        $select33 = new Select;
+        $select33->from('table')->columns(array('*'))->where(array(
+            'c1' => null,
+            'c2' => array(1, 2, 3),
+            new \Zend\Db\Sql\Predicate\IsNotNull('c3')
+        ));
+        $sqlPrep33 = 'SELECT * FROM `table` WHERE `c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL';
+        $sqlStr33 = 'SELECT * FROM `table` WHERE `c1` IS NULL AND `c2` IN (\'1\', \'2\', \'3\') AND `c3` IS NOT NULL';
+        $internalTests33 = array(
+            'processSelect' => array(array(array('*')), '`table`'),
+            'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')
+        );
+
+        //Not yet supported by Sphinx
+        // @author Demian Katz
+        $select34 = new Select;
+        $select34->from('table')->order(array(
+            new Expression('isnull(?) DESC', array('name'), array(Expression::TYPE_IDENTIFIER)),
+            'name'
+        ));
+        $sqlPrep34 = 'SELECT * FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
+        $sqlStr34 = 'SELECT * FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
+        $internalTests34 = array(
+            'processOrder'  => array(array(array('isnull(`name`) DESC'), array('`name`', Select::ORDER_ASCENDING)))
+        );
 
 //         // join with Expression object in COLUMNS part (ZF2-514)
 //         // @co-author Koen Pieters (kpieters)
@@ -912,9 +916,9 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             array($select29, $sqlPrep29, array(),    $sqlStr29, $internalTests29),
 //             array($select30, $sqlPrep30, array(),    $sqlStr30, $internalTests30),
 //             array($select31, $sqlPrep31, array(),    $sqlStr31, $internalTests31),
-//             array($select32, $sqlPrep32, array(),    $sqlStr32, $internalTests32),
-//             array($select33, $sqlPrep33, array(),    $sqlStr33, $internalTests33),
-//             array($select34, $sqlPrep34, array(),    $sqlStr34, $internalTests34),
+            array($select32, $sqlPrep32, array(),    $sqlStr32, $internalTests32),
+            array($select33, $sqlPrep33, array(),    $sqlStr33, $internalTests33),
+            array($select34, $sqlPrep34, array(),    $sqlStr34, $internalTests34),
 //             array($select35, $sqlPrep35, array(),    $sqlStr35, $internalTests35),
 //             array($select36, $sqlPrep36, array(),    $sqlStr36, $internalTests36,  $useNamedParams36),
 //             array($select37, $sqlPrep37, array(),    $sqlStr37, $internalTests37),
