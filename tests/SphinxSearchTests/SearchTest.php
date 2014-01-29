@@ -12,6 +12,7 @@ namespace SphinxSearchTests;
 use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\ResultSet\ResultSet;
 class SearchTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +23,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 
     protected $search = null;
 
-    public function setup()
+    public function setUp()
     {
         // mock the adapter, driver, and parts
         $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
@@ -45,6 +46,9 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->search = new Search($this->mockAdapter, null, $this->mockSql);
     }
 
+    /**
+     * @testdox Instantiation
+     */
     public function test__construct()
     {
         // constructor with only required args

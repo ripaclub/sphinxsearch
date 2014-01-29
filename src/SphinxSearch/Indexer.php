@@ -36,6 +36,14 @@ class Indexer {
     }
 
     /**
+     * @return \Zend\Db\Adapter\Adapter
+     */
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
+
+    /**
      * @return Sql
      */
     public function getSql()
