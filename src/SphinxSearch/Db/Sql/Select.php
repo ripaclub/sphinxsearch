@@ -345,14 +345,17 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             if ($table instanceof Select) {
                 $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
             } else {
-                if (is_array($table)) {
-                    array_walk($table, function(&$item, $key) use ($platform) {
-                        $item = $platform->quoteIdentifier($item);
-                    });
-                    $table = implode(', ', $table);
+
+                if (strpos($table, ',') !== false) {
+                    $table = preg_split('#,\s+#', $table);
                 } else {
-                    $table = $platform->quoteIdentifier($table);
+                    $table = (array) $table;
                 }
+
+                array_walk($table, function(&$item, $key) use ($platform) {
+                    $item = $platform->quoteIdentifier($item);
+                });
+                $table = implode(', ', $table);
             }
 
             return array($columns, $table);

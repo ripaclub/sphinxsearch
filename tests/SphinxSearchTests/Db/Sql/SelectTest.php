@@ -406,14 +406,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '`foo`, `bar`')
         );
 
-//         // table with alias with table as TableIdentifier NOT SUPPORTED BY SPHINXQL
-//         $select3 = new Select;
-//         $select3->from(array('f' => new TableIdentifier('foo')));
-//         $sqlPrep3 = // same
-//         $sqlStr3 = 'SELECT `f`.* FROM `foo` AS `f`';
-//         $internalTests3 = array(
-//             'processSelect' => array(array(array('`f`.*')), '`foo` AS `f`')
-//         );
+        // table list (comma separated)
+        $select3 = new Select;
+        $select3->from('foo, baz');
+        $sqlPrep3 = // same
+        $sqlStr3 = 'SELECT * FROM `foo`, `baz`';
+        $internalTests3 = array(
+            'processSelect' => array(array(array('*')), '`foo`, `baz`')
+        );
 
 //         // columns
 //         $select4 = new Select;
@@ -875,7 +875,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select0,  $sqlPrep0,  array(),    $sqlStr0,  $internalTests0),
             array($select1,  $sqlPrep1,  array(),    $sqlStr1,  $internalTests1),
             array($select2,  $sqlPrep2,  array(),    $sqlStr2,  $internalTests2),
-//             array($select3,  $sqlPrep3,  array(),    $sqlStr3,  $internalTests3),
+            array($select3,  $sqlPrep3,  array(),    $sqlStr3,  $internalTests3),
 //             array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
 //             array($select5,  $sqlPrep5,  array(),    $sqlStr5,  $internalTests5),
 //             array($select6,  $sqlPrep6,  array(),    $sqlStr6,  $internalTests6),
