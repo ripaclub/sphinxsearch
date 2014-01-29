@@ -219,6 +219,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     {
         $select = new Select;
         $return = $select->option(array('opt_name' => 'opt_value'));
+        $return = $select->option(array('opt_name2' => 'opt_value2'));
         $this->assertSame($select, $return);
 
         return $return;
@@ -232,7 +233,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     public function testGetRawOption(Select $select)
     {
         $this->assertEquals(
-            array('opt_name' => 'opt_value'),
+            array('opt_name' => 'opt_value', 'opt_name2' => 'opt_value2'),
             $select->getRawState('option')
         );
 
@@ -241,16 +242,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * @testdox Method option() with OPTIONS_MERGE flag
+     * @testdox Method option() with OPTIONS_SET flag
      * @covers SphinxSearch\Db\Sql\Select::option
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testGetRawOption
      */
-    public function testOptionMerge(Select $select)
+    public function testOptionSet(Select $select)
     {
-        $select->option(array('opt_name2' => 'opt_value2'), $select::OPTIONS_MERGE);
+        $select->option(array('opt_name3' => 'opt_value3'), $select::OPTIONS_SET);
         $this->assertEquals(
-            array('opt_name' => 'opt_value', 'opt_name2' => 'opt_value2'),
+            array('opt_name3' => 'opt_value3'),
             $select->getRawState('option')
         );
     }

@@ -193,7 +193,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @throws Exception\InvalidArgumentException
      * @return Select
      */
-    public function option(array $values, $flag = self::OPTIONS_SET)
+    public function option(array $values, $flag = self::OPTIONS_MERGE)
     {
         if ($values == null) {
             throw new Exception\InvalidArgumentException('option() expects an array of values');
