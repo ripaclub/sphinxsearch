@@ -8,6 +8,8 @@
  */
 namespace SphinxSearchTests;
 
+use SphinxSearch\Db\Sql\Sql;
+use SphinxSearch\Indexer;
 use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 
 class IndexerTest extends \PHPUnit_Framework_TestCase
@@ -27,6 +29,28 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
         // setup mock adapter
         $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+    }
+
+    /**
+     * @testdox Instantiation
+     */
+    public function test__construct()
+    {
+        // constructor with only required args
+        $indexer = new Indexer(
+            $this->mockAdapter
+        );
+        $this->assertSame($this->mockAdapter, $indexer->getAdapter());
+        // $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $search->getResultSetPrototype()); // FIXME
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $indexer->getSql());
+        // injecting all args
+        $search = new Indexer(
+            $this->mockAdapter,
+            $sql = new Sql($this->mockAdapter)
+        );
+        $this->assertSame($this->mockAdapter, $search->getAdapter());
+        // $this->assertSame($resultSet, $search->getResultSetPrototype()); // FIXME
+        $this->assertSame($sql, $search->getSql());
     }
 
 }
