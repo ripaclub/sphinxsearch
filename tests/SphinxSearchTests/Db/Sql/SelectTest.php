@@ -63,6 +63,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @testdox Columns cannot be prefixed with the table name
+     */
+    public function testPrefixColumnsWithTable()
+    {
+        $select = new Select;
+        $select->columns(array('uid'), true);
+    }
+
+    /**
      * @testdox Method getRawState() returns information populated via columns()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testColumns
