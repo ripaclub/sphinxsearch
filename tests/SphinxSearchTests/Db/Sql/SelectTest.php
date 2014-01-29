@@ -13,6 +13,7 @@ use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Adapter\Platform\Sql92;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Sql\Expression;
 
 class SelectTest extends \PHPUnit_Framework_TestCase {
 
@@ -416,49 +417,49 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         );
 
 //         // columns
-//         $select4 = new Select;
-//         $select4->from('foo')->columns(array('bar', 'baz'));
-//         $sqlPrep4 = // same
-//         $sqlStr4 = 'SELECT `foo`.`bar` AS `bar`, `foo`.`baz` AS `baz` FROM `foo`';
-//         $internalTests4 = array(
-//             'processSelect' => array(array(array('`foo`.`bar`', '`bar`'), array('`foo`.`baz`', '`baz`')), '`foo`')
-//         );
+        $select4 = new Select;
+        $select4->from('foo')->columns(array('bar', 'baz'));
+        $sqlPrep4 = // same
+        $sqlStr4 = 'SELECT `bar`, `baz` FROM `foo`';
+        $internalTests4 = array(
+            'processSelect' => array(array(array('`bar`'), array('`baz`')), '`foo`')
+        );
 
-//         // columns with AS associative array
-//         $select5 = new Select;
-//         $select5->from('foo')->columns(array('bar' => 'baz'));
-//         $sqlPrep5 = // same
-//         $sqlStr5 = 'SELECT `foo`.`baz` AS `bar` FROM `foo`';
-//         $internalTests5 = array(
-//             'processSelect' => array(array(array('`foo`.`baz`', '`bar`')), '`foo`')
-//         );
+        // columns with AS associative array
+        $select5 = new Select;
+        $select5->from('foo')->columns(array('bar' => 'baz'));
+        $sqlPrep5 = // same
+        $sqlStr5 = 'SELECT `baz` AS `bar` FROM `foo`';
+        $internalTests5 = array(
+            'processSelect' => array(array(array('`baz`', '`bar`')), '`foo`')
+        );
 
-//         // columns with AS associative array mixed
-//         $select6 = new Select;
-//         $select6->from('foo')->columns(array('bar' => 'baz', 'bam'));
-//         $sqlPrep6 = // same
-//         $sqlStr6 = 'SELECT `foo`.`baz` AS `bar`, `foo`.`bam` AS `bam` FROM `foo`';
-//         $internalTests6 = array(
-//             'processSelect' => array(array(array('`foo`.`baz`', '`bar`'), array('`foo`.`bam`', '`bam`') ), '`foo`')
-//         );
+        // columns with AS associative array mixed
+        $select6 = new Select;
+        $select6->from('foo')->columns(array('bar' => 'baz', 'bam'));
+        $sqlPrep6 = // same
+        $sqlStr6 = 'SELECT `baz` AS `bar`, `bam` FROM `foo`';
+        $internalTests6 = array(
+            'processSelect' => array(array(array('`baz`', '`bar`'), array('`bam`') ), '`foo`')
+        );
 
-//         // columns where value is Expression, with AS
-//         $select7 = new Select;
-//         $select7->from('foo')->columns(array('bar' => new Expression('COUNT(some_column)')));
-//         $sqlPrep7 = // same
-//         $sqlStr7 = 'SELECT COUNT(some_column) AS `bar` FROM `foo`';
-//         $internalTests7 = array(
-//             'processSelect' => array(array(array('COUNT(some_column)', '`bar`')), '`foo`')
-//         );
+        // columns where value is Expression, with AS
+        $select7 = new Select;
+        $select7->from('foo')->columns(array('bar' => new Expression('COUNT(some_column)')));
+        $sqlPrep7 = // same
+        $sqlStr7 = 'SELECT COUNT(some_column) AS `bar` FROM `foo`';
+        $internalTests7 = array(
+            'processSelect' => array(array(array('COUNT(some_column)', '`bar`')), '`foo`')
+        );
 
-//         // columns where value is Expression
-//         $select8 = new Select;
-//         $select8->from('foo')->columns(array(new Expression('COUNT(some_column) AS bar')));
-//         $sqlPrep8 = // same
-//         $sqlStr8 = 'SELECT COUNT(some_column) AS bar FROM `foo`';
-//         $internalTests8 = array(
-//             'processSelect' => array(array(array('COUNT(some_column) AS bar')), '`foo`')
-//         );
+        // columns where value is Expression
+        $select8 = new Select;
+        $select8->from('foo')->columns(array(new Expression('COUNT(some_column) AS bar')));
+        $sqlPrep8 = // same
+        $sqlStr8 = 'SELECT COUNT(some_column) AS bar FROM `foo`';
+        $internalTests8 = array(
+            'processSelect' => array(array(array('COUNT(some_column) AS bar')), '`foo`')
+        );
 
 //         // columns where value is Expression with parameters
 //         $select9 = new Select;
@@ -876,11 +877,11 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select1,  $sqlPrep1,  array(),    $sqlStr1,  $internalTests1),
             array($select2,  $sqlPrep2,  array(),    $sqlStr2,  $internalTests2),
             array($select3,  $sqlPrep3,  array(),    $sqlStr3,  $internalTests3),
-//             array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
-//             array($select5,  $sqlPrep5,  array(),    $sqlStr5,  $internalTests5),
-//             array($select6,  $sqlPrep6,  array(),    $sqlStr6,  $internalTests6),
-//             array($select7,  $sqlPrep7,  array(),    $sqlStr7,  $internalTests7),
-//             array($select8,  $sqlPrep8,  array(),    $sqlStr8,  $internalTests8),
+            array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
+            array($select5,  $sqlPrep5,  array(),    $sqlStr5,  $internalTests5),
+            array($select6,  $sqlPrep6,  array(),    $sqlStr6,  $internalTests6),
+            array($select7,  $sqlPrep7,  array(),    $sqlStr7,  $internalTests7),
+            array($select8,  $sqlPrep8,  array(),    $sqlStr8,  $internalTests8),
 //             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
 //             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
 //             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),

@@ -21,6 +21,7 @@ use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Expression;
 
 /**
  *
@@ -324,6 +325,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             }
 
             // process As portion
+            $columnAs = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false && !is_string($column)) {
@@ -346,10 +348,14 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
             } else {
 
-                if (strpos($table, ',') !== false) {
-                    $table = preg_split('#,\s+#', $table);
-                } else {
-                    $table = (array) $table;
+                if (is_string($table)) {
+                    if (strpos($table, ',') !== false) {
+                        $table = preg_split('#,\s+#', $table);
+                    } else {
+                        $table = (array) $table;
+                    }
+                } elseif (!is_array($table)) {
+                    $table = array($table);
                 }
 
                 array_walk($table, function(&$item, $key) use ($platform) {
