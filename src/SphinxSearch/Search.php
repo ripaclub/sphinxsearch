@@ -6,14 +6,13 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearch;
+
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
-
 
 class Search {
 
@@ -72,12 +71,21 @@ class Search {
     }
 
     /**
-     * @param string $index
-     * @return Select
+     * @param string|array $index
+     * @param Where|\Closure|string|array $where
+     * @return ResultSet
      */
-    public function getSelect($index = null)
+    public function search($index, $where = null)
     {
-        return $this->sql->select($index);
+        $select = $this->sql->select($index);
+
+        if ($where instanceof \Closure) {
+            $where($select);
+        } elseif ($where !== null) {
+            $select->where($where);
+        }
+
+        return $this->searchWith($select);
     }
 
     /**
