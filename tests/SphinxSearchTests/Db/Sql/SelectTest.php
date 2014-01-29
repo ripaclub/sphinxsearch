@@ -236,51 +236,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox Method option() returns same Select object (is chainable)
-     * @covers SphinxSearch\Db\Sql\Select::option
-     */
-    public function testOption()
-    {
-        $select = new Select;
-        $return = $select->option(array('opt_name' => 'opt_value'));
-        $this->assertSame($select, $return);
-
-        return $return;
-    }
-
-    /**
-     * @testdox Method getRawState() returns information populated via option()
-     * @covers SphinxSearch\Db\Sql\Select::getRawState
-     * @depends testOption
-     */
-    public function testGetRawOption(Select $select)
-    {
-        $this->assertEquals(
-            array('opt_name' => 'opt_value'),
-            $select->getRawState('option')
-        );
-
-        return $select;
-    }
-
-
-    /**
-     * @testdox Method option() with OPTIONS_MERGE flag
-     * @covers SphinxSearch\Db\Sql\Select::option
-     * @covers SphinxSearch\Db\Sql\Select::getRawState
-     * @depends testGetRawOption
-     */
-    public function testOptionMerge(Select $select)
-    {
-        $select->option(array('opt_name2' => 'opt_value2'), $select::OPTIONS_MERGE);
-        $this->assertEquals(
-            array('opt_name' => 'opt_value', 'opt_name2' => 'opt_value2'),
-            $select->getRawState('option')
-        );
-    }
-
-
-    /**
      * @testdox Method reset() resets internal stat of Select object, based on input
      * @covers SphinxSearch\Db\Sql\Select::reset
      */
@@ -396,15 +351,10 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     /**
      * @testdox unit test: Text process*() methods will return proper array when internally called, part of extension API
      * @dataProvider providerData
-     * @covers Zend\Db\Sql\Select::processSelect
-     * @covers Zend\Db\Sql\Select::processJoins
-     * @covers Zend\Db\Sql\Select::processWhere
-     * @covers Zend\Db\Sql\Select::processGroup
-     * @covers Zend\Db\Sql\Select::processHaving
-     * @covers Zend\Db\Sql\Select::processOrder
-     * @covers Zend\Db\Sql\Select::processLimit
-     * @covers Zend\Db\Sql\Select::processOffset
-     * @covers Zend\Db\Sql\Select::processCombine
+     * @covers SphinxSearch\Db\Sql\Select::processSelect
+     * @covers SphinxSearch\Db\Sql\Select::processWithinGroupOrder
+     * @covers SphinxSearch\Db\Sql\Select::processLimitOffset
+     * @covers SphinxSearch\Db\Sql\Select::processOption
      */
     public function testProcessMethods(Select $select, $unused, $unused2, $unused3, $internalTests)
     {
@@ -447,14 +397,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '`foo`')
         );
 
-//         // table with alias NOT SUPPORTED BY SPHINXQL
-//         $select2 = new Select;
-//         $select2->from(array('f' => 'foo'));
-//         $sqlPrep2 = // same
-//         $sqlStr2 = 'SELECT `f`.* FROM `foo` AS `f`';
-//         $internalTests2 = array(
-//             'processSelect' => array(array(array('`f`.*')), '`foo` AS `f`')
-//         );
+        // table list
+        $select2 = new Select;
+        $select2->from(array('foo', 'bar'));
+        $sqlPrep2 = // same
+        $sqlStr2 = 'SELECT * FROM `foo`, `bar`';
+        $internalTests2 = array(
+            'processSelect' => array(array(array('*')), '`foo`, `bar`')
+        );
 
 //         // table with alias with table as TableIdentifier NOT SUPPORTED BY SPHINXQL
 //         $select3 = new Select;
@@ -924,7 +874,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             //    $select    $sqlPrep    $params     $sqlStr    $internalTests    // use named param
             array($select0,  $sqlPrep0,  array(),    $sqlStr0,  $internalTests0),
             array($select1,  $sqlPrep1,  array(),    $sqlStr1,  $internalTests1),
-//             array($select2,  $sqlPrep2,  array(),    $sqlStr2,  $internalTests2),
+            array($select2,  $sqlPrep2,  array(),    $sqlStr2,  $internalTests2),
 //             array($select3,  $sqlPrep3,  array(),    $sqlStr3,  $internalTests3),
 //             array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
 //             array($select5,  $sqlPrep5,  array(),    $sqlStr5,  $internalTests5),
