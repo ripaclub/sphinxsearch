@@ -928,6 +928,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
         );
 
+        // option
+        $select49 = new Select;
+        $select49->from('foo')->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+        $sqlPrep49 = // same
+        $sqlStr49 = 'SELECT * FROM `foo` OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)';
+        $internalTests49 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processOption'  => array(array(array('`ranker`', '\'bm25\''), array('`max_matches`', 3000), array('`field_weights`', '(title=10, body=3)')))
+        );
+
 
         /**
          * $select = the select object

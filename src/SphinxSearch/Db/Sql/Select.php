@@ -448,7 +448,8 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                $optionSql .= $platform->quoteValue($optValue);
+                //SphnixQL syntax special case: interger option value must not quoted
+                $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
         }
