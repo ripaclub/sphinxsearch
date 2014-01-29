@@ -155,7 +155,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox Method getRawState() returns information populated via group()
+     * @testdox Method getRawState() returns information populated via withinGroupOrder()
      * @covers SphinxSearch\Db\Sql\Select::getRawState
      * @depends testWithinGroupOrder
      */
@@ -163,6 +163,26 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     {
         $this->assertEquals(
             array('col1', 'col2'),
+            $select->getRawState('withingrouporder')
+        );
+
+        return $select;
+    }
+
+    /**
+     * @testdox Method withinGroupOrder() with string parameter
+     * @covers SphinxSearch\Db\Sql\Select::withinGroupOrder
+     * @depends testGetRawStateViaWithinGroupOrder
+     */
+    public function testWithinGroupOrderParamAsString(Select $select)
+    {
+        $expression = new Expression('colE');
+        $select->withinGroupOrder('col3');
+        $select->withinGroupOrder('col4, col5');
+        $select->withinGroupOrder($expression);
+        $select->withinGroupOrder(array('alias' => 'col6'));
+        $this->assertEquals(
+            array('col1', 'col2', 'col3', 'col4', 'col5', $expression, 'alias' => 'col6'),
             $select->getRawState('withingrouporder')
         );
     }
