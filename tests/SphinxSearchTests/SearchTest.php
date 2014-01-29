@@ -11,7 +11,6 @@ namespace SphinxSearchTests;
 
 use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\ResultSet\ResultSet;
 class SearchTest extends \PHPUnit_Framework_TestCase
@@ -35,7 +34,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new SphinxQL()));
+        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
 
         $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('select'), array($this->mockAdapter, 'foo'));
