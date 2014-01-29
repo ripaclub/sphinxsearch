@@ -419,7 +419,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         if (!$this->option) {
             return null;
         }
-        // process table columns
+        // process options
         $options = array();
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
