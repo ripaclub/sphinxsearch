@@ -403,7 +403,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '`foo`')
         );
 
-//         // table with alias
+//         // table with alias NOT SUPPORTED BY SPHINXQL
 //         $select2 = new Select;
 //         $select2->from(array('f' => 'foo'));
 //         $sqlPrep2 = // same
@@ -412,7 +412,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             'processSelect' => array(array(array('`f`.*')), '`foo` AS `f`')
 //         );
 
-//         // table with alias with table as TableIdentifier
+//         // table with alias with table as TableIdentifier NOT SUPPORTED BY SPHINXQL
 //         $select3 = new Select;
 //         $select3->from(array('f' => new TableIdentifier('foo')));
 //         $sqlPrep3 = // same
