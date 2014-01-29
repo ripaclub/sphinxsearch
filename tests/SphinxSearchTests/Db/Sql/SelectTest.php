@@ -266,6 +266,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @testdox Method option() launch exception when value keys are not strings
+     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @depends testGetRawOption
+     */
+    public function testNotStringOptionValueKeys(Select $select)
+    {
+        $select->option(array(1 => 'opt_values4'));
+    }
+
+    /**
      * @testdox Method reset() resets internal stat of Select object, based on input
      * @covers SphinxSearch\Db\Sql\Select::reset
      */
