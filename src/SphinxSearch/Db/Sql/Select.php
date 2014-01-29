@@ -49,10 +49,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     const SQL_STAR = '*';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
-    const COMBINE = 'combine';
-    const COMBINE_UNION = 'union';
-    const COMBINE_EXCEPT = 'except';
-    const COMBINE_INTERSECT = 'intersect';
 
     const OPTIONS_MERGE = 'merge';
     const OPTIONS_SET = 'set';
@@ -95,8 +91,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 array(2 => '%1$s = %2$s', 'combinedby' => ', ')
             )
         ),
-        'statementEnd' => '%1$s',
-        self::COMBINE => '%1$s ( %2$s )',
+        'statementEnd' => '%1$s'
     );
 
     /**
