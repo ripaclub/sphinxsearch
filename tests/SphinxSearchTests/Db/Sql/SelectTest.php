@@ -415,7 +415,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '`foo`, `baz`')
         );
 
-//         // columns
+        // columns
         $select4 = new Select;
         $select4->from('foo')->columns(array('bar', 'baz'));
         $sqlPrep4 = // same
@@ -765,17 +765,17 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //         $internalTests36 = array();
 //         $useNamedParams36 = true;
 
-//         /**
-//          * @author robertbasic
-//          * @link https://github.com/zendframework/zf2/pull/2714
-//          */
-//         $select37 = new Select;
-//         $select37->from('foo')->columns(array('bar'), false);
-//         $sqlPrep37 = // same
-//         $sqlStr37 = 'SELECT `bar` AS `bar` FROM `foo`';
-//         $internalTests37 = array(
-//             'processSelect' => array(array(array('`bar`', '`bar`')), '`foo`')
-//         );
+        /**
+         * @author robertbasic
+         * @link https://github.com/zendframework/zf2/pull/2714
+         */
+        $select37 = new Select;
+        $select37->from('foo')->columns(array('bar'), false);
+        $sqlPrep37 = // same
+        $sqlStr37 = 'SELECT `bar` FROM `foo`';
+        $internalTests37 = array(
+            'processSelect' => array(array(array('`bar`')), '`foo`')
+        );
 
 //         // @link https://github.com/zendframework/zf2/issues/3294
 //         // Test TableIdentifier In Joins
@@ -852,17 +852,61 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             'processCombine' => array('UNION ALL', 'SELECT `bar`.* FROM `bar` WHERE c = d')
 //         );
 
-//         // limit with offset
-//         $select45 = new Select;
-//         $select45->from('foo')->limit(`5`)->offset(`10`);
-//         $sqlPrep45 = 'SELECT `foo`.* FROM `foo` LIMIT ? OFFSET ?';
-//         $sqlStr45 = 'SELECT `foo`.* FROM `foo` LIMIT \'5\' OFFSET \'10\'';
-//         $params45 = array('limit' => 5, 'offset' => 10);
-//         $internalTests45 = array(
-//             'processSelect' => array(array(array('`foo`.*')), '`foo`'),
-//             'processLimit'  => array('?'),
-//             'processOffset' => array('?')
-//         );
+        // limit with offset
+        $select45 = new Select;
+        $select45->from('foo')->limit("5")->offset("10");
+        $sqlPrep45 = 'SELECT * FROM `foo` LIMIT ?,?';
+        $sqlStr45 = 'SELECT * FROM `foo` LIMIT 10,5';
+        $params45 = array('limit' => 5, 'offset' => 10);
+        $internalTests45 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processLimitOffset'  => array('?', '?')
+        );
+
+
+
+
+        // within group order
+        $select46 = new Select;
+        $select46->from('foo')->group('c0')->withinGroupOrder('c1');
+        $sqlPrep46 = //
+        $sqlStr46 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC';
+        $internalTests46 = array(
+            'processSelect'             => array(array(array('*')), '`foo`'),
+            'processGroup'              => array(array('`c0`')),
+            'processWithinGroupOrder'   => array(array(array('`c1`', Select::ORDER_ASCENDING)))
+        );
+
+        $select47 = new Select;
+        $select47->from('foo')->group('c0')->withinGroupOrder(array('c1', 'c2'));
+        $sqlPrep47 = // same
+        $sqlStr47 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` ASC';
+        $internalTests47 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
+
+        $select48 = new Select;
+        $select48->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
+        $sqlPrep48 = // same
+        $sqlStr48 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` DESC, `c2` ASC';
+        $internalTests48 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
+        );
+
+        $select49 = new Select;
+        $select49->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc'); // notice partially lower case ASC
+        $sqlPrep49 = // same
+        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC';
+        $internalTests49 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processGroup'  => array(array('`c0`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING)))
+        );
+
 
         /**
          * $select = the select object
@@ -911,7 +955,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select34, $sqlPrep34, array(),    $sqlStr34, $internalTests34),
 //             array($select35, $sqlPrep35, array(),    $sqlStr35, $internalTests35),
 //             array($select36, $sqlPrep36, array(),    $sqlStr36, $internalTests36,  $useNamedParams36),
-//             array($select37, $sqlPrep37, array(),    $sqlStr37, $internalTests37),
+            array($select37, $sqlPrep37, array(),    $sqlStr37, $internalTests37),
 //             array($select38, $sqlPrep38, array(),    $sqlStr38, $internalTests38),
 //             array($select39, $sqlPrep39, array(),    $sqlStr39, $internalTests39),
 //             array($select40, $sqlPrep40, array(),    $sqlStr40, $internalTests40),
@@ -919,7 +963,11 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             array($select42, $sqlPrep42, array(),    $sqlStr42, $internalTests42),
 //             array($select43, $sqlPrep43, array(),    $sqlStr43, $internalTests43),
 //             array($select44, $sqlPrep44, array(),    $sqlStr44, $internalTests44),
-//             array($select45, $sqlPrep45, $params45,  $sqlStr45, $internalTests45),
+            array($select45, $sqlPrep45, $params45,  $sqlStr45, $internalTests45),
+            array($select46, $sqlPrep46, array(),    $sqlStr46, $internalTests46),
+            array($select47, $sqlPrep47, array(),    $sqlStr47, $internalTests47),
+            array($select48, $sqlPrep48, array(),    $sqlStr48, $internalTests48),
+            array($select49, $sqlPrep49, array(),    $sqlStr49, $internalTests49),
         );
     }
 
