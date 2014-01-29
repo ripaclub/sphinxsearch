@@ -416,13 +416,13 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         );
 
 //         // columns
-//         $select4 = new Select;
-//         $select4->from('foo')->columns(array('bar', 'baz'));
-//         $sqlPrep4 = // same
-//         $sqlStr4 = 'SELECT `foo`.`bar` AS `bar`, `foo`.`baz` AS `baz` FROM `foo`';
-//         $internalTests4 = array(
-//             'processSelect' => array(array(array('`foo`.`bar`', '`bar`'), array('`foo`.`baz`', '`baz`')), '`foo`')
-//         );
+        $select4 = new Select;
+        $select4->from('foo')->columns(array('bar', 'baz'));
+        $sqlPrep4 = // same
+        $sqlStr4 = 'SELECT `bar`, `baz` FROM `foo`';
+        $internalTests4 = array(
+            'processSelect' => array(array(array('`bar`'), array('`baz`')), '`foo`')
+        );
 
 //         // columns with AS associative array
 //         $select5 = new Select;
@@ -876,7 +876,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select1,  $sqlPrep1,  array(),    $sqlStr1,  $internalTests1),
             array($select2,  $sqlPrep2,  array(),    $sqlStr2,  $internalTests2),
             array($select3,  $sqlPrep3,  array(),    $sqlStr3,  $internalTests3),
-//             array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
+            array($select4,  $sqlPrep4,  array(),    $sqlStr4,  $internalTests4),
 //             array($select5,  $sqlPrep5,  array(),    $sqlStr5,  $internalTests5),
 //             array($select6,  $sqlPrep6,  array(),    $sqlStr6,  $internalTests6),
 //             array($select7,  $sqlPrep7,  array(),    $sqlStr7,  $internalTests7),

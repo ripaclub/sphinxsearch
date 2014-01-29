@@ -324,6 +324,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             }
 
             // process As portion
+            $columnAs = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false && !is_string($column)) {
