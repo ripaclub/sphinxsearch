@@ -343,34 +343,29 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
         if ($this->table) {
 
-            $table = $this->table;
+            $tableList = $this->table;
 
-            // create quoted table name to use in FROM clause
-            if ($table instanceof TableIdentifier) {
-                list($table, $schema) = $table->getTableAndSchema();
+            if (is_string($tableList) && strpos($tableList, ',') !== false) {
+                $tableList = preg_split('#,\s+#', $tableList);
+            } elseif (!is_array($tableList)) {
+                $tableList = array($tableList);
             }
 
-            if ($table instanceof Select) {
-                $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
-            } else {
+            foreach ($tableList as &$table) {
 
-                if (is_string($table)) {
-                    if (strpos($table, ',') !== false) {
-                        $table = preg_split('#,\s+#', $table);
-                    } else {
-                        $table = (array) $table;
+                // create quoted table name to use in FROM clause
+                if ($table instanceof Select) {
+                    $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
+                } else {
+                    if ($table instanceof TableIdentifier) {
+                        list($table, $schema) = $table->getTableAndSchema();
                     }
-                } elseif (!is_array($table)) {
-                    $table = array($table);
+                    $table = $platform->quoteIdentifier($table);
                 }
-
-                array_walk($table, function(&$item, $key) use ($platform) {
-                    $item = $platform->quoteIdentifier($item);
-                });
-                $table = implode(', ', $table);
             }
 
-            return array($columns, $table);
+            $tableList = implode(', ', $tableList);
+            return array($columns, $tableList);
         }
 
         return array($columns);
