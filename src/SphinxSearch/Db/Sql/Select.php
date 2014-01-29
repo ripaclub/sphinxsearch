@@ -229,36 +229,23 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $this->table = null;
                 break;
-            case self::COLUMNS:
-                $this->columns = array();
-                break;
-            case self::WHERE:
-                $this->where = new Where;
-                break;
-            case self::GROUP:
-                $this->group = null;
-                break;
+
             case self::WITHINGROUPORDER:
                 $this->withinGroupOrder = array();
-            case self::HAVING:
-                $this->having = new Having;
                 break;
-            case self::LIMIT:
-                $this->limit = null;
-                break;
+
             case self::OPTION:
                 $this->option = array();
                 break;
-            case self::OFFSET:
-                $this->offset = null;
-                break;
+
             case self::ORDER:
-                $this->order = null;
+                $this->order = array();
                 break;
-            case self::COMBINE:
-                $this->combine = array();
-                break;
+
+            default:
+                parent::reset($part);
         }
+
         return $this;
     }
 
@@ -275,7 +262,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             self::LIMIT      => $this->limit,
             self::OPTION     => $this->option,
             self::OFFSET     => $this->offset,
-            self::COMBINE    => $this->combine
         );
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
