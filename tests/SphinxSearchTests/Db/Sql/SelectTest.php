@@ -9,9 +9,8 @@
 namespace SphinxSearchTests\Db\Sql;
 
 use SphinxSearch\Db\Sql\Select;
+use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Adapter\Platform\Sql92;
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 
@@ -323,7 +322,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnCallback(
             function ($name) use ($useNamedParameters) { return (($useNamedParameters) ? ':' . $name : '?'); }
         ));
-        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new SphinxQL()));
+        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
         $parameterContainer = new ParameterContainer();
 
@@ -346,7 +345,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
      */
     public function testGetSqlString(Select $select, $unused, $unused2, $expectedSqlString)
     {
-        $this->assertEquals($expectedSqlString, $select->getSqlString(new SphinxQL()));
+        $this->assertEquals($expectedSqlString, $select->getSqlString(new TrustedSphinxQL()));
     }
 
     /**
@@ -372,7 +371,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         foreach ($internalTests as $method => $expected) {
             $mr = $sr->getMethod($method);
             $mr->setAccessible(true);
-            $return = $mr->invokeArgs($select, array(new SphinxQL(), $mockDriver, $parameterContainer));
+            $return = $mr->invokeArgs($select, array(new TrustedSphinxQL(), $mockDriver, $parameterContainer));
             $this->assertEquals($expected, $return);
         }
     }
