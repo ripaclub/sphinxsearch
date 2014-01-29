@@ -1013,7 +1013,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @testdox Tables have to be strings, array, TableIdentifier objects or a Select objects
+     * @testdox Tables have to be strings, array, TableIdentifier objects or Select objects
      */
     public function testTableType()
     {
