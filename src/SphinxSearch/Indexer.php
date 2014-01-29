@@ -6,8 +6,8 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearch;
+
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Sql;
@@ -32,7 +32,6 @@ class Indexer {
     public function __construct(ZendDBAdapter $adapter, Sql $sql = null)
     {
         $this->adapter = $adapter;
-
         $this->sql     = $sql ? $sql : new Sql($adapter);
     }
 
