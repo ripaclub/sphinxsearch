@@ -86,4 +86,22 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zend\Db\Adapter\Adapter', $actual);
     }
 
+    /**
+     * @return array
+     */
+    public function providerEmptyConfig()
+    {
+        return array();
+    }
+
+    /**
+     * @param string $service
+     * @dataProvider providerEmptyConfig
+     */
+    public function testEmptyConfig($service)
+    {
+        $actual = $this->serviceManager->get($service);
+        $this->assertFalse($actual);
+    }
+
 }
