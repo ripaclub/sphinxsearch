@@ -5,10 +5,8 @@ php:
   - 5.4
   - 5.5
 
-before_install:
- - composer install --dev
-
 before_script:
+ - composer install --dev
  - cd tests
 
 script:
