@@ -133,5 +133,25 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->search->search('foo', 'foo');
     }
 
+    /**
+     * @covers SphinxSearch\Search::search
+     * @covers SphinxSearch\Search::searchWith
+     */
+    public function testSearchWithWhereClosure()
+    {
+        $mockSelect = $this->mockSql->select();
+
+        $mockSelect->expects($this->any())
+                    ->method('getRawState')
+                    ->will($this->returnValue(array(
+                        'table' => 'foo',
+                    ))
+        );
+
+        $this->search->search('foo', function($select) use ($mockSelect) {
+            self::assertSame($mockSelect, $select);
+        });
+    }
+
 
 }
