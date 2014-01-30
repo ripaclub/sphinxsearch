@@ -59,7 +59,7 @@ class Indexer
      */
     public function beginTransaction()
     {
-        $this->adapter->driver->getConnection()->beginTransaction();
+        $this->getAdapter()->getDriver()->getConnection()->beginTransaction();
 
         return $this;
     }
@@ -69,7 +69,7 @@ class Indexer
      */
     public function commit()
     {
-        $this->adapter->driver->getConnection()->commit();
+        $this->getAdapter()->getDriver()->getConnection()->commit();
 
         return $this;
     }
@@ -79,7 +79,7 @@ class Indexer
      */
     public function rollback()
     {
-        $this->adapter->driver->getConnection()->rollback();
+        $this->getAdapter()->getDriver()->getConnection()->rollback();
 
         return $this;
     }
