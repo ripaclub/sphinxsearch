@@ -10,7 +10,8 @@ namespace SphinxSearch\Db\Sql;
 
 use Zend\Db\Sql\Insert;
 
-class Replace extends Insert {
+class Replace extends Insert
+{
 
     /**
      * @var array Specification array

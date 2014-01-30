@@ -15,7 +15,8 @@ use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 
-class Search {
+class Search
+{
 
     /**
      * @var ZendDBAdapter

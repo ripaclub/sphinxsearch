@@ -13,8 +13,10 @@ use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Update;
 use Zend\Db\Sql\Delete;
+use Zend\Db\Sql\Where;
 
-class Indexer {
+class Indexer
+{
 
     /**
      * @var ZendDBAdapter
@@ -78,7 +80,7 @@ class Indexer {
     public function rollback()
     {
         $this->adapter->driver->getConnection()->rollback();
-        
+
         return $this;
     }
 
