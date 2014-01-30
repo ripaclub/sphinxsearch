@@ -124,6 +124,9 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
      */
     public function testPrepareStatement()
     {
+
+        //with option
+
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
@@ -133,27 +136,13 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y'));
-        $this->update->table('foo')
-            ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
-            ->where('x = y');
-        $this->update->prepareStatement($mockAdapter, $mockStatement);
-        //
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
-        $pContainer = new ParameterContainer(array());
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
-        $mockStatement->expects($this->at(1))
-            ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = `bm25`'));
+            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\''));
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
             ->where('x = y')
             ->option(array('ranker' => 'bm25'));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
+
         // with TableIdentifier
         $this->update = new Update;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
@@ -165,10 +154,11 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y'));
+            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\''));
         $this->update->table(new TableIdentifier('foo'))
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
-            ->where('x = y');
+            ->where('x = y')
+            ->option(array('ranker' => 'bm25'));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
     }
 
@@ -177,14 +167,6 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
      */
     public function testGetSqlString()
     {
-        $this->update->table('foo')
-            ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
-            ->where('x = y');
-        $this->assertEquals(
-            'UPDATE `foo` SET `bar` = \'baz\', `boo` = NOW(), `bam` = NULL WHERE x = y',
-            $this->update->getSqlString(new TrustedSphinxQL())
-        );
-        //
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
             ->where('x = y')
@@ -208,4 +190,3 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
     }
 
 }
- 
