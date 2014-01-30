@@ -85,11 +85,14 @@ class Indexer {
         return $result->getAffectedRows();
     }
 
-    public function update($index, $set, $where = null)
+    public function update($index, array $values, $where = null)
     {
         $update = $this->sql->update($index);
-        $update->set($set);
-        if ($where !== null) {
+        $update->set($values);
+
+        if ($where instanceof \Closure) {
+            $where($update);
+        } elseif ($where !== null) {
             $update->where($where);
         }
 

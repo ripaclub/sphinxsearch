@@ -102,7 +102,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     /**
      * @var array
      */
-    protected $option = null;
+    protected $option = array();
 
 
     /**
@@ -416,7 +416,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
     protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
-        if (!$this->option) {
+        if (empty($this->option)) {
             return null;
         }
         // process options
