@@ -9,6 +9,9 @@
 namespace SphinxSearchTests\Db\Sql;
 
 use SphinxSearch\Db\Sql\Update;
+use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Sql\Predicate\Expression;
+use Zend\Db\Sql\TableIdentifier;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase {
 
@@ -115,6 +118,43 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $update->option(array(1 => 'opt_values4'));
     }
 
+    /**
+     * @covers SphinxSearch\Db\Sql\Update::prepareStatement
+     */
+    public function testPrepareStatement()
+    {
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver));
+        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $pContainer = new ParameterContainer(array());
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
+        $mockStatement->expects($this->at(1))
+            ->method('setSql')
+            ->with($this->equalTo('UPDATE "foo" SET "bar" = ?, "boo" = NOW() WHERE x = y'));
+        $this->update->table('foo')
+            ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
+            ->where('x = y');
+        $this->update->prepareStatement($mockAdapter, $mockStatement);
+
+        // with TableIdentifier
+        $this->update = new Update;
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver));
+        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $pContainer = new ParameterContainer(array());
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
+        $mockStatement->expects($this->at(1))
+            ->method('setSql')
+            ->with($this->equalTo('UPDATE "foo" SET "bar" = ?, "boo" = NOW() WHERE x = y'));
+        $this->update->table(new TableIdentifier('foo'))
+            ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
+            ->where('x = y');
+        $this->update->prepareStatement($mockAdapter, $mockStatement);
+    }
 
 }
  
