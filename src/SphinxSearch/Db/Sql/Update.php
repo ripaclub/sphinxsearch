@@ -56,6 +56,35 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     protected $option = array();
 
 
+    /**
+     * Set key/value pairs to option
+     *
+     * @param  array $values Associative array of key values
+     * @param  string $flag One of the OPTIONS_* constants
+     * @throws Exception\InvalidArgumentException
+     * @return Select
+     */
+    public function option(array $values, $flag = self::OPTIONS_MERGE)
+    {
+        if ($values == null) {
+            throw new Exception\InvalidArgumentException('option() expects an array of values');
+        }
+
+        if ($flag == self::OPTIONS_SET) {
+            $this->option = array();
+        }
+
+        foreach ($values as $k => $v) {
+            if (!is_string($k)) {
+                throw new Exception\InvalidArgumentException('option() expects a string for the value key');
+            }
+            $this->option[$k] = $v;
+        }
+
+        return $this;
+    }
+
+
     public function getRawState($key = null)
     {
         $rawState = array(
