@@ -17,6 +17,9 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
     protected $mockAdapter = null;
 
+    /**
+     * @var Sql
+     */
     protected $mockSql = null;
 
     /**
@@ -102,7 +105,6 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         ->method('prepareStatement')
         ->with($this->mockAdapter);
 
-
         $mockInsert->expects($this->once())
         ->method('values')
         ->with($this->equalTo(array('foo' => 'bar')));
@@ -110,14 +112,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'));
         $this->assertEquals(5, $affectedRows);
 
-        // Testing Replace mode
-
+        // Testing replace mode
         $mockReplace = $this->mockSql->replace('foo');
 
         $mockReplace->expects($this->once())
         ->method('prepareStatement')
         ->with($this->mockAdapter);
-
 
         $mockReplace->expects($this->once())
         ->method('values')
