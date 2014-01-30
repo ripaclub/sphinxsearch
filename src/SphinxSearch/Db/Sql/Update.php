@@ -121,7 +121,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         // Create quoted table name to use in update processing
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema(); // FIXME: schema not supported by SphinxQL
+            list($table, $schema) = $table->getTableAndSchema(); // NOTE: schema not supported by SphinxQL
         }
 
         $table = $platform->quoteIdentifier($table);
