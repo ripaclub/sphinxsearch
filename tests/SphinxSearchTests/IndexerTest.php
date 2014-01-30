@@ -19,11 +19,13 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
     protected $mockSql = null;
 
+    /**
+     * @var Indexer
+     */
     protected $indexer = null;
 
     public function setUp()
     {
-
         // mock the adapter, driver, and parts
         $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
         $mockResult->expects($this->any())->method('getAffectedRows')->will($this->returnValue(5));
@@ -41,14 +43,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         // setup mock adapter
         $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
-
         $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('select', 'insert', 'replace', 'update', 'delete'), array($this->mockAdapter, 'foo'));
         $this->mockSql->expects($this->any())->method('select')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))));
         $this->mockSql->expects($this->any())->method('insert')->will($this->returnValue($this->getMock('Zend\Db\Sql\Insert', array('prepareStatement', 'values'), array('foo'))));
         $this->mockSql->expects($this->any())->method('replace')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values'), array('foo'))));
         $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'), array('foo'))));
         $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'), array('foo'))));
-
 
         // setup the indexer object
         $this->indexer = new Indexer($this->mockAdapter, $this->mockSql);
