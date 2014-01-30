@@ -17,6 +17,9 @@ use Zend\Db\Sql\Update as ZendUpdate;
 use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\Where;
+use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Predicate;
+use Zend\Db\Adapter\Driver\DriverInterface;
 
 /**
  * @property Where $where
@@ -97,7 +100,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         if (is_array($set)) {
             $setSql = array();
             foreach ($set as $column => $value) {
-                if ($value instanceof Expression) {
+                if ($value instanceof Predicate\Expression) {
                     $exprData = $this->processExpression($value, $platform, $driver);
                     $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $exprData->getSql();
                     $parameterContainer->merge($exprData->getParameterContainer());
@@ -150,7 +153,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         if (is_array($set)) {
             $setSql = array();
             foreach ($set as $column => $value) {
-                if ($value instanceof Expression) {
+                if ($value instanceof Predicate\Expression) {
                     $exprData = $this->processExpression($value, $adapterPlatform);
                     $setSql[] = $adapterPlatform->quoteIdentifier($column) . ' = ' . $exprData->getSql();
                 } elseif ($value === null) {
@@ -186,7 +189,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $options = array();
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
-            if ($optValue instanceof Expression) {
+            if ($optValue instanceof Predicate\Expression) {
                 $optionParts = $this->processExpression($optValue, $platform, $driver, $this->processInfo['paramPrefix'] . 'option');
                 if ($parameterContainer) {
                     $parameterContainer->merge($optionParts->getParameterContainer());

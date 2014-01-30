@@ -8,7 +8,47 @@
  */
 namespace SphinxSearchTests\Db\Sql;
 
+use SphinxSearch\Db\Sql\Update;
+
 class UpdateTest extends \PHPUnit_Framework_TestCase {
+
+    /**
+     * @var Update
+     */
+    protected $update;
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->update = new Update;
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     */
+    protected function tearDown()
+    {
+    }
+
+    /**
+     * @covers SphinxSearch\Db\Sql\Update::getRawState
+     */
+    public function testGetRawState()
+    {
+        $this->update->table('foo')
+            ->set(array('bar' => 'baz'))
+            ->where('x = y');
+
+        $this->assertEquals('foo', $this->update->getRawState('table'));
+        $this->assertEquals(true, $this->update->getRawState('emptyWhereProtection'));
+        $this->assertEquals(array('bar' => 'baz'), $this->update->getRawState('set'));
+        // $this->assertEquals(, $this->update->getRawState('option')); // FIXME: option
+        $this->assertInstanceOf('Zend\Db\Sql\Where', $this->update->getRawState('where'));
+    }
 
 }
  
