@@ -7,7 +7,7 @@ return array(
         'factories' => array(
             'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
         ),
-        'alias' => array(
+        'aliases' => array(
             'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
         ),
     ),
