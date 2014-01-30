@@ -125,7 +125,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
      */
     public function testPrepareStatement()
     {
-        //with empty option
+        // With empty option
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
@@ -141,7 +141,10 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         ->where('x = y');
         $this->update->prepareStatement($mockAdapter, $mockStatement);
 
-        //with option
+        // TODO: Without parameter container
+
+
+        // With option
         $this->update = new Update;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
@@ -159,7 +162,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
             ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
 
-        // with TableIdentifier
+        // With TableIdentifier
         $this->update = new Update;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
@@ -184,7 +187,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
      */
     public function testGetSqlString()
     {
-        //with empty option
+        // With empty option
         $this->update->table('foo')
         ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
         ->where('x = y');
@@ -193,7 +196,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
             $this->update->getSqlString(new TrustedSphinxQL())
         );
 
-        //with option
+        // With option
         $this->update = new Update;
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
@@ -204,8 +207,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
             $this->update->getSqlString(new TrustedSphinxQL())
         );
 
-
-        // with TableIdentifier
+        // With TableIdentifier
         $this->update = new Update;
         $this->update->table(new TableIdentifier('foo'))
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
