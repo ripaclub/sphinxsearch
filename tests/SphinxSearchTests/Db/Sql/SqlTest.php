@@ -8,8 +8,6 @@
  */
 namespace SphinxSearchTests\Db\Sql;
 
-
-
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
 
