@@ -339,7 +339,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                     $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
                 } else {
                     if ($table instanceof TableIdentifier) {
-                        list($table, $schema) = $table->getTableAndSchema();
+                        list($table, $schema) = $table->getTableAndSchema(); // NOTE: schema not supported by SphinxQL
                     }
                     $table = $platform->quoteIdentifier($table);
                 }

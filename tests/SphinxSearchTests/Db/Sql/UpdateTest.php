@@ -41,7 +41,8 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
     {
         $this->update->table('foo')
             ->set(array('bar' => 'baz'))
-            ->where('x = y');
+            ->where('x = y')
+            ->option();
 
         $this->assertEquals('foo', $this->update->getRawState('table'));
         $this->assertEquals(true, $this->update->getRawState('emptyWhereProtection'));

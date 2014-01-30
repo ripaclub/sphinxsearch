@@ -65,6 +65,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             'where' => $this->where,
             'option' => $this->option,
         );
+
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
@@ -89,9 +90,9 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $table = $this->table;
         $schema = null;
 
-        // create quoted table name to use in update processing
+        // Create quoted table name to use in update processing
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema();
+            list($table, $schema) = $table->getTableAndSchema(); // FIXME: schema not supported by SphinxQL
         }
 
         $table = $platform->quoteIdentifier($table);
@@ -114,15 +115,15 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
 
-        // process where
+        // Process where
         if ($this->where->count() > 0) {
             $whereParts = $this->processExpression($this->where, $platform, $driver, 'where');
             $parameterContainer->merge($whereParts->getParameterContainer());
             $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
         }
 
-        // process option
-        $optionParts = $this->processOption($platform, $driver, $parameterContainer, $sqls);
+        // Process option
+        $optionParts = $this->processOption($platform, $driver, $parameterContainer);
         if (is_array($optionParts)) {
             $sql .= ' ' . $this->createSqlFromSpecificationAndParameters($this->specifications[self::SPECIFICATION_OPTION], $optionParts);
         }
@@ -138,11 +139,11 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
      */
     public function getSqlString(PlatformInterface $adapterPlatform = null)
     {
-        $adapterPlatform = ($adapterPlatform) ?: new Sql92;
+        $adapterPlatform = ($adapterPlatform) ? : new Sql92;
         $table = $this->table;
         $schema = null;
 
-        // create quoted table name to use in update processing
+        // Create quoted table name to use in update processing
         if ($table instanceof TableIdentifier) {
             list($table, $schema) = $table->getTableAndSchema();
         }
@@ -173,7 +174,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $optionParts = $this->processOption($adapterPlatform, null, null);
         if (is_array($optionParts)) {
-            $sqls[$name] = $this->createSqlFromSpecificationAndParameters($this->specifications[self::SPECIFICATION_OPTION], $optionParts);
+            $sql .= ' ' . $this->createSqlFromSpecificationAndParameters($this->specifications[self::SPECIFICATION_OPTION], $optionParts);
         }
 
         return $sql;
@@ -196,7 +197,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                //SphnixQL syntax special case: interger option value must not quoted
+                // SphinxQL syntax special case: interger option value must not quoted
                 $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
