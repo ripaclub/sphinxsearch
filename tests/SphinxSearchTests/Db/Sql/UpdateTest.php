@@ -141,16 +141,16 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         ->where('x = y');
         $this->update->prepareStatement($mockAdapter, $mockStatement);
 
-        // TODO: Without parameter container
+        // Without parameter container
         $this->update = new Update;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
         $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
         $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
-        //$pContainer = array();
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue(new ParameterContainer()));
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue(null));
+        $mockStatement->expects($this->at(1))->method('setParameterContainer')->with($this->isInstanceOf('Zend\Db\Adapter\ParameterContainer'));
+        $mockStatement->expects($this->at(2))
             ->method('setSql')
             ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)'));
         $this->update->table('foo')
