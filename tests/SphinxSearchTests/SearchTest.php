@@ -154,7 +154,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->search->search('foo', function($select) use ($mockSelect) {
-            self::assertSame($mockSelect, $select);
+            SearchTest::assertSame($mockSelect, $select);
         });
     }
 
