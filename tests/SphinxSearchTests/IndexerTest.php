@@ -43,12 +43,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         // setup mock adapter
         $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
-        $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('select', 'insert', 'replace', 'update', 'delete'), array($this->mockAdapter, 'foo'));
-        $this->mockSql->expects($this->any())->method('select')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))));
-        $this->mockSql->expects($this->any())->method('insert')->will($this->returnValue($this->getMock('Zend\Db\Sql\Insert', array('prepareStatement', 'values'), array('foo'))));
-        $this->mockSql->expects($this->any())->method('replace')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values'), array('foo'))));
-        $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'), array('foo'))));
-        $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'), array('foo'))));
+        $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('insert', 'replace', 'update', 'delete'), array($this->mockAdapter));
+
+        $this->mockSql->expects($this->any())->method('insert')->will($this->returnValue($this->getMock('Zend\Db\Sql\Insert', array('prepareStatement', 'values'))))->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('replace')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values'))))->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'))))->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'))))->with($this->equalTo('foo'));
 
         // setup the indexer object
         $this->indexer = new Indexer($this->mockAdapter, $this->mockSql);
@@ -96,7 +96,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInsert()
     {
-        $mockInsert = $this->mockSql->insert();
+        $mockInsert = $this->mockSql->insert('foo');
 
         $mockInsert->expects($this->once())
         ->method('prepareStatement')
@@ -112,7 +112,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
         //Testing Replace mode
 
-        $mockReplace = $this->mockSql->replace();
+        $mockReplace = $this->mockSql->replace('foo');
 
         $mockReplace->expects($this->once())
         ->method('prepareStatement')
@@ -124,6 +124,42 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         ->with($this->equalTo(array('foo' => 'bar')));
 
         $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'), true);
+        $this->assertEquals(5, $affectedRows);
+    }
+
+    /**
+     * @covers SphinxSearch\Indexer::update
+     * @covers SphinxSearch\Indexer::updateWith
+     */
+    public function testUpdate()
+    {
+        $mockUpdate = $this->mockSql->update('foo');
+
+        $mockUpdate->expects($this->once())
+        ->method('where')
+        ->with($this->equalTo('id = 2'));
+
+        $affectedRows = $this->indexer->update('foo', array('foo' => 'bar'), 'id = 2');
+        $this->assertEquals(5, $affectedRows);
+
+        // with closure
+        $mockUpdate = $this->mockSql->update('foo');
+        $this->indexer->update('foo', array('foo' => 'bar'), function($update) use ($mockUpdate) {
+            self::assertSame($mockUpdate, $update);
+        });
+        $this->assertEquals(5, $affectedRows);
+
+    }
+
+    /**
+     * @covers SphinxSearch\Indexer::update
+     * @covers SphinxSearch\Indexer::updateWith
+     */
+    public function testUpdateWithNoCriteria()
+    {
+        $mockUpdate = $this->mockSql->update('foo');
+
+        $affectedRows = $this->indexer->update('foo', array('foo' => 'bar'));
         $this->assertEquals(5, $affectedRows);
     }
 
