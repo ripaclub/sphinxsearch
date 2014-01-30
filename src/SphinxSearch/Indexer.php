@@ -68,7 +68,7 @@ class Indexer {
     public function rollback()
     {
         $this->adapter->driver->getConnection()->rollback();
-        
+
         return $this;
     }
 
