@@ -37,7 +37,9 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
 
         $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
-        $mockConnection->expects($this->any())->method('getLastGeneratedValue')->will($this->returnValue(10));
+        $mockConnection->expects($this->any())->method('beginTransaction');
+        $mockConnection->expects($this->any())->method('commit');
+        $mockConnection->expects($this->any())->method('rollback');
 
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
@@ -91,6 +93,36 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
     public function testGetSql()
     {
         $this->assertInstanceOf('Zend\Db\Sql\Sql', $this->indexer->getSql());
+    }
+
+    /**
+     * @covers SphinxSearch\Indexer::beginTransaction
+     */
+    public function testBeginTransaction()
+    {
+        $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('beginTransaction');
+        $indexer = $this->indexer->beginTransaction();
+        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
+    }
+
+    /**
+     * @covers SphinxSearch\Indexer::commit
+     */
+    public function testCommit()
+    {
+        $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('commit');
+        $indexer = $this->indexer->commit();
+        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
+    }
+
+    /**
+     * @covers SphinxSearch\Indexer::rollback
+     */
+    public function testRollback()
+    {
+        $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('rollback');
+        $indexer = $this->indexer->rollback();
+        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
     }
 
     /**
