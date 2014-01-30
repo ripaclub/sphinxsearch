@@ -13,6 +13,7 @@ use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Select;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Where;
 
 class Search {
 
