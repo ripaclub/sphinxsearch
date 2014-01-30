@@ -14,6 +14,7 @@ use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Update;
 use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Where;
+use Zend\Db\Sql\TableIdentifier;
 
 class Indexer
 {

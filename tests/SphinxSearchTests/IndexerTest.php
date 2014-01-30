@@ -110,7 +110,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'));
         $this->assertEquals(5, $affectedRows);
 
-        //Testing Replace mode
+        // Testing Replace mode
 
         $mockReplace = $this->mockSql->replace('foo');
 
