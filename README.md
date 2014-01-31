@@ -1,6 +1,6 @@
-# ZF2 Sphinx Search
+# Sphinx Search
 
-A Zend Framework 2 module that encapsulates Sphinx Search functionalities.
+Sphinx Search library provides SphinxQL indexing and searching features.
 
 
 ## Testing

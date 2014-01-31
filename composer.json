@@ -1,6 +1,6 @@
 {
     "name": "ripaclub/sphinxsearch",
-    "description": "A Zend Framework 2 module that encapsulates Sphinx Search functionalities.",
+    "description": "Sphinx Search library provides SphinxQL indexing and searching features",
     "license": "BSD-2-Clause",
     "minimum-stability": "dev",
     "require": {
@@ -25,18 +25,20 @@
     ],
     "autoload": {
         "psr-0": {
-            "SphinxSearch": "src/",
+            "SphinxSearch": "library/",
             "SphinxSearchTests": "tests/"
         },
         "classmap": [
-            "./Module.php"
+            "./"
         ]
     },
     "keywords": [
-        "zf2",
         "sphinx",
         "sphinxql",
         "sphinx search",
-        "search engine"
+        "sphinx indexer",
+        "search engine",
+        "query builder",
+        "zf2"
     ]
 }
