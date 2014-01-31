@@ -177,7 +177,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         // Where with closure
         $mockUpdate = $this->mockSql->update('foo');
         $this->indexer->update('foo', array('foo' => 'bar'), function($update) use ($mockUpdate) {
-            self::assertSame($mockUpdate, $update);
+            IndexerTest::assertSame($mockUpdate, $update);
         });
         $this->assertEquals(5, $affectedRows);
     }
@@ -210,7 +210,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         // Where with closure
         $mockDelete = $this->mockSql->delete('foo');
         $this->indexer->delete('foo', function($delete) use ($mockDelete) {
-            self::assertSame($mockDelete, $delete);
+            IndexerTest::assertSame($mockDelete, $delete);
         });
     }
 
