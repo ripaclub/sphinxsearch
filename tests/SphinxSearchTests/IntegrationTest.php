@@ -13,14 +13,13 @@ use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 use SphinxSearch\Search;
 use SphinxSearchTests\Db\Sql\SelectTest;
+use SphinxSearch\Db\Sql\Select;
+use Zend\Db\Sql\Expression;
+use SphinxSearch\Db\Sql\Sql;
+use SphinxSearch\Indexer;
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
-
-    /**
-     * @var Search
-     */
-    protected $search = null;
 
     /**
      * @var \Zend\ServiceManager\ServiceLocatorInterface
@@ -31,6 +30,16 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
      * @var \Zend\Db\Adapter\Adapter
      */
     private $adapter;
+
+    /**
+     * @var Search
+     */
+    protected $search = null;
+
+    /**
+     * @var Sql
+     */
+    protected $sql = null;
 
     public function setUp()
     {
@@ -56,6 +65,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->adapter = $this->serviceManager->get('sphinxql');
 
         $this->search = new Search($this->adapter);
+
+        $this->sql = $this->search->getSql();
     }
 
     public function testConnection()
@@ -109,6 +120,37 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             echo $sqlPrep . PHP_EOL;
             $this->search->searchWith($select);
         }
+
+    }
+
+
+    public function testIntValue()
+    {
+        $select = new Select();
+        $select->columns(array(new Expression('?+?', array(1,1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))));
+
+         // prepare and execute
+//         $statement = $this->sql->prepareStatementForSqlObject($select);
+//         $result = $statement->execute();
+
+//         $sql = $this->sql->getSqlStringForSqlObject($select);
+//         var_dump($sql);
+//         $result = $this->adapter->query($sql)->execute();
+
+
+//         var_dump($result);
+
+
+        $indexer = new Indexer($this->adapter);
+
+        echo $indexer->insert('foo', array(
+            'id' => 1,
+            'c1' => 1.5,
+            'c2' => null,
+            'c3' => true
+        ), true);
+
+        exit;
 
     }
 

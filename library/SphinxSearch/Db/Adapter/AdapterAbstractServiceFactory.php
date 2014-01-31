@@ -61,7 +61,11 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     {
         $config = $this->getConfig($services);
 
-        return new ZendDBAdapter($config[$requestedName], new SphinxQL());
+        $platform = new SphinxQL();
+        $adapter  = new ZendDBAdapter($config[$requestedName], $platform);
+        $platform->setDriver($adapter->getDriver());
+
+        return $adapter;
     }
 
     /**

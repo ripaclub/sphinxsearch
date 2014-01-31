@@ -569,22 +569,22 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // where (simple string)
         $select15 = new Select;
-        $select15->from('foo')->where('x = 5');
+        $select15->from('foo')->where('c1 = 5');
         $sqlPrep15 = // same
-        $sqlStr15 = 'SELECT * FROM `foo` WHERE x = 5';
+        $sqlStr15 = 'SELECT * FROM `foo` WHERE c1 = 5';
         $internalTests15 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processWhere'  => array('x = 5')
+            'processWhere'  => array('c1 = 5')
         );
 
         // where (returning parameters)
         $select16 = new Select;
-        $select16->from('foo')->where(array('x = ?' => 5));
-        $sqlPrep16 = 'SELECT * FROM `foo` WHERE x = ?';
-        $sqlStr16 = 'SELECT * FROM `foo` WHERE x = \'5\'';
+        $select16->from('bar')->where(array('x = ?' => 5));
+        $sqlPrep16 = 'SELECT * FROM `bar` WHERE x = ?';
+        $sqlStr16 = 'SELECT * FROM `bar` WHERE x = \'5\'';
         $params16 = array('where1' => 5);
         $internalTests16 = array(
-            'processSelect' => array(array(array('*')), '`foo`'),
+            'processSelect' => array(array(array('*')), '`bar`'),
             'processWhere'  => array('x = ?')
         );
 
