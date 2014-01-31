@@ -6,7 +6,16 @@ php:
   - 5.5
 
 before_script:
- - composer install
+ - curl -s http://getcomposer.org/installer | php
+ - php composer.phar install
+ - wget http://sphinxsearch.com/files/sphinx-2.2.1-beta.tar.gz
+ - tar xzvf sphinx-2.2.1-beta.tar.gz
+ - cd sphinx-2.2.1-beta/
+ - ./configure
+ - make && make install
+ - cd $PWD
+ - SPHINX=`which searchd`
+ - $SPHINX -c tests/sphinx.conf
 
 script:
  - vendor/bin/phpunit -c tests/
