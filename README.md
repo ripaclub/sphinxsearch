@@ -11,10 +11,10 @@ Introduction
 
 This Library aims to provide:
 
- - A SphinxQL query builder based upon Zend\Db\Sql ( http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html )
+ - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html)
  - A simple Search class
  - An Indexer class to work with RT Indexes
- - Factories for SphinxQL connection via Zend\Db\Adapter 
+ - Factories for SphinxQL connection via [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
  
 NOTE: this library doesn't not use SphinxClient php extension. Everything available via the SphinxAPI is also available via SphinxQL but not vice versa; for instance, writes into RT indexes are only available via SphinxQL.
 
@@ -42,6 +42,40 @@ Alternately with git submodules:
 
     git submodule add https://github.com/ripaclub/sphinxsearch.git pruno/ripaclub/sphinxsearch
 
+
+Howto
+---
+
+Register the factory under the ServiceManager:
+
+     'service_manager' => array(
+     
+          'factories' => array(
+              'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
+          ),
+          
+          //Alternately register the abstract facory
+         'abstract_factories' => array(
+              'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
+          ),
+          
+          //Optionally
+          'aliases' => array(
+              'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+          ),
+      ),
+
+Then in your config add the 'sphinxql' and configure it with sphinxql connection params via Pdo driver. Configuration params will be used by Zend\Db\Adapter\Adapter so refer to its documentation for more details. For example:
+
+    'sphinxql' => array(
+         'driver'         => 'Pdo',
+         'dsn'            => 'mysql:dbname=dummy;host=127.0.0.1;port=9306;',
+         'driver_options' => array(
+             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+         ),
+      ),
+
+If you use the abstract factory refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory)
 
 ## Testing
 
