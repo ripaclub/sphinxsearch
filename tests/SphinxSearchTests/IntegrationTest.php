@@ -43,7 +43,6 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        // TODO: here on ina bootstrap file start searchd -c sphinx.conf
         $this->serviceManager = new ServiceManager(new Config(array(
             'factories' => array(
                 'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
