@@ -34,6 +34,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        // TODO: here on ina bootstrap file start searchd -c sphinx.conf
         $this->serviceManager = new ServiceManager(new Config(array(
             'factories' => array(
                 'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
@@ -74,30 +75,28 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
         $data = $selectTest->providerData();
 
-        echo 'Testing queries on sphinx...' . PHP_EOL;
+        echo PHP_EOL . 'Testing SphinxQL queries ...' . PHP_EOL;
 
         foreach ($data as $namedParam) {
-            //    $select    $sqlPrep    $params     $sqlStr    $internalTests    // use named param
+            // $select    $sqlPrep    $params     $sqlStr    $internalTests // use named param
             list($select, $sqlPrep, $params, $sqlStr, $internalTests) = $namedParam;
-
-
 
             if (!$select->getRawState('table')) {
                 $select = clone $select;
                 $select->from('foo');
             }
 
-            //Expr in group by NOT SUPPORTED
+            // Expr in group by NOT SUPPORTED
             if ($sqlPrep == 'SELECT * FROM `foo` GROUP BY DAY(`c1`)') {
                 continue;
             }
 
-            //Buggy
+            // Buggy
             if (strpos($sqlPrep, 'HAVING')) {
                 continue;
             }
 
-            //not fully supported
+            // Not fully supported
             if (strpos($sqlPrep, 'IS NULL') || strpos($sqlPrep, 'ORDER BY isnull(`name`)')) {
                 continue;
             }
@@ -109,10 +108,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
             echo $sqlPrep . PHP_EOL;
             $this->search->searchWith($select);
-
         }
-
-
 
     }
 
