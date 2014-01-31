@@ -7,7 +7,7 @@ php:
 
 install:
   - composer self-update && composer --version
-  - composer install
+  - composer install --dev --prefer-source
 
 before_script:
   - tests/travis/sphinx-setup.sh
