@@ -2,9 +2,15 @@
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
-Master: [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Develop: [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=develop)](https://travis-ci.org/ripaclub/sphinxsearch)
+---
+
+<dl><dt>Master</dt></dl>
+[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)
+
+<dl><dt>Development</dt></dl>
+[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=develop)](https://travis-ci.org/ripaclub/sphinxsearch)
+
+---
 
 Introduction
 ---
@@ -40,7 +46,7 @@ Add the following to your `composer.json` file:
 
 Alternately with git submodules:
 
-    git submodule add https://github.com/ripaclub/sphinxsearch.git pruno/ripaclub/sphinxsearch
+    git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
 
 
 Howto
@@ -54,18 +60,20 @@ Register the factory under the ServiceManager:
               'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
           ),
           
-          //Alternately register the abstract facory
+          // Alternately register the abstract facory
          'abstract_factories' => array(
               'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
           ),
           
-          //Optionally
+          // Optionally
           'aliases' => array(
               'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
           ),
       ),
 
-Then in your config add the 'sphinxql' and configure it with sphinxql connection params via Pdo driver. Configuration params will be used by Zend\Db\Adapter\Adapter so refer to its documentation for more details. For example:
+Then in your config add the 'sphinxql' and configure it with sphinxql connection params via Pdo driver. Configuration params will be used by Zend\Db\Adapter\Adapter so refer to its documentation for more details.
+
+Example:
 
     'sphinxql' => array(
          'driver'         => 'Pdo',
@@ -82,6 +90,6 @@ If you use the abstract factory refer to [Zend Db Adpater Abstract Factory docum
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```{bash}
-./vendor/bin/phpunit -c tests
+./vendor/bin/phpunit -c tests/
 ```
 
