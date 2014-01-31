@@ -177,7 +177,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         // Where with closure
         $mockUpdate = $this->mockSql->update('foo');
         $this->indexer->update('foo', array('foo' => 'bar'), function($update) use ($mockUpdate) {
-            self::assertSame($mockUpdate, $update);
+            IndexerTest::assertSame($mockUpdate, $update);
         });
         $this->assertEquals(5, $affectedRows);
     }
