@@ -20,6 +20,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Predicate;
 use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Sql\Expression;
 
 /**
  * @property Where $where
@@ -219,15 +220,20 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $options = array();
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
-            if ($optValue instanceof Predicate\Expression) {
+            if ($optValue instanceof Expression) {
                 $optionParts = $this->processExpression($optValue, $platform, $driver, $this->processInfo['paramPrefix'] . 'option');
                 if ($parameterContainer) {
                     $parameterContainer->merge($optionParts->getParameterContainer());
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                // SphinxQL syntax special case: interger option value must not quoted
-                $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
+                if ($driver) {
+                    $parameterContainer->offsetSet('option_' .  $optName, $optValue, is_int($optValue) ? ParameterContainer::TYPE_INTEGER : ParameterContainer::TYPE_AUTO);
+                    $optionSql .= $driver->formatParameterName('option_' .  $optName);
+                } else {
+                    //SphnixQL syntax special case: interger option value must not quoted
+                    $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
+                }
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
         }

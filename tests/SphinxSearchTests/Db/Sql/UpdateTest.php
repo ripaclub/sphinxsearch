@@ -152,11 +152,11 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $mockStatement->expects($this->at(1))->method('setParameterContainer')->with($this->isInstanceOf('Zend\Db\Adapter\ParameterContainer'));
         $mockStatement->expects($this->at(2))
             ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)'));
+            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = ?, `max_matches` = ?, `field_weights` = (title=10, body=3)'));
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
             ->where('x = y')
-            ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+            ->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
 
         // With option
@@ -170,11 +170,11 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)'));
+            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = ?, `max_matches` = ?, `field_weights` = (title=10, body=3)'));
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
             ->where('x = y')
-            ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+            ->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
 
         // With TableIdentifier
@@ -188,11 +188,11 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
-            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)'));
+            ->with($this->equalTo('UPDATE `foo` SET `bar` = ?, `boo` = NOW() WHERE x = y OPTION `ranker` = ?, `max_matches` = ?, `field_weights` = (title=10, body=3)'));
         $this->update->table(new TableIdentifier('foo'))
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()')))
             ->where('x = y')
-            ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+            ->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->update->prepareStatement($mockAdapter, $mockStatement);
     }
 
@@ -216,9 +216,9 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $this->update->table('foo')
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
             ->where('x = y')
-            ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+            ->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->assertEquals(
-            'UPDATE `foo` SET `bar` = \'baz\', `boo` = NOW(), `bam` = NULL WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)',
+            'UPDATE `foo` SET `bar` = \'baz\', `boo` = NOW(), `bam` = NULL WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 500, `field_weights` = (title=10, body=3)',
             $this->update->getSqlString(new TrustedSphinxQL())
         );
 
@@ -227,9 +227,9 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $this->update->table(new TableIdentifier('foo'))
             ->set(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null))
             ->where('x = y')
-            ->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
+            ->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
         $this->assertEquals(
-            'UPDATE `foo` SET `bar` = \'baz\', `boo` = NOW(), `bam` = NULL WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)',
+            'UPDATE `foo` SET `bar` = \'baz\', `boo` = NOW(), `bam` = NULL WHERE x = y OPTION `ranker` = \'bm25\', `max_matches` = 500, `field_weights` = (title=10, body=3)',
             $this->update->getSqlString(new TrustedSphinxQL())
         );
     }

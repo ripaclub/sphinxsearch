@@ -484,20 +484,20 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // columns where value is Expression, with AS
         $select7 = new Select;
-        $select7->from('foo')->columns(array('bar' => new Expression('COUNT(some_column)')));
+        $select7->from('foo')->columns(array('bar' => new Expression('COUNT(*)')));
         $sqlPrep7 = // same
-        $sqlStr7 = 'SELECT COUNT(some_column) AS `bar` FROM `foo`';
+        $sqlStr7 = 'SELECT COUNT(*) AS `bar` FROM `foo`';
         $internalTests7 = array(
-            'processSelect' => array(array(array('COUNT(some_column)', '`bar`')), '`foo`')
+            'processSelect' => array(array(array('COUNT(*)', '`bar`')), '`foo`')
         );
 
         // columns where value is Expression
         $select8 = new Select;
-        $select8->from('foo')->columns(array(new Expression('COUNT(some_column) AS bar')));
+        $select8->from('foo')->columns(array(new Expression('COUNT(*) AS bar')));
         $sqlPrep8 = // same
-        $sqlStr8 = 'SELECT COUNT(some_column) AS bar FROM `foo`';
+        $sqlStr8 = 'SELECT COUNT(*) AS bar FROM `foo`';
         $internalTests8 = array(
-            'processSelect' => array(array(array('COUNT(some_column) AS bar')), '`foo`')
+            'processSelect' => array(array(array('COUNT(*) AS bar')), '`foo`')
         );
 
         // columns where value is Expression with parameters
@@ -505,17 +505,17 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $select9->from('foo')->columns(
             array(
                 new Expression(
-                    '(COUNT(?) + ?) AS ?',
-                    array('some_column', 5, 'bar'),
-                    array(Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER)
+                    'EXIST(?, 5) AS ?',
+                    array('baz', 'bar'),
+                    array(Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER)
                 )
             )
         );
-        $sqlPrep9 = 'SELECT (COUNT(`some_column`) + ?) AS `bar` FROM `foo`';
-        $sqlStr9 = 'SELECT (COUNT(`some_column`) + \'5\') AS `bar` FROM `foo`';
-        $params9 = array('column1' => 5);
+        $sqlPrep9 = 'SELECT EXIST(?, 5) AS `bar` FROM `foo`';
+        $sqlStr9 = 'SELECT EXIST(\'baz\', 5) AS `bar` FROM `foo`';
+        $params9 = array('column1' => 'baz');
         $internalTests9 = array(
-            'processSelect' => array(array(array('(COUNT(`some_column`) + ?) AS `bar`')), '`foo`')
+            'processSelect' => array(array(array('EXIST(?, 5) AS `bar`')), '`foo`')
         );
 
         // select without from and expression in column without alias
@@ -590,30 +590,30 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // group
         $select17 = new Select;
-        $select17->from('foo')->group(array('col1', 'col2'));
+        $select17->from('foo')->group(array('c1', 'c2'));
         $sqlPrep17 = // same
-        $sqlStr17 = 'SELECT * FROM `foo` GROUP BY `col1`, `col2`';
+        $sqlStr17 = 'SELECT * FROM `foo` GROUP BY `c1`, `c2`';
         $internalTests17 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('`col1`', '`col2`'))
+            'processGroup'  => array(array('`c1`', '`c2`'))
         );
 
         $select18 = new Select;
-        $select18->from('foo')->group('col1')->group('col2');
+        $select18->from('foo')->group('c1')->group('c2');
         $sqlPrep18 = // same
-        $sqlStr18 = 'SELECT * FROM `foo` GROUP BY `col1`, `col2`';
+        $sqlStr18 = 'SELECT * FROM `foo` GROUP BY `c1`, `c2`';
         $internalTests18 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('`col1`', '`col2`'))
+            'processGroup'  => array(array('`c1`', '`c2`'))
         );
 
         $select19 = new Select;
-        $select19->from('foo')->group(new Expression('DAY(?)', array('col1'), array(Expression::TYPE_IDENTIFIER)));
+        $select19->from('foo')->group(new Expression('DAY(?)', array('c1'), array(Expression::TYPE_IDENTIFIER)));
         $sqlPrep19 = // same
-        $sqlStr19 = 'SELECT * FROM `foo` GROUP BY DAY(`col1`)';
+        $sqlStr19 = 'SELECT * FROM `foo` GROUP BY DAY(`c1`)';
         $internalTests19 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('DAY(`col1`)'))
+            'processGroup'  => array(array('DAY(`c1`)'))
         );
 
         // having (simple string)
@@ -750,27 +750,27 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         //Not yet supported by Sphinx
         $select33 = new Select;
-        $select33->from('table')->columns(array('*'))->where(array(
+        $select33->from('foo')->columns(array('*'))->where(array(
             'c1' => null,
             'c2' => array(1, 2, 3),
             new \Zend\Db\Sql\Predicate\IsNotNull('c3')
         ));
-        $sqlPrep33 = 'SELECT * FROM `table` WHERE `c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL';
-        $sqlStr33 = 'SELECT * FROM `table` WHERE `c1` IS NULL AND `c2` IN (\'1\', \'2\', \'3\') AND `c3` IS NOT NULL';
+        $sqlPrep33 = 'SELECT * FROM `foo` WHERE `c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL';
+        $sqlStr33 = 'SELECT * FROM `foo` WHERE `c1` IS NULL AND `c2` IN (\'1\', \'2\', \'3\') AND `c3` IS NOT NULL';
         $internalTests33 = array(
-            'processSelect' => array(array(array('*')), '`table`'),
+            'processSelect' => array(array(array('*')), '`foo`'),
             'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')
         );
 
         //Not yet supported by Sphinx
         // @author Demian Katz
         $select34 = new Select;
-        $select34->from('table')->order(array(
+        $select34->from('foo')->order(array(
             new Expression('isnull(?) DESC', array('name'), array(Expression::TYPE_IDENTIFIER)),
             'name'
         ));
-        $sqlPrep34 = 'SELECT * FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
-        $sqlStr34 = 'SELECT * FROM `table` ORDER BY isnull(`name`) DESC, `name` ASC';
+        $sqlPrep34 = 'SELECT * FROM `foo` ORDER BY isnull(`name`) DESC, `name` ASC';
+        $sqlStr34 = 'SELECT * FROM `foo` ORDER BY isnull(`name`) DESC, `name` ASC';
         $internalTests34 = array(
             'processOrder'  => array(array(array('isnull(`name`) DESC'), array('`name`', Select::ORDER_ASCENDING)))
         );
@@ -908,53 +908,53 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // within group order
         $select46 = new Select;
-        $select46->from('foo')->group('c0')->withinGroupOrder('c1');
+        $select46->from('foo')->group('baz')->withinGroupOrder('c1');
         $sqlPrep46 = //
-        $sqlStr46 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC';
+        $sqlStr46 = 'SELECT * FROM `foo` GROUP BY `baz` WITHIN GROUP ORDER BY `c1` ASC';
         $internalTests46 = array(
             'processSelect'             => array(array(array('*')), '`foo`'),
-            'processGroup'              => array(array('`c0`')),
+            'processGroup'              => array(array('`baz`')),
             'processWithinGroupOrder'   => array(array(array('`c1`', Select::ORDER_ASCENDING)))
         );
 
         $select47 = new Select;
-        $select47->from('foo')->group('c0')->withinGroupOrder(array('c1', 'c2'));
+        $select47->from('foo')->group('baz')->withinGroupOrder(array('c1', 'c2'));
         $sqlPrep47 = // same
-        $sqlStr47 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` ASC';
+        $sqlStr47 = 'SELECT * FROM `foo` GROUP BY `baz` WITHIN GROUP ORDER BY `c1` ASC, `c2` ASC';
         $internalTests47 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('`c0`')),
+            'processGroup'  => array(array('`baz`')),
             'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_ASCENDING)))
         );
 
         $select48 = new Select;
-        $select48->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
+        $select48->from('foo')->group('baz')->withinGroupOrder(array('c1' => 'DESC', 'c2' => 'Asc')); // notice partially lower case ASC
         $sqlPrep48 = // same
-        $sqlStr48 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` DESC, `c2` ASC';
+        $sqlStr48 = 'SELECT * FROM `foo` GROUP BY `baz` WITHIN GROUP ORDER BY `c1` DESC, `c2` ASC';
         $internalTests48 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('`c0`')),
+            'processGroup'  => array(array('`baz`')),
             'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_DESCENDING), array('`c2`', Select::ORDER_ASCENDING)))
         );
 
         $select49 = new Select; //testing all features for code coverage (i.e. Sphinx doesn't support Expression in order yet)
-        $select49->from('foo')->group('c0')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc')->withinGroupOrder(array('c3', 'c4 DESC'))->withinGroupOrder(new Expression('WEIGHT()'));
+        $select49->from('foo')->group('baz')->withinGroupOrder(array('c1' => 'asc'))->withinGroupOrder('c2 desc')->withinGroupOrder(array('c3', 'baz DESC'))->withinGroupOrder(new Expression('RAND()'));
         $sqlPrep49 = // same
-        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `c0` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC, `c3` ASC, `c4` DESC, WEIGHT()';
+        $sqlStr49 = 'SELECT * FROM `foo` GROUP BY `baz` WITHIN GROUP ORDER BY `c1` ASC, `c2` DESC, `c3` ASC, `baz` DESC, RAND()';
         $internalTests49 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processGroup'  => array(array('`c0`')),
-            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING), array('`c3`', Select::ORDER_ASCENDING), array('`c4`', Select::ORDER_DESCENDING), array('WEIGHT()')))
+            'processGroup'  => array(array('`baz`')),
+            'processWithinGroupOrder'  => array(array(array('`c1`', Select::ORDER_ASCENDING), array('`c2`', Select::ORDER_DESCENDING), array('`c3`', Select::ORDER_ASCENDING), array('`baz`', Select::ORDER_DESCENDING), array('RAND()')))
         );
 
         // option
         $select50 = new Select;
-        $select50->from('foo')->option(array('ranker' => 'bm25', 'max_matches' => 3000, 'field_weights' => new Expression('(title=10, body=3)')));
-        $sqlPrep50 = // same
-        $sqlStr50 = 'SELECT * FROM `foo` OPTION `ranker` = \'bm25\', `max_matches` = 3000, `field_weights` = (title=10, body=3)';
+        $select50->from('foo')->option(array('ranker' => 'bm25', 'max_matches' => 500, 'field_weights' => new Expression('(title=10, body=3)')));
+        $sqlPrep50 = 'SELECT * FROM `foo` OPTION `ranker` = ?, `max_matches` = ?, `field_weights` = (title=10, body=3)';
+        $sqlStr50 = 'SELECT * FROM `foo` OPTION `ranker` = \'bm25\', `max_matches` = 500, `field_weights` = (title=10, body=3)';
         $internalTests50 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processOption'  => array(array(array('`ranker`', '\'bm25\''), array('`max_matches`', 3000), array('`field_weights`', '(title=10, body=3)')))
+            'processOption'  => array(array(array('`ranker`', '?'), array('`max_matches`', '?'), array('`field_weights`', '(title=10, body=3)')))
         );
 
 

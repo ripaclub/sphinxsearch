@@ -430,8 +430,13 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                //SphnixQL syntax special case: interger option value must not quoted
-                $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
+                if ($driver) {
+                    $parameterContainer->offsetSet('option_' .  $optName, $optValue, is_int($optValue) ? ParameterContainer::TYPE_INTEGER : ParameterContainer::TYPE_AUTO);
+                    $optionSql .= $driver->formatParameterName('option_' .  $optName);
+                } else {
+                    //SphnixQL syntax special case: interger option value must not quoted
+                    $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
+                }
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
         }
