@@ -4,10 +4,6 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 ---
 
-<dl><dt>Master</dt></dl>
-[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)
-
-<dl><dt>Development</dt></dl>
 [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=develop)](https://travis-ci.org/ripaclub/sphinxsearch)
 
 ---
