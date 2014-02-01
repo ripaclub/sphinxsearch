@@ -6,7 +6,7 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests;
+namespace SphinxSearchTests\IntegrationTest;
 
 use SphinxSearch\Db\Adapter\AdapterServiceFactory;
 use Zend\ServiceManager\ServiceManager;
@@ -17,7 +17,9 @@ use SphinxSearch\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
-class IntegrationTest extends \PHPUnit_Framework_TestCase
+use Zend\Db\Sql\Insert;
+use SphinxSearch\Db\Sql\Replace;
+abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
 
@@ -41,6 +43,9 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
      */
     protected $sql = null;
 
+    protected $config = array();
+
+
     public function setUp()
     {
         $this->serviceManager = new ServiceManager(new Config(array(
@@ -52,13 +57,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             )
         )));
         $this->serviceManager->setService('Config', array(
-            'sphinxql' => array(
-                'driver'         => 'Pdo',
-                'dsn'            => 'mysql:dbname=dummy;host=127.0.0.1;port=9306;',
-                'driver_options' => array(
-                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-                ),
-            ),
+            'sphinxql' => $this->config
         ));
 
         $this->adapter = $this->serviceManager->get('sphinxql');
@@ -77,8 +76,18 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $connection->connect();
 
         $this->assertTrue($connection->isConnected());
+
+        $result = $this->adapter->query(
+            'SELECT 1+1'
+        )->execute()->current();
+
+        $this->assertArrayHasKey('1+1', $result);
+        $this->assertTrue(2 == $result['1+1']);
     }
 
+    /**
+     * @depends testConnection
+     */
     public function testSearchQueries()
     {
         $selectTest = new SelectTest();
@@ -115,21 +124,22 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             if (strpos($sqlPrep, 'DESC, RAND()')) {
                 continue;
             }
-            
-            
+
+
             echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
 
     }
 
-
-    public function testTypeCasting()
+    /**
+     * @depends testConnection
+     */
+    public function testTypeWithPreparedStatement()
     {
-
         $indexer = new Indexer($this->adapter);
 
-        $result = $indexer->insert('foo', array(
+        $affectedRow = $indexer->insert('foo', array(
             'id' => 1,
             'c1' => 10,
             'c2' => true, //will be casted to int
@@ -137,14 +147,13 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             'f1' => 3.333,
         ), true); //replace
 
-        $this->assertEquals(1, $result);
+        $this->assertEquals(1, $affectedRow);
 
 
+        //test int in where
         $select = new Select('foo');
         $select->where(array('id' => 1));
 
-
-        //test prepared statement
         $results = $this->search->searchWith($select);
 
         foreach ($results as $result) {
@@ -156,9 +165,58 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
+
+        // FIXME: PDO doesn't support quoting for float
+
+        //test float in where
+        $select = new Select('foo');
+        $select->where(array('f1' => 3.333));
+
+        $results = $this->search->searchWith($select);
+
+        foreach ($results as $result) {
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+    }
+
+    /**
+     * @depends testConnection
+     */
+    public function testTypeWithSql()
+    {
+
+
+        $sql = new Sql($this->adapter);
+
+
+        $insert = new Replace('foo');
+        $insert->values(array(
+            'id' => 1,
+            'c1' => 10,
+            'c2' => true, //will be casted to int
+            'c3' => '5', //will be casted to int
+            'f1' => 3.333,
+        ));
+
+        $affectedRow = $this->adapter->query(
+            $sql->getSqlStringForSqlObject($insert)
+        )->execute()->getAffectedRows();
+
+        $this->assertEquals(1, $affectedRow);
+
+
+        $select = new Select('foo');
+        $select->where(array('id' => 1));
+
+
         //test sql
-        $results = $this->search->getAdapter()->query(
-            $this->search->getSql()->getSqlStringForSqlObject($select)
+        $results = $this->adapter->query(
+            $sql->getSqlStringForSqlObject($select)
         )->execute();
 
 
@@ -175,23 +233,9 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $select = new Select('foo');
         $select->where(array('f1' => 3.333));
 
-        //FIXME: PDO doesn't support quoting for float
-        //test prepared statement
-//         $results = $this->search->searchWith($select);
-
-//         foreach ($results as $result) {
-//             $this->assertEquals(1, $result['id']);
-//             $this->assertEquals(10, $result['c1']);
-//             $this->assertEquals(1, $result['c2']);
-//             $this->assertEquals(5, $result['c3']);
-//             $this->assertEquals(3.333, $result['f1']);
-//             break;
-//         }
-
-
         //test sql
-        $results = $this->search->getAdapter()->query(
-            $this->search->getSql()->getSqlStringForSqlObject($select)
+        $results = $this->adapter->query(
+            $sql->getSqlStringForSqlObject($select)
         )->execute();
 
 
@@ -204,7 +248,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
-        $indexer->delete('foo', array('id' => 1));
+//         $indexer->delete('foo', array('id' => 1));
     }
 
 }
