@@ -19,6 +19,7 @@ use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
 use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Replace;
+use Zend\Db\Adapter\Adapter;
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -44,6 +45,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
     protected $config = array();
 
+
     public function setUp()
     {
         $this->serviceManager = new ServiceManager(new Config(array(
@@ -59,20 +61,24 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         ));
 
         $this->adapter = $this->serviceManager->get('sphinxql');
+
         $this->search = new Search($this->adapter);
+
         $this->sql = $this->search->getSql();
     }
 
     public function testConnection()
     {
         $this->assertInstanceOf('\Zend\Db\Adapter\Adapter', $this->adapter);
+
         $connection = $this->adapter->getDriver()->getConnection();
+
         $connection->connect();
+
         $this->assertTrue($connection->isConnected());
-        //
-        $result = $this->adapter->query(
-            'SELECT 1+1'
-        )->execute()->current();
+
+        $result = $this->adapter->query('SELECT 1+1', Adapter::QUERY_MODE_EXECUTE)->current();
+
         $this->assertArrayHasKey('1+1', $result);
         $this->assertTrue(2 == $result['1+1']);
     }
