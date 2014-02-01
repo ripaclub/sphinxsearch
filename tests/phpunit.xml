@@ -1,6 +1,6 @@
 <phpunit bootstrap="bootstrap.php" colors="true" verbose="true">
     <testsuites>
-        <testsuite name="ZF2 Sphinx Search Test Suite">
+        <testsuite name="Sphinx Search Test Suite">
             <directory>SphinxSearchTests</directory>
         </testsuite>
     </testsuites>
