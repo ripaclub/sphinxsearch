@@ -1,7 +1,7 @@
 <phpunit bootstrap="bootstrap.php" colors="true" verbose="true">
     <testsuites>
         <testsuite name="Sphinx Search Test Suite">
-            <directory>SphinxSearchTests</directory>
+            <directory>SphinxSearchTest</directory>
         </testsuite>
     </testsuites>
     <filter>

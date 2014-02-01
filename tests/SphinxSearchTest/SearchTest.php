@@ -6,13 +6,13 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests;
+namespace SphinxSearchTest;
 
 
 use SphinxSearch\Db\Sql\Select;
 use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
-use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\ResultSet\ResultSet;
 class SearchTest extends \PHPUnit_Framework_TestCase
 {

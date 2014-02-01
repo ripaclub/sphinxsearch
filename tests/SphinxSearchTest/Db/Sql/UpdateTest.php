@@ -6,10 +6,10 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests\Db\Sql;
+namespace SphinxSearchTest\Db\Sql;
 
 use SphinxSearch\Db\Sql\Update;
-use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;

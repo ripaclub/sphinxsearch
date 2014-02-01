@@ -6,9 +6,15 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests\Db\Adapter\Driver\Pdo;
+namespace SphinxSearchTest\Db\TestAsset;
 
-class Statement  extends \PHPUnit_Framework_TestCase
-{
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+
+class TrustedSphinxQL extends SphinxQL {
+
+    public function quoteValue($value)
+    {
+        return $this->quoteTrustedValue($value);
+    }
 
 } 

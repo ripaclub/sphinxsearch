@@ -6,11 +6,11 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests;
+namespace SphinxSearchTest;
 
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
-use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 
 class IndexerTest extends \PHPUnit_Framework_TestCase
 {

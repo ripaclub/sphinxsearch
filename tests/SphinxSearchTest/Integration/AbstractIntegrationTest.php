@@ -6,13 +6,13 @@
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests\IntegrationTest;
+namespace SphinxSearchTest\IntegrationTest;
 
 use SphinxSearch\Db\Adapter\AdapterServiceFactory;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 use SphinxSearch\Search;
-use SphinxSearchTests\Db\Sql\SelectTest;
+use SphinxSearchTest\Db\Sql\SelectTest;
 use SphinxSearch\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
 use SphinxSearch\Db\Sql\Sql;

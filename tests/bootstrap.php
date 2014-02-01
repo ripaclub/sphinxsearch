@@ -7,5 +7,5 @@
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 
-// Set the decimal separator to "C" (i.e. minal "C" locale)
+// Set the decimal separator to "C" (i.e. minimal "C" locale)
 setlocale(LC_NUMERIC, 'C');
