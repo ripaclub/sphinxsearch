@@ -31,14 +31,12 @@ class SphinxQL extends Mysql implements PlatformInterface
      */
     public function quoteValue($value)
     {
-        switch (true) {
-            case is_null($value):
-                return 'NULL';
-            case is_int($value):
-                return (int) $value;
-            case is_float($value):
-                return sprintf('%F', $value);
-            default:
+        if (is_int($value)) {
+            return (int) $value;
+        } elseif (is_float($value)) {
+            return sprintf('%F', $value);
+        } elseif (is_null($value)) {
+            return 'NULL'; //Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
 
         return parent::quoteValue($value);
@@ -54,14 +52,12 @@ class SphinxQL extends Mysql implements PlatformInterface
      */
     public function quoteTrustedValue($value)
     {
-         switch (true) {
-            case is_null($value):
-                return 'NULL';
-            case is_int($value):
-                return (int) $value;
-            case is_float($value):
-                return sprintf('%F', $value);
-            default:
+        if (is_int($value)) {
+            return (int) $value;
+        } elseif (is_float($value)) {
+            return sprintf('%F', $value);
+        } elseif (is_null($value)) {
+            return 'NULL'; //Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
 
         return parent::quoteTrustedValue($value);
