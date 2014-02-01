@@ -36,7 +36,7 @@ class SphinxQL extends Mysql implements PlatformInterface
         } elseif (is_float($value)) {
             return sprintf('%F', $value);
         } elseif (is_null($value)) {
-            return 'NULL'; //Not supported by SphinxQL, but included for consistency with prepared statement behavior
+            return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
 
         return parent::quoteValue($value);
@@ -57,7 +57,7 @@ class SphinxQL extends Mysql implements PlatformInterface
         } elseif (is_float($value)) {
             return sprintf('%F', $value);
         } elseif (is_null($value)) {
-            return 'NULL'; //Not supported by SphinxQL, but included for consistency with prepared statement behavior
+            return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
 
         return parent::quoteTrustedValue($value);
