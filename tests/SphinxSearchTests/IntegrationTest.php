@@ -13,14 +13,13 @@ use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 use SphinxSearch\Search;
 use SphinxSearchTests\Db\Sql\SelectTest;
+use SphinxSearch\Db\Sql\Select;
+use Zend\Db\Sql\Expression;
+use SphinxSearch\Db\Sql\Sql;
+use SphinxSearch\Indexer;
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
-
-    /**
-     * @var Search
-     */
-    protected $search = null;
 
     /**
      * @var \Zend\ServiceManager\ServiceLocatorInterface
@@ -31,6 +30,16 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
      * @var \Zend\Db\Adapter\Adapter
      */
     private $adapter;
+
+    /**
+     * @var Search
+     */
+    protected $search = null;
+
+    /**
+     * @var Sql
+     */
+    protected $sql = null;
 
     public function setUp()
     {
@@ -55,6 +64,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->adapter = $this->serviceManager->get('sphinxql');
 
         $this->search = new Search($this->adapter);
+
+        $this->sql = $this->search->getSql();
     }
 
     public function testConnection()
@@ -104,11 +115,96 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             if (strpos($sqlPrep, 'DESC, RAND()')) {
                 continue;
             }
-
-            echo $sqlPrep . PHP_EOL;
+            
+            
+            echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
 
+    }
+
+
+    public function testTypeCasting()
+    {
+
+        $indexer = new Indexer($this->adapter);
+
+        $result = $indexer->insert('foo', array(
+            'id' => 1,
+            'c1' => 10,
+            'c2' => true, //will be casted to int
+            'c3' => '5', //will be casted to int
+            'f1' => 3.333,
+        ), true); //replace
+
+        $this->assertEquals(1, $result);
+
+
+        $select = new Select('foo');
+        $select->where(array('id' => 1));
+
+
+        //test prepared statement
+        $results = $this->search->searchWith($select);
+
+        foreach ($results as $result) {
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+
+        //test sql
+        $results = $this->search->getAdapter()->query(
+            $this->search->getSql()->getSqlStringForSqlObject($select)
+        )->execute();
+
+
+        foreach ($results as $result) {
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+
+
+        $select = new Select('foo');
+        $select->where(array('f1' => 3.333));
+
+        //FIXME: PDO doesn't support quoting for float
+        //test prepared statement
+//         $results = $this->search->searchWith($select);
+
+//         foreach ($results as $result) {
+//             $this->assertEquals(1, $result['id']);
+//             $this->assertEquals(10, $result['c1']);
+//             $this->assertEquals(1, $result['c2']);
+//             $this->assertEquals(5, $result['c3']);
+//             $this->assertEquals(3.333, $result['f1']);
+//             break;
+//         }
+
+
+        //test sql
+        $results = $this->search->getAdapter()->query(
+            $this->search->getSql()->getSqlStringForSqlObject($select)
+        )->execute();
+
+
+        foreach ($results as $result) {
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+
+        $indexer->delete('foo', array('id' => 1));
     }
 
 }
