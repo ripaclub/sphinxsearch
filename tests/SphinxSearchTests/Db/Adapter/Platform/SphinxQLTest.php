@@ -10,7 +10,8 @@ namespace SphinxSearchTests\Db\Adapter\Platform;
 
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
-class SphinxQLTest extends \PHPUnit_Framework_TestCase {
+class SphinxQLTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var SphinxQL

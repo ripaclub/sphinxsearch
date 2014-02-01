@@ -38,8 +38,8 @@
     "keywords": [
         "sphinx",
         "sphinxql",
-        "sphinx search",
-        "sphinx indexer",
+        "search",
+        "indexing",
         "search engine",
         "query builder",
         "zf2"
