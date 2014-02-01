@@ -11,6 +11,7 @@ namespace SphinxSearch\Db\Adapter\Platform;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Platform\Mysql;
+use Zend\Db\Adapter\Driver\DriverInterface;
 
 class SphinxQL extends Mysql implements PlatformInterface
 {
@@ -22,5 +23,56 @@ class SphinxQL extends Mysql implements PlatformInterface
     {
         return 'SphinxQL';
     }
+
+    /**
+     * Quote value
+     *
+     * @param  string $value
+     * @return string
+     */
+    public function quoteValue($value)
+    {
+        switch (true) {
+
+            case is_null($value):
+                return 'NULL';
+
+            case is_int($value):
+                return (int) $value;
+
+            case is_float($value):
+                return sprintf('%F', $value);
+        }
+
+
+        return parent::quoteValue($value);
+    }
+
+    /**
+     * Quote Trusted Value
+     *
+     * The ability to quote values without notices
+     *
+     * @param $value
+     * @return mixed
+     */
+    public function quoteTrustedValue($value)
+    {
+         switch (true) {
+
+            case is_null($value):
+                return 'NULL';
+
+            case is_int($value):
+                return (int) $value;
+
+            case is_float($value):
+                return sprintf('%F', $value);
+        }
+
+
+        return parent::quoteTrustedValue($value);
+    }
+
 
 }

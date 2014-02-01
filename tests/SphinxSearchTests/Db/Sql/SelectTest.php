@@ -569,22 +569,22 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // where (simple string)
         $select15 = new Select;
-        $select15->from('foo')->where('x = 5');
+        $select15->from('foo')->where('c1 = 5');
         $sqlPrep15 = // same
-        $sqlStr15 = 'SELECT * FROM `foo` WHERE x = 5';
+        $sqlStr15 = 'SELECT * FROM `foo` WHERE c1 = 5';
         $internalTests15 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processWhere'  => array('x = 5')
+            'processWhere'  => array('c1 = 5')
         );
 
         // where (returning parameters)
         $select16 = new Select;
-        $select16->from('foo')->where(array('x = ?' => 5));
-        $sqlPrep16 = 'SELECT * FROM `foo` WHERE x = ?';
-        $sqlStr16 = 'SELECT * FROM `foo` WHERE x = \'5\'';
+        $select16->from('bar')->where(array('x = ?' => 5));
+        $sqlPrep16 = 'SELECT * FROM `bar` WHERE x = ?';
+        $sqlStr16 = 'SELECT * FROM `bar` WHERE x = 5';
         $params16 = array('where1' => 5);
         $internalTests16 = array(
-            'processSelect' => array(array(array('*')), '`foo`'),
+            'processSelect' => array(array(array('*')), '`bar`'),
             'processWhere'  => array('x = ?')
         );
 
@@ -630,7 +630,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $select21 = new Select;
         $select21->from('foo')->having(array('x = ?' => 5));
         $sqlPrep21 = 'SELECT * FROM `foo` HAVING x = ?';
-        $sqlStr21 = 'SELECT * FROM `foo` HAVING x = \'5\'';
+        $sqlStr21 = 'SELECT * FROM `foo` HAVING x = 5';
         $params21 = array('having1' => 5);
         $internalTests21 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
@@ -741,7 +741,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $select32 = new Select;
         $select32->from($select32subselect)->order('x');
         $sqlPrep32 = 'SELECT * FROM (SELECT * FROM `bar` WHERE `y` = ?) ORDER BY `x` ASC';
-        $sqlStr32 = 'SELECT * FROM (SELECT * FROM `bar` WHERE `y` = \'1\') ORDER BY `x` ASC';
+        $sqlStr32 = 'SELECT * FROM (SELECT * FROM `bar` WHERE `y` = 1) ORDER BY `x` ASC';
         $internalTests32 = array(
             'processSelect' => array(array(array('*')), '(SELECT * FROM `bar` WHERE `y` = ?)'),
         );
@@ -756,7 +756,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             new \Zend\Db\Sql\Predicate\IsNotNull('c3')
         ));
         $sqlPrep33 = 'SELECT * FROM `foo` WHERE `c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL';
-        $sqlStr33 = 'SELECT * FROM `foo` WHERE `c1` IS NULL AND `c2` IN (\'1\', \'2\', \'3\') AND `c3` IS NOT NULL';
+        $sqlStr33 = 'SELECT * FROM `foo` WHERE `c1` IS NULL AND `c2` IN (1, 2, 3) AND `c3` IS NOT NULL';
         $internalTests33 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
             'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')

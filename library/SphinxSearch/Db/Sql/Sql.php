@@ -9,6 +9,7 @@
 namespace SphinxSearch\Db\Sql;
 
 use Zend\Db\Sql\Sql as ZendSql;
+use Zend\Db\Sql\Platform;
 
 class Sql extends ZendSql
 {
