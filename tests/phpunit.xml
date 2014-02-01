@@ -1,4 +1,4 @@
-<phpunit colors="true" verbose="true">
+<phpunit bootstrap="bootstrap.php" colors="true" verbose="true">
     <testsuites>
         <testsuite name="ZF2 Sphinx Search Test Suite">
             <directory>SphinxSearchTests</directory>
