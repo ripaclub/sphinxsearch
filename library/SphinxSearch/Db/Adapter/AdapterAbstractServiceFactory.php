@@ -14,6 +14,8 @@ use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
+use SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException;
 
 /**
  * Database adapter abstract service factory.
@@ -63,7 +65,15 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         $platform = new SphinxQL();
         $adapter  = new ZendDBAdapter($config[$requestedName], $platform);
+        $driver   = $adapter->getDriver();
+
+        if (!$driver instanceof \Zend\Db\Adapter\Driver\Pdo\Pdo) {
+            throw new UnsupportedDriverException('Only Zend\Db\Adapter\Driver\Pdo\Pdo supported at moment');
+        }
+
         $platform->setDriver($adapter->getDriver());
+        $adapter->getDriver()->registerStatementPrototype(new Statement());
+
 
         return $adapter;
     }
