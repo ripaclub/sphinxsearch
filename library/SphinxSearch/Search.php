@@ -15,23 +15,13 @@ use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
 
-class Search
+class Search extends AbstractComponent
 {
-
-    /**
-     * @var ZendDBAdapter
-     */
-    protected $adapter;
 
     /**
      * @var ResultSetInterface
      */
     protected $resultSetPrototype;
-
-    /**
-     * @var Sql
-     */
-    protected $sql;
 
     /**
      * @param ZendDBAdapter $adapter
@@ -41,17 +31,8 @@ class Search
     public function __construct(ZendDBAdapter $adapter, ResultSetInterface $resultSetPrototype = null, Sql $sql = null)
     {
         $this->adapter = $adapter;
-        // result prototype
         $this->resultSetPrototype = ($resultSetPrototype) ? : new ResultSet();
         $this->sql     = $sql ? $sql : new Sql($adapter);
-    }
-
-    /**
-     * @return \Zend\Db\Adapter\Adapter
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
     }
 
     /**
@@ -60,14 +41,6 @@ class Search
     public function getResultSetPrototype()
     {
         return $this->resultSetPrototype;
-    }
-
-    /**
-     * @return Sql
-     */
-    public function getSql()
-    {
-        return $this->sql;
     }
 
     /**
@@ -94,9 +67,7 @@ class Search
      */
     public function searchWith(Select $select)
     {
-         // prepare and execute
-        $statement = $this->sql->prepareStatementForSqlObject($select);
-        $result = $statement->execute();
+        $result = $this->executeSqlObject($select);
 
         // build result set
         $resultSet = clone $this->resultSetPrototype;

@@ -16,18 +16,8 @@ use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\TableIdentifier;
 
-class Indexer
+class Indexer extends AbstractComponent
 {
-
-    /**
-     * @var ZendDBAdapter
-     */
-    protected $adapter;
-
-    /**
-     * @var Sql
-     */
-    protected $sql;
 
     /**
      * @param ZendDBAdapter $adapter
@@ -37,22 +27,6 @@ class Indexer
     {
         $this->adapter = $adapter;
         $this->sql     = $sql ? $sql : new Sql($adapter);
-    }
-
-    /**
-     * @return \Zend\Db\Adapter\Adapter
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @return Sql
-     */
-    public function getSql()
-    {
-        return $this->sql;
     }
 
     /**
@@ -105,9 +79,7 @@ class Indexer
      */
     public function insertWith(Insert $insert)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($insert);
-        $result = $statement->execute();
-
+        $result = $this->executeSqlObject($insert);
         return $result->getAffectedRows();
     }
 
@@ -137,9 +109,7 @@ class Indexer
      */
     public function updateWith(Update $update)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($update);
-        $result = $statement->execute();
-
+        $result = $this->executeSqlObject($update);
         return $result->getAffectedRows();
     }
 
@@ -167,12 +137,8 @@ class Indexer
      */
     public function deleteWith(Delete $delete)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($delete);
-        $result = $statement->execute();
-
+        $result = $this->executeSqlObject($delete);
         return $result->getAffectedRows();
     }
-
-
 
 }

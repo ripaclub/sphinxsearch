@@ -136,7 +136,18 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
      */
     public function testTypeWithPreparedStatement()
     {
+
+        if ($this->adapter->getDriver() instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
+            $this->markTestSkipped('Mysqli does not support prepared statement client side emulation');
+        }
+
+        $this->adapter->query('DELETE FROM foo WHERE id = 1', Adapter::QUERY_MODE_EXECUTE);
+
         $indexer = new Indexer($this->adapter);
+        $indexer->setExecutionMode($indexer::EXECUTE_MODE_PREPARED);
+
+        $search = clone $this->search;
+        $search->setExecutionMode($search::EXECUTE_MODE_PREPARED);
 
         $affectedRow = $indexer->insert('foo', array(
             'id' => 1,
@@ -149,11 +160,13 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $affectedRow);
 
 
+
+
         //test int in where
         $select = new Select('foo');
         $select->where(array('id' => 1));
 
-        $results = $this->search->searchWith($select);
+        $results = $search->searchWith($select);
 
         foreach ($results as $result) {
             $this->assertEquals(1, $result['id']);
@@ -171,7 +184,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $select = new Select('foo');
         $select->where(array('f1' => 3.333));
 
-        $results = $this->search->searchWith($select);
+        $results = $search->searchWith($select);
 
         foreach ($results as $result) {
             $this->assertEquals(1, $result['id']);
@@ -189,9 +202,10 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
     public function testTypeWithSql()
     {
 
+        $this->adapter->query('DELETE FROM foo WHERE id = 1', Adapter::QUERY_MODE_EXECUTE);
+
 
         $sql = new Sql($this->adapter);
-
 
         $insert = new Replace('foo');
         $insert->values(array(
@@ -203,8 +217,10 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         ));
 
         $affectedRow = $this->adapter->query(
-            $sql->getSqlStringForSqlObject($insert)
-        )->execute()->getAffectedRows();
+            $sql->getSqlStringForSqlObject($insert),
+            Adapter::QUERY_MODE_EXECUTE
+        )->getAffectedRows();
+
 
         $this->assertEquals(1, $affectedRow);
 
@@ -215,8 +231,9 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         //test sql
         $results = $this->adapter->query(
-            $sql->getSqlStringForSqlObject($select)
-        )->execute();
+            $sql->getSqlStringForSqlObject($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
 
 
         foreach ($results as $result) {
@@ -234,8 +251,9 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         //test sql
         $results = $this->adapter->query(
-            $sql->getSqlStringForSqlObject($select)
-        )->execute();
+            $sql->getSqlStringForSqlObject($select),
+            Adapter::QUERY_MODE_EXECUTE
+        );
 
 
         foreach ($results as $result) {
@@ -247,7 +265,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
-//         $indexer->delete('foo', array('id' => 1));
     }
 
 }

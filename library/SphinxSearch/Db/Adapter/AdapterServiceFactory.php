@@ -33,7 +33,7 @@ class AdapterServiceFactory implements FactoryInterface
 
         if ($driver instanceof \Zend\Db\Adapter\Driver\Pdo\Pdo) {
             $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
-        } elseif (!$driver instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
+        } elseif ($driver instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
 
         } else {
             throw new UnsupportedDriverException(get_class($driver) . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli');
