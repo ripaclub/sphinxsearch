@@ -153,7 +153,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             'c1' => 10,
             'c2' => true, //will be casted to int
             'c3' => '5', //will be casted to int
-            'f1' => 3.333,
+            'f1' => '3.333',
         ), true); //replace
 
         $this->assertEquals(1, $affectedRow);
