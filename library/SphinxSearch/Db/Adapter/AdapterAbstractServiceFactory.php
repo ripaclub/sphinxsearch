@@ -8,13 +8,13 @@
  */
 namespace SphinxSearch\Db\Adapter;
 
-use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\Pdo\Pdo as ZendPdoDriver;
+use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement as PdoStatement;
-use SphinxSearch\Db\Adapter\Driver\Mysqli\Statement as MysqliStatement;
 use SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException;
 
 /**
@@ -55,9 +55,10 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * Create a DB adapter
      *
      * @param  ServiceLocatorInterface $services
-     * @param  string $name
-     * @param  string $requestedName
-     * @return Adapter
+     * @param  string                  $name
+     * @param  string                  $requestedName
+     * @throws Exception\UnsupportedDriverException
+     * @return \Zend\Db\Adapter\Adapter
      */
     public function createServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
     {
@@ -66,17 +67,14 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         $platform = new SphinxQL();
         $adapter  = new ZendDBAdapter($config[$requestedName], $platform);
         $driver   = $adapter->getDriver();
-
-        if ($driver instanceof \Zend\Db\Adapter\Driver\Pdo\Pdo) {
+        // Check driver
+        if ($driver instanceof ZendPdoDriver) {
             $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
-        } elseif ($driver instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
-
-        } else {
+        } elseif (!$driver instanceof ZendMysqliDriver) {
             throw new UnsupportedDriverException(get_class($driver) . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli');
         }
 
         $platform->setDriver($adapter->getDriver());
-
 
         return $adapter;
     }

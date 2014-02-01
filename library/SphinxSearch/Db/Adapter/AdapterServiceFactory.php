@@ -8,12 +8,13 @@
  */
 namespace SphinxSearch\Db\Adapter;
 
+use Zend\Db\Adapter\Driver\Pdo\Pdo as ZendPdoDriver;
+use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement as PdoStatement;
-use SphinxSearch\Db\Adapter\Driver\Mysqli\Statement as MysqliStatement;
 use SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException;
 
 class AdapterServiceFactory implements FactoryInterface
@@ -22,7 +23,8 @@ class AdapterServiceFactory implements FactoryInterface
      * Create db adapter service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return Adapter
+     * @throws Exception\UnsupportedDriverException
+     * @return \Zend\Db\Adapter\Adapter
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
@@ -30,17 +32,14 @@ class AdapterServiceFactory implements FactoryInterface
         $platform = new SphinxQL();
         $adapter  = new ZendDBAdapter($config['sphinxql'], $platform);
         $driver   = $adapter->getDriver();
-
-        if ($driver instanceof \Zend\Db\Adapter\Driver\Pdo\Pdo) {
+        // Check driver
+        if ($driver instanceof ZendPdoDriver) {
             $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
-        } elseif ($driver instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
-
-        } else {
+        } elseif (!$driver instanceof ZendMysqliDriver) {
             throw new UnsupportedDriverException(get_class($driver) . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli');
         }
 
         $platform->setDriver($adapter->getDriver());
-
 
         return $adapter;
     }

@@ -24,7 +24,7 @@ class SphinxQL extends Mysql implements PlatformInterface
     }
 
     /**
-     * Quote value
+     * Quotes value
      *
      * @param  string $value
      * @return string
@@ -45,7 +45,7 @@ class SphinxQL extends Mysql implements PlatformInterface
     }
 
     /**
-     * Quote Trusted Value
+     * Quotes trusted value
      *
      * The ability to quote values without notices
      *
@@ -63,7 +63,6 @@ class SphinxQL extends Mysql implements PlatformInterface
                 return sprintf('%F', $value);
             default:
         }
-
 
         return parent::quoteTrustedValue($value);
     }

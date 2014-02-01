@@ -13,6 +13,7 @@ use Zend\Db\Adapter\ParameterContainer;
 
 class Statement extends ZendPdoStatement
 {
+
     /**
      * Bind parameters from container
      */
@@ -21,7 +22,6 @@ class Statement extends ZendPdoStatement
         if ($this->parametersBound) {
             return;
         }
-
         $parameters = $this->parameterContainer->getNamedArray();
         foreach ($parameters as $name => &$value) {
             $type = \PDO::PARAM_STR;
@@ -42,23 +42,18 @@ class Statement extends ZendPdoStatement
                 }
             } else {
                 switch (true) {
-
                     case is_int($value):
                         $type = \PDO::PARAM_INT;
                         break;
-
                     case is_null($value):
                         $type = \PDO::PARAM_NULL;
                         break;
-
                     case is_bool($value):
                         $type = \PDO::PARAM_BOOL;
                         break;
-
                 }
             }
-
-            // parameter is named or positional, value is reference
+            // Parameter is named or positional, value is reference
             $parameter = is_int($name) ? ($name + 1) : $name;
             $this->resource->bindParam($parameter, $value, $type);
         }
