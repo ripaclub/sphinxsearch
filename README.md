@@ -1,4 +1,4 @@
-Sphinx Search ![License](http://img.shields.io/badge/license-BSD--2-green.svg) ![Build Status](http://img.shields.io/travis/ripaclub/sphinxsearch/develop.svg)
+Sphinx Search ![License](http://img.shields.io/badge/license-BSD--2-green.svg)&nbsp;![Build Status](http://img.shields.io/travis/ripaclub/sphinxsearch/develop.svg)&nbsp;
 =============
 
 Sphinx Search library provides SphinxQL indexing and searching features.
