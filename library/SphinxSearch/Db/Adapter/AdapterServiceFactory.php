@@ -13,6 +13,7 @@ use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
 
 class AdapterServiceFactory implements FactoryInterface
 {
@@ -28,6 +29,7 @@ class AdapterServiceFactory implements FactoryInterface
         $platform = new SphinxQL();
         $adapter  = new ZendDBAdapter($config['sphinxql'], $platform);
         $platform->setDriver($adapter->getDriver());
+        $adapter->getDriver()->registerStatementPrototype(new Statement());
         return $adapter;
     }
 }

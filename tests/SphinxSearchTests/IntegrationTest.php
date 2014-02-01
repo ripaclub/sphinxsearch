@@ -116,40 +116,61 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-            echo $sqlPrep . PHP_EOL;
+            echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
 
     }
 
 
-    public function testIntValue()
+    public function testTypeCasting()
     {
-        $select = new Select();
-        $select->columns(array(new Expression('?+?', array(1,1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))));
-
-         // prepare and execute
-//         $statement = $this->sql->prepareStatementForSqlObject($select);
-//         $result = $statement->execute();
-
-//         $sql = $this->sql->getSqlStringForSqlObject($select);
-//         var_dump($sql);
-//         $result = $this->adapter->query($sql)->execute();
-
-
-//         var_dump($result);
-
 
         $indexer = new Indexer($this->adapter);
 
-        echo $indexer->insert('foo', array(
+        $result = $indexer->insert('foo', array(
             'id' => 1,
-            'c1' => 1.5,
-            'c2' => null,
-            'c3' => true
-        ), true);
+            'c1' => 10,
+            'c2' => true, //will be casted to int
+            'c3' => '5', //will be casted to int
+            'f1' => 3.333,
+        ), true); //replace
 
-        exit;
+        $this->assertEquals(1, $result);
+
+
+        $select = new Select('foo');
+        $select->where(array('id' => 1));
+
+
+        //test prepared statement
+        $results = $this->search->searchWith($select);
+
+        foreach ($results as $result) {
+            var_dump($result);
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+
+        //test sql
+        $results = $this->search->getAdapter()->query(
+            $this->search->getSql()->getSqlStringForSqlObject($select)
+        )->execute();
+
+
+        foreach ($results as $result) {
+            var_dump($result);
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
 
     }
 
