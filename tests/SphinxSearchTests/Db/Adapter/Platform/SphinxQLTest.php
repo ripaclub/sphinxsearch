@@ -42,6 +42,16 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(1.11, $this->platform->quoteValue(1.11));
     }
 
+    /**
+     * @covers SphinxSearch\Db\Adapter\Platform\SphinxQL::quoteValue
+     * @testdox Trigger E_USER_NOTICE when quoted a not supported value type
+     */
+    public function testQuoteWrongValue()
+    {
+        $this->setExpectedException('PHPUnit_Framework_Error_Notice');
+        $this->platform->quoteValue('ciao');
+    }
+
     public function testQuoteTrustedValue()
     {
         $this->assertEquals(3, $this->platform->quoteTrustedValue(3));
