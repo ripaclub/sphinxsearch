@@ -8,7 +8,6 @@
  */
 namespace SphinxSearchTests\IntegrationTest;
 
-
 class PDOIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(

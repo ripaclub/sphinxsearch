@@ -22,7 +22,6 @@ use SphinxSearch\Db\Sql\Replace;
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
-
     /**
      * @var \Zend\ServiceManager\ServiceLocatorInterface
      */
