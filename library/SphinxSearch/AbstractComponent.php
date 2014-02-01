@@ -8,14 +8,14 @@
  */
 namespace SphinxSearch;
 
-
 use Zend\Db\Sql\AbstractSql;
+use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+
 abstract class AbstractComponent
 {
     const EXECUTE_MODE_PREPARED = 'prepared';
     const EXECUTE_MODE_QUERY    = 'query';
     const EXECUTE_MODE_AUTO     = 'auto';
-
 
     /**
      * @var \Zend\Db\Adapter\Adapter
@@ -89,15 +89,14 @@ abstract class AbstractComponent
     public function usePreparedStatement()
     {
         if ($this->executeMode === self::EXECUTE_MODE_AUTO) {
-            //Mysqli doesn't support client side prepared statement emulation
-            if ($this->getAdapter()->getDriver() instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
+            // Mysqli doesn't support client side prepared statement emulation
+            if ($this->getAdapter()->getDriver() instanceof ZendMysqliDriver) {
                 return false;
             }
 
-            //By default, we use PDO prepared statement emulation
+            // By default, we use PDO prepared statement emulation
             return true;
         }
-
 
         if ($this->executeMode === self::EXECUTE_MODE_PREPARED) {
             return true;
@@ -123,6 +122,7 @@ abstract class AbstractComponent
         }
 
         $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+
         return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
 

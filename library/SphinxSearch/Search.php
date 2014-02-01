@@ -68,8 +68,7 @@ class Search extends AbstractComponent
     public function searchWith(Select $select)
     {
         $result = $this->executeSqlObject($select);
-
-        // build result set
+        // Build result set
         $resultSet = clone $this->resultSetPrototype;
         $resultSet->initialize($result);
 

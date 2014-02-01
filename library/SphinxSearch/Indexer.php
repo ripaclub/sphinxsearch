@@ -60,9 +60,9 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param array $values
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier    $index
+     * @param array                     $values
+     * @param bool                      $replace
      * @return number
      */
     public function insert($index, array $values, $replace = false)
@@ -80,13 +80,14 @@ class Indexer extends AbstractComponent
     public function insertWith(Insert $insert)
     {
         $result = $this->executeSqlObject($insert);
+
         return $result->getAffectedRows();
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param array $values
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier        $index
+     * @param array                         $values
+     * @param Where|\Closure|string|array   $where
      * @return number
      */
     public function update($index, array $values, $where = null)
@@ -110,12 +111,13 @@ class Indexer extends AbstractComponent
     public function updateWith(Update $update)
     {
         $result = $this->executeSqlObject($update);
+
         return $result->getAffectedRows();
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier        $index
+     * @param Where|\Closure|string|array   $where
      * @return number
      */
     public function delete($index, $where)
@@ -138,6 +140,7 @@ class Indexer extends AbstractComponent
     public function deleteWith(Delete $delete)
     {
         $result = $this->executeSqlObject($delete);
+
         return $result->getAffectedRows();
     }
 
