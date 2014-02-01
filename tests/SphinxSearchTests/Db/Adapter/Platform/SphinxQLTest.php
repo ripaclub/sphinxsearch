@@ -34,5 +34,19 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('SphinxQL', $this->platform->getName());
     }
 
+
+    public function testQuoteValue()
+    {
+        $this->assertEquals(3, $this->platform->quoteValue(3));
+        $this->assertSame('NULL', $this->platform->quoteValue(null));
+        $this->assertEquals(1.11, $this->platform->quoteValue(1.11));
+    }
+
+    public function testQuoteTrustedValue()
+    {
+        $this->assertEquals(3, $this->platform->quoteTrustedValue(3));
+        $this->assertSame('NULL', $this->platform->quoteTrustedValue(null));
+        $this->assertEquals(1.11, $this->platform->quoteTrustedValue(1.11));
+    }
+
 }
- 
