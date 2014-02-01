@@ -115,7 +115,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             if (strpos($sqlPrep, 'DESC, RAND()')) {
                 continue;
             }
-
+            
+            
             echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
@@ -147,7 +148,6 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $results = $this->search->searchWith($select);
 
         foreach ($results as $result) {
-            var_dump($result);
             $this->assertEquals(1, $result['id']);
             $this->assertEquals(10, $result['c1']);
             $this->assertEquals(1, $result['c2']);
@@ -163,7 +163,6 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
 
         foreach ($results as $result) {
-            var_dump($result);
             $this->assertEquals(1, $result['id']);
             $this->assertEquals(10, $result['c1']);
             $this->assertEquals(1, $result['c2']);
@@ -172,6 +171,40 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
+
+        $select = new Select('foo');
+        $select->where(array('f1' => 3.333));
+
+        //FIXME: PDO doesn't support quoting for float
+        //test prepared statement
+//         $results = $this->search->searchWith($select);
+
+//         foreach ($results as $result) {
+//             $this->assertEquals(1, $result['id']);
+//             $this->assertEquals(10, $result['c1']);
+//             $this->assertEquals(1, $result['c2']);
+//             $this->assertEquals(5, $result['c3']);
+//             $this->assertEquals(3.333, $result['f1']);
+//             break;
+//         }
+
+
+        //test sql
+        $results = $this->search->getAdapter()->query(
+            $this->search->getSql()->getSqlStringForSqlObject($select)
+        )->execute();
+
+
+        foreach ($results as $result) {
+            $this->assertEquals(1, $result['id']);
+            $this->assertEquals(10, $result['c1']);
+            $this->assertEquals(1, $result['c2']);
+            $this->assertEquals(5, $result['c3']);
+            $this->assertEquals(3.333, $result['f1']);
+            break;
+        }
+
+        $indexer->delete('foo', array('id' => 1));
     }
 
 }
