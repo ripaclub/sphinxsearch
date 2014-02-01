@@ -11,11 +11,11 @@ namespace SphinxSearchTests\IntegrationTest;
 class PDOIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(
-        'driver'         => 'Pdo',
-        'dsn'            => 'mysql:dbname=dummy;host=127.0.0.1;port=9306;',
-        'driver_options' => array(
-            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-        )
+        'driver'    => 'pdo_mysql',
+        'database'  => 'dummy',
+        'hostname'  => '127.0.0.1',
+        'port'      => 9306,
+        'charset'   => 'UTF8'
     );
 }
 
