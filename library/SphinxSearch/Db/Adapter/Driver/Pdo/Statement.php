@@ -24,7 +24,9 @@ class Statement extends ZendPdoStatement
         }
         $parameters = $this->parameterContainer->getNamedArray();
         foreach ($parameters as $name => &$value) {
-            $type = \PDO::PARAM_STR;
+            // if param has no errata, PDO will detect the right type
+            $type = null;
+
             if ($this->parameterContainer->offsetHasErrata($name)) {
                 switch ($this->parameterContainer->offsetGetErrata($name)) {
                     case ParameterContainer::TYPE_INTEGER:
@@ -40,19 +42,8 @@ class Statement extends ZendPdoStatement
                         $type = \PDO::PARAM_BOOL;
                         break;
                 }
-            } else {
-                switch (true) {
-                    case is_int($value):
-                        $type = \PDO::PARAM_INT;
-                        break;
-                    case is_null($value):
-                        $type = \PDO::PARAM_NULL;
-                        break;
-                    case is_bool($value):
-                        $type = \PDO::PARAM_BOOL;
-                        break;
-                }
             }
+
             // Parameter is named or positional, value is reference
             $parameter = is_int($name) ? ($name + 1) : $name;
             $this->resource->bindParam($parameter, $value, $type);

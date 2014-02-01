@@ -176,9 +176,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
-
-        // FIXME: PDO doesn't support quoting for float
-
         //test float in where
         $select = new Select('foo');
         $select->where(array('f1' => 3.333));
