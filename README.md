@@ -1,8 +1,7 @@
-# Sphinx Search
+Sphinx Search ![License](http://img.shields.io/badge/license-BSD--2-green.svg) ![Build Status](http://img.shields.io/travis/ripaclub/sphinxsearch/develop.svg)
+=============
 
 Sphinx Search library provides SphinxQL indexing and searching features.
-
-[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=develop)](https://travis-ci.org/ripaclub/sphinxsearch)
 
 Introduction
 ---
@@ -13,8 +12,10 @@ This Library aims to provide:
  - A simple `Search` class
  - An `Indexer` class to work with RT Indexes
  - Factories for `SphinxQL` connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
- 
-NOTE: this library doesn't not use `SphinxClient` PHP extension. Everything available via the Sphinx API is also available via `SphinxQL` but not vice versa; for instance, writing to RT indexes is only available via `SphinxQL`.
+
+###### Note
+
+This library does not use `SphinxClient` PHP extension. Everything available via the Sphinx API is also available via `SphinxQL` but not vice versa; for instance, writing to RT indexes is only available via `SphinxQL`.
 
 Installation
 ---
@@ -24,12 +25,10 @@ Using [composer](http://getcomposer.org/):
 Add the following to your `composer.json` file:
 
     "require": {
-        ...
-        "ripaclub/sphinxsearch": "*",
+        "php": ">=5.3.3",
+        "ripaclub/sphinxsearch": "~0.2.0",
     },
-    ...
     "repositories": [
-        ...
         {
             "type": "vcs",
             "url": "https://github.com/ripaclub/sphinxsearch.git"
@@ -66,7 +65,7 @@ Register in the `ServiceManager` the provided factories through the `service_man
 ),
 ```
 
-Then in your configuration add the `sphinxql` node and configure it with connection parameters via Pdo driver. Configuration parameters will be used by `Zend\Db\Adapter\Adapter` (refer to its documentation for details).
+Then in your configuration add the `sphinxql` node and configure it with connection parameters via `Pdo` driver. Configuration parameters will be used by `Zend\Db\Adapter\Adapter` (refer to its documentation for details).
 
 Example:
 
