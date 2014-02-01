@@ -15,6 +15,8 @@ class MysqliIntegrationTest extends AbstractIntegrationTest
         'driver'    => 'Mysqli',
         'database'  => 'dummy',
         'hostname'  => '127.0.0.1',
+        'username'  => null,
+        'password'  => null,
         'port'      => 9306
     );
 }
