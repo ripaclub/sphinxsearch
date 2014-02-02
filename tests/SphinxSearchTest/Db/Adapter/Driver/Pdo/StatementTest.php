@@ -151,4 +151,43 @@ class StatementTest  extends \PHPUnit_Framework_TestCase
         $this->statement->execute(array('foo' => 3.333));
     }
 
+    /**
+     * @requires OS LINUX|DARWIN
+     * @testdox LOB value
+     */
+    public function testLOB()
+    {
+        $fp = fopen('/dev/random', 'rb');
+        $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
+            $this->equalTo('lob'),
+            $this->equalTo($fp),
+            $this->equalTo(null) // Auto PDO type detection
+        );
+        $this->statement->execute(array('lob' => $fp));
+    }
+
+    /**
+     * @requires OS LINUX|DARWIN
+     * @testdox LOB value passed through a parameter container
+     */
+    public function testLOBWithParamContainer()
+    {
+        $fp = fopen('/dev/random', 'rb');
+        $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
+            $this->equalTo('lob'),
+            $this->equalTo($fp),
+            $this->equalTo(\PDO::PARAM_LOB) // Auto PDO type detection
+        );
+        $paramContainer = new ParameterContainer();
+        $paramContainer->offsetSet('lob', $fp, ParameterContainer::TYPE_LOB);
+        $this->statement->setParameterContainer($paramContainer);
+        $this->statement->execute(array('lob' => $fp));
+    }
+
+    // TODO:
+//    public function testParametersBound()
+//    {
+//
+//    }
+
 }
