@@ -38,8 +38,7 @@ class Statement extends ZendPdoStatement
                     case ParameterContainer::TYPE_DOUBLE:
                         $value = (float) $value;
                         break;
-
-                    //TODO: check Sphinx compatibility
+                    // TODO: check Sphinx compatibility
                     case ParameterContainer::TYPE_LOB:
                         $type = \PDO::PARAM_LOB;
                         break;
