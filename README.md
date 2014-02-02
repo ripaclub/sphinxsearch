@@ -8,14 +8,14 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 This Library aims to provide:
 
- - A `SphinxQL` query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html)
+ - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html)
  - A simple `Search` class
  - An `Indexer` class to work with RT indices
- - Factories for `SphinxQL` connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
+ - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
 
 ###### Note
 
-This library does not use `SphinxClient` PHP extension because everything available through the Sphinx API is also available via `SphinxQL` but not vice versa (i.e., writing to RT indicies is only available via `SphinxQL`).
+This library does not use `SphinxClient` PHP extension because everything available through the Sphinx API is also available via SphinxQL but not vice versa (i.e., writing to RT indicies is only available via SphinxQL).
 
 ## Installation
 
@@ -105,14 +105,14 @@ The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://frame
       ->where
       ->having
 
-Thus it adds some `SphinxQL` specific methods:
+Thus it adds some SphinxQL specific methods:
 
      withinGroupOrder($withinGroupOrder)
      option(array $values, $flag = self::OPTIONS_MERGE)
 
 Other utility methods as `setSpecifications`, `getRawState` and `reset` are fully supported.
 
-Instead `quantifier`, `join` and `combine` are just ignored because `SphinxQL` syntax doesn't have them.
+Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syntax doesn't have them.
 
 ### Indexer
 
@@ -141,7 +141,10 @@ Only two drivers are supported:
 
 ### Prepared statement
 
-`SphinxQL` does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
+SphinxQL does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. 
+
+###### Note
+The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
 
 For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setQueryMode()` using one of the following flags:
 
@@ -153,25 +156,24 @@ With the `auto` option the component will use the best execution mode available,
 
 ### Working with types
 
-This library aims to normalize API usage among supported drivers and modes, but due to `SphinxQL` specifications there are some consideration:
+This library aims to normalize API usage among supported drivers and modes, but due to SphinxQL limitations there are some considerations:
 
 * `NULL`
 
-   Not supported by `SphinxQL`. The library transparently handle it for `SQL` compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
+   Not supported by SphinxQL. The library transparently handle it for SQL compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
 
 * `boolean`
 
-  `SphinxQL` does not have a native boolean type, however if you try to use a `PHP` bool when `SphinxQL` expects an integer the driver will caste the value to `0` or `1` respectively.
+  `SphinxQL` does not have a native boolean type, however if you try to use a PHP bool when SphinxQL expects an integer the driver will caste the value to `0` or `1` respectively.
 
-* `integer`
-
-  Both integer number and string containing integer work properly when `SphinxQL` expects an `uint` (WARNING: `SphinxQL` supports `UNSIGNED` integers and `UNIX` timestamp)
+* `integer` Both integer number and string containing integer work properly when SphinxQL expects an `uint` 
+  (WARNING: PHP integers are signed, instead SphinxQL supports UNSIGNED integers and UNIX timestamp)
 
 * `float`
 
-  Due to some limitation of `PDO` driver, only proper `PHP` float values work in prepared statement mode. Also the `PDO` decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
+  Due to some limitations of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
 
-For those reasons we suggest to use proper `PHP` native types always (i.e., not use strings for numeric fields) when building queries.
+For those reasons we suggest to use proper PHP native types always (i.e., not use strings for numeric fields) when building queries.
 
 Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
