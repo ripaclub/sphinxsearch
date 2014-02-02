@@ -156,15 +156,19 @@ With the `auto` option the component will use the best execution mode available,
 This library aims to normalize API usage among supported drivers and modes, but due to `SphinxQL` specifications there are some consideration:
 
 * `NULL`
+
    Not supported by `SphinxQL`. The library transparently handle it for `SQL` compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
 
 * `boolean`
+
   `SphinxQL` does not have a native boolean type, however if you try to use a `PHP` bool when `SphinxQL` expects an integer the driver will caste the value to `0` or `1` respectively.
 
 * `integer`
+
   Both integer number and string containing integer work properly when `SphinxQL` expects an `uint` (WARNING: `SphinxQL` supports `UNSIGNED` integers and `UNIX` timestamp)
 
 * `float`
+
   Due to some limitation of `PDO` driver, only proper `PHP` float values work in prepared statement mode. Also the `PDO` decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
 
 For those reasons we suggest to use proper `PHP` native types always (i.e., not use strings for numeric fields) when building queries.
