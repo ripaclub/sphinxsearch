@@ -114,17 +114,19 @@ With the 'auto' option the component will use the best execution mode available,
 
 ### Working with types
 
-This library aims to normalize API usage among supported drivers and modes, bud due to Sphinx specification there're some consideration:
+This library aims to normalize API usage among supported drivers and modes, but due to Sphinx specification there're some consideration:
 
-* `NULL` is not supported by Sphinx, however the library transparently hadle this case for SQL compatibility. An exception will be thrown by the driver if you try to use a value = `NULL`
+* `NULL` is not supported by Sphinx, however the library transparently handle this case for SQL compatibility. An exception will be thrown by the driver if you try to use a value = `NULL`
 
 * `boolean` Sphinx doesn't have a native boolean type, however if you try to use a PHP bool when Sphinx expects an integer the driver will caste the value to 0 or 1 respectively.
 
-* `integer` both integer number and string of integer work properly when Sphinx expects an integer. 
+* `integer` both integer number and string of integer work properly when Sphinx expects an `uint` (WARNING: Sphinx supports UNSIGNED integers and UNIX timestamp)
 
 * `float` due to some limitation of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if LC_NUMERIC setting is compliant with point as separator in decimal notation. 
 
 For those reasons we suggest to use proper PHP native types always (i.e not use strings for numeric fields) when building queries.
+
+Usefull link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
 
 ### SQL Objects
