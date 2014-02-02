@@ -35,11 +35,13 @@ class Statement extends ZendPdoStatement
                     case ParameterContainer::TYPE_NULL:
                         $type = \PDO::PARAM_NULL;
                         break;
+                    case ParameterContainer::TYPE_DOUBLE:
+                        $value = (float) $value;
+                        break;
+
+                    //TODO: check Sphinx compatibility
                     case ParameterContainer::TYPE_LOB:
                         $type = \PDO::PARAM_LOB;
-                        break;
-                    case (is_bool($value)):
-                        $type = \PDO::PARAM_BOOL;
                         break;
                 }
             }

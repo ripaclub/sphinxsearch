@@ -3,8 +3,8 @@ Sphinx Search [![License](http://img.shields.io/badge/license-BSD--2-green.svg)]
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
-Introduction
----
+## Introduction
+
 
 This Library aims to provide:
 
@@ -17,8 +17,8 @@ This Library aims to provide:
 
 This library does not use `SphinxClient` PHP extension because everything available through the Sphinx API is also available via `SphinxQL` but not vice versa (i.e., writing to RT indicies is only available via `SphinxQL`).
 
-Installation
----
+## Installation
+
 
 Using [composer](http://getcomposer.org/):
 
@@ -34,8 +34,8 @@ Alternately with git submodules:
     git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
 
 
-Configuration
----
+## Configuration (simple)
+
 
 Register in the `ServiceManager` the provided factories through the `service_manager` configuration node:
 
@@ -45,11 +45,6 @@ Register in the `ServiceManager` the provided factories through the `service_man
           'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
         ),
 
-        // Alternately register the abstract facory
-        'abstract_factories' => array(
-          'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
-        ),
-
         // Optionally
         'aliases' => array(
           'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
@@ -57,27 +52,71 @@ Register in the `ServiceManager` the provided factories through the `service_man
 
     )
 
-Then in your configuration add the `sphinxql` node and configure it with connection parameters via `Pdo` driver. Configuration parameters will be used by `Zend\Db\Adapter\Adapter` (refer to its documentation for details).
-
-Example:
+Then in your configuration add the `sphinxql` node and configure it with connection parameters as in example:
 
     'sphinxql' => array(
-        'driver'         => 'Pdo',
-        'dsn'            => 'mysql:dbname=dummy;host=127.0.0.1;port=9306;',
-        'driver_options' => array(
-            \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+        'driver'    => 'pdo_mysql',
+        'database'  => 'dummy',
+        'hostname'  => '127.0.0.1',
+        'port'      => 9306,
+        'charset'   => 'UTF8'
+    )
+
+For more details see the "Adapter Service Factory" section.
+
+## Using
+
+
+
+### Search
+
+
+### Indexer
+
+
+
+## Advanced
+
+
+### Adapter Service Factory
+
+This library come with two factories in bundle in order to properly configure the `Zend\Db\Adapter\Adapter` to work with Sphinx.
+
+Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (like in the "Configuration" section above) for a single connection or, if you need to use multiple connection, use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory registering` it in the service manager as below:
+
+    'service_manager' => array(
+        ...
+       
+        'abstract_factories' => array(
+          'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
         ),
     )
 
-If you use the abstract factory refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory)
+For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory)
 
-Using
----
 
-Two driver are supported.
+Only two drivers are supported:
 
-- PDO (MySQL only)
+- PDO_MySQL
 - Mysqli
+
+### Prepared statement
+
+SphinxQL doesn't support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. With the Pdo driver prepared and non-prepared query are supported. The Mysqli driver doesn't support prepared query.
+
+For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setExecutionMode()` using one of the following flags:
+
+    const EXECUTE_MODE_PREPARED = 'prepared';
+    const EXECUTE_MODE_QUERY    = 'query';
+    const EXECUTE_MODE_AUTO     = 'auto';
+    
+With the 'auto' option the component will use the best execution mode available, prefering prepared mode if supported by the driver.
+
+
+### SQL Objects
+
+
+
 
 Testing
 ---
