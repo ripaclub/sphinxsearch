@@ -70,6 +70,51 @@ For more details see the "Adapter Service Factory" section.
 
 ### Search
 
+Assming $adapter was retrivied via ServiceManager:
+
+        use SphinxSearch\Search;
+        $search = new Search($adapter);
+        $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
+
+        echo 'Founds row:';
+        foreach ($rowset as $row) {
+            echo $row['id'] . PHP_EOL;
+        }
+
+The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`). 
+Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current Select object that is being used to build the SELECT query. The following usage is possible:
+
+        use SphinxSearch\Search;
+        use SphinxSearch\Db\Sql\Select; 
+        $search = new Search($adapter);
+        $rowset = $search->search('foo', function(Select $select){
+            $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
+                   ->where(array('c1 > ?' => 5))
+                   ->limit(1);
+        });
+
+The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from), supports the following methods related to SQL standard clauses:
+
+      from($table)
+      columns(array $columns)
+      where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+      group($group)
+      having($predicate, $combination = Predicate\PredicateSet::OP_AND)
+      order($order)
+      limit($limit)
+      offset($offset)
+      
+      //and also variable overloading for:
+      ->where
+      ->having
+      
+Thus it adds some Sphinx-specific methods:
+
+     withinGroupOrder($withinGroupOrder)
+     option(array $values, $flag = self::OPTIONS_MERGE)
+
+Other utility methods as `setSpecifications`, `getRawState` and `reset` are fully supported.
+Instead `quantifier`, `join` and `combine` are just ignored becaouse SphinxQL syntax doesn't have them.
 
 ### Indexer
 
