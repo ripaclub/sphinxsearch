@@ -8,6 +8,9 @@
  */
 namespace SphinxSearchTest\IntegrationTest;
 
+/**
+ * @group integration
+ */
 class PDOIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(

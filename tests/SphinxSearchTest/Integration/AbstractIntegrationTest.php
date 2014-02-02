@@ -20,6 +20,7 @@ use SphinxSearch\Indexer;
 use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Replace;
 use Zend\Db\Adapter\Adapter;
+
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 

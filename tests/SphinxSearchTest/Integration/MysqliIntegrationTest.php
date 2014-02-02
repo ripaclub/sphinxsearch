@@ -8,7 +8,9 @@
  */
 namespace SphinxSearchTest\IntegrationTest;
 
-
+/**
+ * @group integration
+ */
 class MysqliIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(
