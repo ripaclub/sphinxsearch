@@ -11,6 +11,7 @@ namespace SphinxSearchTest\Db\Adapter;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 use \Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use SphinxSearch\Db\Adapter\AdapterServiceFactory;
 
 class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
 
@@ -84,22 +85,26 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zend\Db\Adapter\Adapter', $actual);
     }
 
-//    /**
-//     * @testdox Launch exception when driver is not supported
-//     */
-//    public function testUnsupportedDriver()
-//    {
-//        $sManager = new ServiceManager(new Config(array(
-//            'factories' => array(
-//                'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
-//            )
-//        )));
-//        $sManager->setService('Config', array(
-//                'sphinxql' => array(
-//                    'driver' => 'pdo'
-//                )
-//        ));
-//        $sManager->get('SphinxSearch\Db\Adapter\Adapter');
-//    }
+   /**
+    * @testdox Launch exception when driver is not supported
+    */
+   public function testUnsupportedDriver()
+   {
+       // testing Mysqli driver
+       $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\Pdo\Pdo', array('getDatabasePlatformName'), array(), '', false);
+       $mockDriver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('NotMysql'));
+
+       $sManager = new ServiceManager();
+       $sManager->setService('Config', array(
+               'sphinxql' => $mockDriver
+       ));
+
+       //Test exception by factory
+       $factory = new AdapterServiceFactory();
+
+       $this->setExpectedException('SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException');
+       $factory->createService($sManager);
+
+   }
 
 }
