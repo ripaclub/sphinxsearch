@@ -43,14 +43,6 @@ abstract class AbstractComponent
     }
 
     /**
-     * @return \Zend\Db\ResultSet\ResultSetInterface
-     */
-    public function getResultSetPrototype()
-    {
-        return $this->resultSetPrototype;
-    }
-
-    /**
      * @return \SphinxSearch\Db\Sql\Sql
      */
     public function getSql()
@@ -107,7 +99,7 @@ abstract class AbstractComponent
 
     /**
      * @param AbstractSql $sqlObject
-     * @param string $usePreparedStatement
+     * @param bool $usePreparedStatement
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
     public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
