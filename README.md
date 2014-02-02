@@ -19,7 +19,6 @@ This library does not use `SphinxClient` PHP extension because everything availa
 
 ## Installation
 
-
 Using [composer](http://getcomposer.org/):
 
 Add the following to your `composer.json` file:
@@ -33,9 +32,7 @@ Alternately with git submodules:
 
     git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
 
-
 ## Configuration (simple)
-
 
 Register in the `ServiceManager` the provided factories through the `service_manager` configuration node:
 
@@ -66,23 +63,23 @@ For more details see the "Adapter Service Factory" section.
 
 ## Using
 
-
-
 ### Search
 
-Assming $adapter was retrivied via ServiceManager:
+Assuming `$adapter` has been retrivied via `ServiceManager`:
 
         use SphinxSearch\Search;
         $search = new Search($adapter);
         $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
 
-        echo 'Founds row:';
+        echo 'Founds row:' . PHP_EOL;
         foreach ($rowset as $row) {
             echo $row['id'] . PHP_EOL;
         }
 
 The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`).
-Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current Select object that is being used to build the SELECT query. The following usage is possible:
+Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current `Select` object that is being used to build the `SELECT` query.
+
+The following usage is possible:
 
         use SphinxSearch\Search;
         use SphinxSearch\Db\Sql\Select;
@@ -104,83 +101,84 @@ The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://frame
       limit($limit)
       offset($offset)
 
-      //and also variable overloading for:
+      // And also variable overloading for:
       ->where
       ->having
 
-Thus it adds some Sphinx-specific methods:
+Thus it adds some `SphinxQL` specific methods:
 
      withinGroupOrder($withinGroupOrder)
      option(array $values, $flag = self::OPTIONS_MERGE)
 
 Other utility methods as `setSpecifications`, `getRawState` and `reset` are fully supported.
-Instead `quantifier`, `join` and `combine` are just ignored becaouse SphinxQL syntax doesn't have them.
+
+Instead `quantifier`, `join` and `combine` are just ignored because `SphinxQL` syntax doesn't have them.
 
 ### Indexer
 
-
+_TODO_
 
 ## Advanced
 
-
 ### Adapter Service Factory
 
-This library come with two factories in bundle in order to properly configure the `Zend\Db\Adapter\Adapter` to work with Sphinx.
+This library come with two factories in bundle in order to properly configure the `Zend\Db\Adapter\Adapter` to work with Sphinx Search.
 
-Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (like in the "Configuration" section above) for a single connection or, if you need to use multiple connection, use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory registering` it in the service manager as below:
+Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection or, if you need to use multiple connection, use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
 
     'service_manager' => array(
-        ...
-
-        'abstract_factories' => array(
+          'abstract_factories' => array(
           'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
         ),
     )
 
-For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory)
-
+For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
 
 Only two drivers are supported:
 
-- PDO_MySQL
-- Mysqli
+- `PDO_MySQL`
+- `Mysqli`
 
 ### Prepared statement
 
-SphinxQL doesn't support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. With the Pdo driver prepared and non-prepared query are supported. The Mysqli driver doesn't support prepared query.
+`SphinxQL` does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
 
 For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setQueryMode()` using one of the following flags:
 
-    const QUERY_MODE_PREPARED   = 'prepared'; //use prepared statement
-    const QUERY_MODE_EXECUTE    = 'execute';  //do not use prepared statement
-    const QUERY_MODE_AUTO       = 'auto';     //auto detect best available options (prepared mode preferred)
+    const QUERY_MODE_PREPARED   = 'prepared'; // use prepared statement
+    const QUERY_MODE_EXECUTE    = 'execute';  // do not use prepared statement
+    const QUERY_MODE_AUTO       = 'auto';     // auto detect best available options (prepared mode preferred)
 
-With the 'auto' option the component will use the best execution mode available, prefering prepared mode if supported by the driver.
+With the `auto` option the component will use the best execution mode available, prefering prepared mode if supported by the driver.
 
 ### Working with types
 
-This library aims to normalize API usage among supported drivers and modes, but due to Sphinx specification there're some consideration:
+This library aims to normalize API usage among supported drivers and modes, but due to `SphinxQL` specifications there are some consideration:
 
-* `NULL` is not supported by Sphinx, however the library transparently handle this case for SQL compatibility. An exception will be thrown by the driver if you try to use a value = `NULL`
+* `NULL`
+   Not supported by `SphinxQL`. The library transparently handle it for `SQL` compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
 
-* `boolean` Sphinx doesn't have a native boolean type, however if you try to use a PHP bool when Sphinx expects an integer the driver will caste the value to 0 or 1 respectively.
+* `boolean`
+  `SphinxQL` does not have a native boolean type, however if you try to use a `PHP` bool when `SphinxQL` expects an integer the driver will caste the value to `0` or `1` respectively.
 
-* `integer` both integer number and string of integer work properly when Sphinx expects an `uint` (WARNING: Sphinx supports UNSIGNED integers and UNIX timestamp)
+* `integer`
+  Both integer number and string containing integer work properly when `SphinxQL` expects an `uint` (WARNING: `SphinxQL` supports `UNSIGNED` integers and `UNIX` timestamp)
 
-* `float` due to some limitation of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if LC_NUMERIC setting is compliant with point as separator in decimal notation.
+* `float`
+  Due to some limitation of `PDO` driver, only proper `PHP` float values work in prepared statement mode. Also the `PDO` decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
 
-For those reasons we suggest to use proper PHP native types always (i.e not use strings for numeric fields) when building queries.
+For those reasons we suggest to use proper `PHP` native types always (i.e., not use strings for numeric fields) when building queries.
 
-Usefull link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
-
+Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
 ### SQL Objects
 
-
-
+_TODO_
 
 Testing
 ---
+
+The library source code is 100% coverade by unit tests.
 
 Once installed development dependencies through composer you can run `phpunit`.
 
