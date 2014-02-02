@@ -81,11 +81,11 @@ Assming $adapter was retrivied via ServiceManager:
             echo $row['id'] . PHP_EOL;
         }
 
-The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`). 
+The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`).
 Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current Select object that is being used to build the SELECT query. The following usage is possible:
 
         use SphinxSearch\Search;
-        use SphinxSearch\Db\Sql\Select; 
+        use SphinxSearch\Db\Sql\Select;
         $search = new Search($adapter);
         $rowset = $search->search('foo', function(Select $select){
             $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
@@ -103,11 +103,11 @@ The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://frame
       order($order)
       limit($limit)
       offset($offset)
-      
+
       //and also variable overloading for:
       ->where
       ->having
-      
+
 Thus it adds some Sphinx-specific methods:
 
      withinGroupOrder($withinGroupOrder)
@@ -131,7 +131,7 @@ Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (like in the "Configuration"
 
     'service_manager' => array(
         ...
-       
+
         'abstract_factories' => array(
           'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
         ),
@@ -149,12 +149,12 @@ Only two drivers are supported:
 
 SphinxQL doesn't support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. With the Pdo driver prepared and non-prepared query are supported. The Mysqli driver doesn't support prepared query.
 
-For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setExecutionMode()` using one of the following flags:
+For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setQueryMode()` using one of the following flags:
 
-    const EXECUTE_MODE_PREPARED = 'prepared';
-    const EXECUTE_MODE_QUERY    = 'query';
-    const EXECUTE_MODE_AUTO     = 'auto';
-    
+    const QUERY_MODE_PREPARED   = 'prepared'; //use prepared statement
+    const QUERY_MODE_EXECUTE    = 'execute';  //do not use prepared statement
+    const QUERY_MODE_AUTO       = 'auto';     //auto detect best available options (prepared mode preferred)
+
 With the 'auto' option the component will use the best execution mode available, prefering prepared mode if supported by the driver.
 
 ### Working with types
@@ -167,7 +167,7 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
 * `integer` both integer number and string of integer work properly when Sphinx expects an `uint` (WARNING: Sphinx supports UNSIGNED integers and UNIX timestamp)
 
-* `float` due to some limitation of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if LC_NUMERIC setting is compliant with point as separator in decimal notation. 
+* `float` due to some limitation of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if LC_NUMERIC setting is compliant with point as separator in decimal notation.
 
 For those reasons we suggest to use proper PHP native types always (i.e not use strings for numeric fields) when building queries.
 

@@ -93,7 +93,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $data = $selectTest->providerData();
 
-        echo PHP_EOL . 'Testing SphinxQL queries ...' . PHP_EOL;
+//         echo PHP_EOL . 'Testing SphinxQL queries ...' . PHP_EOL;
 
         foreach ($data as $namedParam) {
             // $select    $sqlPrep    $params     $sqlStr    $internalTests // use named param
@@ -125,7 +125,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             }
 
 
-            echo $sqlStr . PHP_EOL;
+//             echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
 
@@ -144,10 +144,10 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->adapter->query('DELETE FROM foo WHERE id = 1', Adapter::QUERY_MODE_EXECUTE);
 
         $indexer = new Indexer($this->adapter);
-        $indexer->setExecutionMode($indexer::EXECUTE_MODE_PREPARED);
+        $indexer->setQueryMode($indexer::QUERY_MODE_PREPARED);
 
         $search = clone $this->search;
-        $search->setExecutionMode($search::EXECUTE_MODE_PREPARED);
+        $search->setQueryMode($search::QUERY_MODE_PREPARED);
 
         $affectedRow = $indexer->insert('foo', array(
             'id' => 1,
@@ -201,9 +201,17 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $this->adapter->query('DELETE FROM foo WHERE id = 1', Adapter::QUERY_MODE_EXECUTE);
 
+        $search = new Search($this->adapter);
+        $search->setQueryMode($search::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($this->adapter);
+        $indexer->setQueryMode($indexer::QUERY_MODE_EXECUTE);
+
 
         $sql = new Sql($this->adapter);
 
+
+        //test Replace with sql query
         $insert = new Replace('foo');
         $insert->values(array(
             'id' => 1,
@@ -213,12 +221,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             'f1' => 3.333,
         ));
 
-        $affectedRow = $this->adapter->query(
-            $sql->getSqlStringForSqlObject($insert),
-            Adapter::QUERY_MODE_EXECUTE
-        )->getAffectedRows();
-
-
+        $affectedRow = $indexer->insertWith($insert);
         $this->assertEquals(1, $affectedRow);
 
 
@@ -226,11 +229,8 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $select->where(array('id' => 1));
 
 
-        //test sql
-        $results = $this->adapter->query(
-            $sql->getSqlStringForSqlObject($select),
-            Adapter::QUERY_MODE_EXECUTE
-        );
+        //test select sql
+        $results = $search->searchWith($select);
 
 
         foreach ($results as $result) {
@@ -246,7 +246,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $select = new Select('foo');
         $select->where(array('f1' => 3.333));
 
-        //test sql
+        //test select sql with float in where and direct adapter execution
         $results = $this->adapter->query(
             $sql->getSqlStringForSqlObject($select),
             Adapter::QUERY_MODE_EXECUTE
@@ -262,6 +262,49 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             break;
         }
 
+    }
+
+    public function testDocUseCase1()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+
+        $indexer = new Indexer($adapter);
+
+        $indexer->insert('foo', array(
+            'id'    => 11,
+            'short' => 'hello world',
+            'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            'c1'    => 10,
+            'c2'    => 100,
+            'c3'    => 1000,
+            'f1'    => pi(),
+        ), true);
+
+
+        $search = new Search($adapter);
+        $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
+
+        foreach ($rowset as $row) {
+//             echo $row['id'] . PHP_EOL;
+        }
+
+        $this->assertEquals(11, $row['id']);
+
+        $search = new Search($adapter);
+        $rowset = $search->search('foo', function(Select $select){
+            $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
+                   ->where(array('c1 > ?' => 5))
+                   ->limit(1);
+        });
+
+        $this->assertEquals(1, $rowset->count());
+        $current = $rowset->current();
+
+        $this->assertEquals(11, $current['id']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
 
 }

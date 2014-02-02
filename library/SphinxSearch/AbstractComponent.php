@@ -13,9 +13,9 @@ use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
 
 abstract class AbstractComponent
 {
-    const EXECUTE_MODE_PREPARED = 'prepared';
-    const EXECUTE_MODE_QUERY    = 'query';
-    const EXECUTE_MODE_AUTO     = 'auto';
+    const QUERY_MODE_PREPARED   = 'prepared'; //use prepared statement
+    const QUERY_MODE_EXECUTE    = 'execute';  //do not use prepared statement
+    const QUERY_MODE_AUTO       = 'auto';     //auto detect best available options (prepared mode preferred)
 
     /**
      * @var \Zend\Db\Adapter\Adapter
@@ -31,7 +31,7 @@ abstract class AbstractComponent
     /**
      * @var string
      */
-    protected $executeMode = self::EXECUTE_MODE_AUTO;
+    protected $executeMode = self::QUERY_MODE_AUTO;
 
 
     /**
@@ -63,9 +63,9 @@ abstract class AbstractComponent
      * @throws \InvalidArgumentException
      * @return \SphinxSearch\AbstractComponent
      */
-    public function setExecutionMode($flag)
+    public function setQueryMode($flag)
     {
-        if (!in_array($flag, array(self::EXECUTE_MODE_AUTO, self::EXECUTE_MODE_PREPARED, self::EXECUTE_MODE_QUERY))) {
+        if (!in_array($flag, array(self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE))) {
             throw new \InvalidArgumentException('Invalid execution mode. Must be one of: auto, prepared or query');
         }
 
@@ -76,7 +76,7 @@ abstract class AbstractComponent
     /**
      * @return string
      */
-    public function getExecutionMode()
+    public function getQueryMode()
     {
         return $this->executeMode;
     }
@@ -86,9 +86,9 @@ abstract class AbstractComponent
      *
      * @return boolean
      */
-    public function usePreparedStatement()
+    public function getUsePreparedStatement()
     {
-        if ($this->executeMode === self::EXECUTE_MODE_AUTO) {
+        if ($this->executeMode === self::QUERY_MODE_AUTO) {
             // Mysqli doesn't support client side prepared statement emulation
             if ($this->getAdapter()->getDriver() instanceof ZendMysqliDriver) {
                 return false;
@@ -98,7 +98,7 @@ abstract class AbstractComponent
             return true;
         }
 
-        if ($this->executeMode === self::EXECUTE_MODE_PREPARED) {
+        if ($this->executeMode === self::QUERY_MODE_PREPARED) {
             return true;
         }
 
@@ -113,7 +113,7 @@ abstract class AbstractComponent
     public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
     {
         if ($usePreparedStatement === null) {
-            $usePreparedStatement = $this->usePreparedStatement();
+            $usePreparedStatement = $this->getUsePreparedStatement();
         }
 
         if ($usePreparedStatement) {

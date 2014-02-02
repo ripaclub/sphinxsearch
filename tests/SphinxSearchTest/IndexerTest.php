@@ -55,6 +55,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'))))->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'))))->with($this->equalTo('foo'));
 
+
         // Setup the indexer object
         $this->indexer = new Indexer($this->mockAdapter, $this->mockSql);
     }
