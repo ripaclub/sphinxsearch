@@ -9,6 +9,7 @@
             <group>integration</group>
         </exclude>
     </groups>
+
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">../library</directory>

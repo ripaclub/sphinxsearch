@@ -8,18 +8,14 @@
  */
 namespace SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset;
 
-class CtorlessPdo extends \Pdo
+use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
+
+class ParametersBoundedAlreadyStatement extends Statement
 {
-    protected $mockStatement;
 
-    public function __construct($mockStatement)
-    {
-        $this->mockStatement = $mockStatement;
-    }
-
-    public function prepare($sql, $options = null)
-    {
-        return $this->mockStatement;
-    }
+    /**
+     * @var bool
+     */
+    protected $parametersBound = true;
 
 }

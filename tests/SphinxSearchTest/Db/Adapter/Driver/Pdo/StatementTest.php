@@ -10,6 +10,7 @@ namespace SphinxSearchTest\Db\Adapter\Driver\Pdo;
 
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
 use Zend\Db\Adapter\ParameterContainer;
+use SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset\ParametersBoundedAlreadyStatement;
 
 class StatementTest  extends \PHPUnit_Framework_TestCase
 {
@@ -184,10 +185,25 @@ class StatementTest  extends \PHPUnit_Framework_TestCase
         $this->statement->execute(array('lob' => $fp));
     }
 
-    // TODO:
-//    public function testParametersBound()
-//    {
-//
-//    }
+   /**
+    * This test is required to assure future compatibility with parent statement class provided by zend.
+    *
+    * We're testing the not used property $this->parametersBound simulating it was true.
+    *
+    */
+   public function testParametersBoundedAlready()
+   {
+       $statement = new ParametersBoundedAlreadyStatement();
+       $statement->setDriver(
+           $this->getMock('Zend\Db\Adapter\Driver\Pdo\Pdo', array(), array(), '', false)
+       );
+       $statement->initialize(new TestAsset\CtorlessPdo(
+           $pdoStatementMock = $this->getMock('PDOStatement', array('bindParam')))
+       );
+
+       //bind param should be never called becaouse we set parametersBound = true in ParametersBounededAlteradStatement test asset
+       $pdoStatementMock->expects($this->never())->method('bindParam');
+       $statement->execute(array('dummy' => 'dummy'));
+   }
 
 }
