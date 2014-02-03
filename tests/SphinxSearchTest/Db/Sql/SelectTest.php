@@ -881,16 +881,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //         );
 
         //test combine (silent ignore)
-//         $select44 = new Select;
-//         $select44->from('foo');
-//         $select44b = new Select;
-//         $select44b->from('bar')->where('c = d');
-//         $select44->combine($select44b, Select::COMBINE_UNION, 'ALL');
-//         $sqlPrep44 = // same
-//         $sqlStr44 = 'SELECT * FROM `foo`';
-//         $internalTests44 = array(
-//             'processSelect' => array(array(array('*')), '`foo`'),
-//         );
+        $select44 = new Select;
+        $select44->from('foo');
+        $select44b = new Select;
+        $select44b->from('bar')->where('c = d');
+        $select44->combine($select44b, Select::COMBINE_UNION, 'ALL');
+        $sqlPrep44 = // same
+        $sqlStr44 = 'SELECT * FROM `foo`';
+        $internalTests44 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+        );
 
         // limit with offset
         $select45 = new Select;
@@ -1012,7 +1012,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             array($select41, $sqlPrep41, array(),    $sqlStr41, $internalTests41),
 //             array($select42, $sqlPrep42, array(),    $sqlStr42, $internalTests42),
 //             array($select43, $sqlPrep43, array(),    $sqlStr43, $internalTests43),
-//             array($select44, $sqlPrep44, array(),    $sqlStr44, $internalTests44),
+            array($select44, $sqlPrep44, array(),    $sqlStr44, $internalTests44),
             array($select45, $sqlPrep45, $params45,  $sqlStr45, $internalTests45),
             array($select46, $sqlPrep46, array(),    $sqlStr46, $internalTests46),
             array($select47, $sqlPrep47, array(),    $sqlStr47, $internalTests47),
