@@ -143,9 +143,9 @@ All supported methods:
 Finally, `Indexer` has also `beginTransaction()`, `commit()`, `rollback()` methods in order to deal with   [transactions](http://sphinxsearch.com/docs/2.2.1/sphinxql-commit.html).
 
 ###### Note
- - [`insert`](http://sphinxsearch.com/docs/2.2.1/sphinxql-insert.html) with `$replace` = `true` will produce a SQL `REPLACE` query. 
+ - `insert` with `$replace` = `true` will produce a SQL [`REPLACE`](http://sphinxsearch.com/docs/2.2.1/sphinxql-insert.html) query. 
  - `$where` argument accepets same values accepted by `$where` in `Search`
- - Unlike `Search`, with write you can only one index at a time.
+ - Unlike `Search`, with writting operations you can use only one index at a time.
  
 
     
