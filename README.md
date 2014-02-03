@@ -37,7 +37,7 @@ Add the following to your `composer.json` file:
 
     "require": {
         "php": ">=5.3.3",
-        "ripaclub/sphinxsearch": "~0.2.0",
+        "ripaclub/sphinxsearch": "~0.3",
     }
 
 Alternately with git submodules:
