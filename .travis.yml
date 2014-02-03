@@ -18,7 +18,6 @@ before_script:
 
 script:
  - vendor/bin/phpunit -c tests/
- - vendor/bin/phpunit -c tests/ --group=integration
 
 notifications:
   email: false
