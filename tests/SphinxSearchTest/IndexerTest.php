@@ -1,16 +1,16 @@
 <?php
 /**
- * ZF2 Sphinx Search
+ * Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearchTests;
+namespace SphinxSearchTest;
 
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
-use SphinxSearchTests\Db\TestAsset\TrustedSphinxQL;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 
 class IndexerTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,6 +54,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $this->mockSql->expects($this->any())->method('replace')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values'))))->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'))))->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'))))->with($this->equalTo('foo'));
+
 
         // Setup the indexer object
         $this->indexer = new Indexer($this->mockAdapter, $this->mockSql);

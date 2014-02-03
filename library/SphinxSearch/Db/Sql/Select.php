@@ -1,6 +1,6 @@
 <?php
 /**
- * ZF2 Sphinx Search
+ * Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
@@ -431,11 +431,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $optionSql .= $optionParts->getSql();
             } else {
                 if ($driver) {
-                    $parameterContainer->offsetSet('option_' .  $optName, $optValue, is_int($optValue) ? ParameterContainer::TYPE_INTEGER : ParameterContainer::TYPE_AUTO);
+                    $parameterContainer->offsetSet('option_' .  $optName, $optValue);
                     $optionSql .= $driver->formatParameterName('option_' .  $optName);
                 } else {
-                    //SphnixQL syntax special case: interger option value must not quoted
-                    $optionSql .= is_int($optValue) ? $optValue : $platform->quoteValue($optValue);
+
+                    $optionSql .= $platform->quoteValue($optValue);
                 }
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);

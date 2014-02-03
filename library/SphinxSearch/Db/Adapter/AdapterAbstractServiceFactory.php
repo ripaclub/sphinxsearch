@@ -1,20 +1,20 @@
 <?php
 /**
- * ZF2 Sphinx Search
+ * Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearch\Db\Adapter;
 
-use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\Pdo\Pdo as ZendPdoDriver;
+use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
-use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
+use SphinxSearch\Db\Adapter\Driver\Pdo\Statement as PdoStatement;
 use SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException;
 
 /**
@@ -46,7 +46,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         return (
             isset($config[$requestedName])
-            && is_array($config[$requestedName])
+            //&& is_array($config[$requestedName]) //omitted because could be a driver instance
             && !empty($config[$requestedName])
         );
     }
@@ -55,9 +55,10 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * Create a DB adapter
      *
      * @param  ServiceLocatorInterface $services
-     * @param  string $name
-     * @param  string $requestedName
-     * @return Adapter
+     * @param  string                  $name
+     * @param  string                  $requestedName
+     * @throws Exception\UnsupportedDriverException
+     * @return \Zend\Db\Adapter\Adapter
      */
     public function createServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
     {
@@ -66,14 +67,14 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         $platform = new SphinxQL();
         $adapter  = new ZendDBAdapter($config[$requestedName], $platform);
         $driver   = $adapter->getDriver();
-
-        if (!$driver instanceof \Zend\Db\Adapter\Driver\Pdo\Pdo) {
-            throw new UnsupportedDriverException('Only Zend\Db\Adapter\Driver\Pdo\Pdo supported at moment');
+        // Check driver
+        if ($driver instanceof ZendPdoDriver && $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql') {
+            $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
+        } elseif (!$driver instanceof ZendMysqliDriver) {
+            throw new UnsupportedDriverException(get_class($driver) . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli');
         }
 
         $platform->setDriver($adapter->getDriver());
-        $adapter->getDriver()->registerStatementPrototype(new Statement());
-
 
         return $adapter;
     }

@@ -1,12 +1,11 @@
 <?php
 /**
- * ZF2 Sphinx Search
+ * Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearch\Db\Adapter\Driver\Pdo;
 
 use Zend\Db\Adapter\Driver\Pdo\Statement as ZendPdoStatement;
@@ -14,6 +13,7 @@ use Zend\Db\Adapter\ParameterContainer;
 
 class Statement extends ZendPdoStatement
 {
+
     /**
      * Bind parameters from container
      */
@@ -22,10 +22,11 @@ class Statement extends ZendPdoStatement
         if ($this->parametersBound) {
             return;
         }
-
         $parameters = $this->parameterContainer->getNamedArray();
         foreach ($parameters as $name => &$value) {
-            $type = \PDO::PARAM_STR;
+            // if param has no errata, PDO will detect the right type
+            $type = null;
+
             if ($this->parameterContainer->offsetHasErrata($name)) {
                 switch ($this->parameterContainer->offsetGetErrata($name)) {
                     case ParameterContainer::TYPE_INTEGER:
@@ -34,32 +35,17 @@ class Statement extends ZendPdoStatement
                     case ParameterContainer::TYPE_NULL:
                         $type = \PDO::PARAM_NULL;
                         break;
+                    case ParameterContainer::TYPE_DOUBLE:
+                        $value = (float) $value;
+                        break;
+                    // TODO: check Sphinx compatibility
                     case ParameterContainer::TYPE_LOB:
                         $type = \PDO::PARAM_LOB;
                         break;
-                    case (is_bool($value)):
-                        $type = \PDO::PARAM_BOOL;
-                        break;
-                }
-            } else {
-                switch (true) {
-
-                    case is_int($value):
-                        $type = \PDO::PARAM_INT;
-                        break;
-
-                    case is_null($value):
-                        $type = \PDO::PARAM_NULL;
-                        break;
-
-                    case is_bool($value):
-                        $type = \PDO::PARAM_BOOL;
-                        break;
-
                 }
             }
 
-            // parameter is named or positional, value is reference
+            // Parameter is named or positional, value is reference
             $parameter = is_int($name) ? ($name + 1) : $name;
             $this->resource->bindParam($parameter, $value, $type);
         }

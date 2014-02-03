@@ -1,6 +1,6 @@
 <?php
 /**
- * ZF2 Sphinx Search
+ * Sphinx Search
  *
  * @link        https://github.com/ripaclub/zf2-sphinxsearch
  * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
@@ -16,18 +16,8 @@ use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\TableIdentifier;
 
-class Indexer
+class Indexer extends AbstractComponent
 {
-
-    /**
-     * @var ZendDBAdapter
-     */
-    protected $adapter;
-
-    /**
-     * @var Sql
-     */
-    protected $sql;
 
     /**
      * @param ZendDBAdapter $adapter
@@ -37,22 +27,6 @@ class Indexer
     {
         $this->adapter = $adapter;
         $this->sql     = $sql ? $sql : new Sql($adapter);
-    }
-
-    /**
-     * @return \Zend\Db\Adapter\Adapter
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @return Sql
-     */
-    public function getSql()
-    {
-        return $this->sql;
     }
 
     /**
@@ -86,9 +60,9 @@ class Indexer
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param array $values
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier    $index
+     * @param array                     $values
+     * @param bool                      $replace
      * @return number
      */
     public function insert($index, array $values, $replace = false)
@@ -105,16 +79,15 @@ class Indexer
      */
     public function insertWith(Insert $insert)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($insert);
-        $result = $statement->execute();
+        $result = $this->executeSqlObject($insert);
 
         return $result->getAffectedRows();
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param array $values
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier        $index
+     * @param array                         $values
+     * @param Where|\Closure|string|array   $where
      * @return number
      */
     public function update($index, array $values, $where = null)
@@ -137,15 +110,14 @@ class Indexer
      */
     public function updateWith(Update $update)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($update);
-        $result = $statement->execute();
+        $result = $this->executeSqlObject($update);
 
         return $result->getAffectedRows();
     }
 
     /**
-     * @param null|string|TableIdentifier $index
-     * @param Where|\Closure|string|array $where
+     * @param string|TableIdentifier        $index
+     * @param Where|\Closure|string|array   $where
      * @return number
      */
     public function delete($index, $where)
@@ -167,12 +139,9 @@ class Indexer
      */
     public function deleteWith(Delete $delete)
     {
-        $statement = $this->sql->prepareStatementForSqlObject($delete);
-        $result = $statement->execute();
+        $result = $this->executeSqlObject($delete);
 
         return $result->getAffectedRows();
     }
-
-
 
 }
