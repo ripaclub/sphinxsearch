@@ -527,15 +527,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('1+1', '`Expression1`')))
         );
 
-//         // join with columns
-//         $select11 = new Select;
-//         $select11->from('foo')->join('zac', 'm = n', array('bar', 'baz'));
-//         $sqlPrep11 = // same
-//         $sqlStr11 = 'SELECT `foo`.*, `zac`.`bar` AS `bar`, `zac`.`baz` AS `baz` FROM `foo` INNER JOIN `zac` ON `m` = `n`';
-//         $internalTests11 = array(
-//             'processSelect' => array(array(array('`foo`.*'), array('`zac`.`bar`', '`bar`'), array('`zac`.`baz`', '`baz`')), '`foo`'),
-//             'processJoins'   => array(array(array('INNER', '`zac`', '`m` = `n`')))
-//         );
+        // test join (silent ignore)
+        $select11 = new Select;
+        $select11->from('foo')->join('zac', 'm = n', array('bar', 'baz'));
+        $sqlPrep11 = // same
+        $sqlStr11 = 'SELECT * FROM `foo`';
+        $internalTests11 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+        );
 
 //         // join with alternate type
 //         $select12 = new Select;
@@ -881,15 +880,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 //             'processSelect' => array(array(array('`bar`', '`bar`')), '`foo` AS `x`')
 //         );
 
+        //test combine (silent ignore)
 //         $select44 = new Select;
-//         $select44->from('foo')->where('a = b');
+//         $select44->from('foo');
 //         $select44b = new Select;
 //         $select44b->from('bar')->where('c = d');
 //         $select44->combine($select44b, Select::COMBINE_UNION, 'ALL');
 //         $sqlPrep44 = // same
-//         $sqlStr44 = '( SELECT `foo`.* FROM `foo` WHERE a = b ) UNION ALL ( SELECT `bar`.* FROM `bar` WHERE c = d )';
+//         $sqlStr44 = 'SELECT * FROM `foo`';
 //         $internalTests44 = array(
-//             'processCombine' => array('UNION ALL', 'SELECT `bar`.* FROM `bar` WHERE c = d')
+//             'processSelect' => array(array(array('*')), '`foo`'),
 //         );
 
         // limit with offset
@@ -979,7 +979,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select8,  $sqlPrep8,  array(),    $sqlStr8,  $internalTests8),
             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
-//             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
+            array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
 //             array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
 //             array($select13, $sqlPrep13, array(),    $sqlStr13, $internalTests13),
 //             array($select14, $sqlPrep14, array(),    $sqlStr14, $internalTests14),
@@ -1069,5 +1069,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         );
         $select->reset(Select::TABLE);
     }
+
 
 }
