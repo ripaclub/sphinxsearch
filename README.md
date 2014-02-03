@@ -3,8 +3,20 @@ Sphinx Search [![License](http://img.shields.io/badge/license-BSD--2-green.svg)]
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
-## Introduction
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Configuration (simple)](#configuration-simple)
+- [Usage](#usage)
+	- [Search](#search)
+	- [Indexer](#indexer)
+- [Advanced](#advanced)
+	- [Adapter Service Factory](#adapter-service-factory)
+	- [Prepared statement](#prepared-statement)
+	- [Working with types](#working-with-types)
+	- [SQL Objects](#sql-objects)
+- [Testing](#testing)
 
+## Introduction
 
 This Library aims to provide:
 
@@ -61,7 +73,7 @@ Then in your configuration add the `sphinxql` node and configure it with connect
 
 For more details see the "Adapter Service Factory" section.
 
-## Using
+## Usage
 
 ### Search
 
