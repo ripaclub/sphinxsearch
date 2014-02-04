@@ -128,7 +128,28 @@ Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syn
 
 ### Indexer
 
-_TODO_
+The `Indexer` allows you to write into [RT Index](http://sphinxsearch.com/docs/2.2.1/rt-overview.html). For instance the following code will insert a row into the index `foo`:
+
+    use SphinxSearch\Indexer;
+    $indexer = new Indexer($adapter);
+    $indexer->insert('foo', array('id' => 1, 'text' => 'Lorem ipsum dolor'));
+    
+All supported methods:
+
+    insert($index, array $values, $replace = false)
+    update($index, array $values, $where = null)
+    delete($index, $where)
+
+Finally, `Indexer` has also `beginTransaction()`, `commit()`, `rollback()` methods in order to deal with   [transactions](http://sphinxsearch.com/docs/2.2.1/sphinxql-commit.html).
+
+###### Note
+ - `insert` with `$replace` = `true` will produce a SQL [`REPLACE`](http://sphinxsearch.com/docs/2.2.1/sphinxql-insert.html) query. 
+ - `$where` argument accepets same values accepted by `$where` in `Search`
+ - Unlike `Search`, with writting operations you can use only one index at a time.
+ 
+
+    
+
 
 ## Advanced
 
