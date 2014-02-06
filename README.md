@@ -80,10 +80,10 @@ For more details see the "Adapter Service Factory" section.
 Assuming `$adapter` has been retrivied via `ServiceManager`:
 
         use SphinxSearch\Search;
-        use Zend\Db\Sql\Expression;
+        use SphinxSearch\Db\Sql\Predicate\Match;
 
         $search = new Search($adapter);
-        $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
+        $rowset = $search->search('foo', new Match('?', 'ipsum dolor'));
 
         echo 'Founds row:' . PHP_EOL;
         foreach ($rowset as $row) {
@@ -97,11 +97,11 @@ The following usage is possible:
 
         use SphinxSearch\Search;
         use SphinxSearch\Db\Sql\Select;
-        use Zend\Db\Sql\Expression;
+        use SphinxSearch\Db\Sql\Predicate\Match;
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', function(Select $select){
-            $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
+            $select->where(new Match('?', 'ipsum dolor'))
                    ->where(array('c1 > ?' => 5))
                    ->limit(1);
         });
