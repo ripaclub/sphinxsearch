@@ -80,6 +80,8 @@ For more details see the "Adapter Service Factory" section.
 Assuming `$adapter` has been retrivied via `ServiceManager`:
 
         use SphinxSearch\Search;
+        use Zend\Db\Sql\Expression;
+
         $search = new Search($adapter);
         $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
 
@@ -95,6 +97,8 @@ The following usage is possible:
 
         use SphinxSearch\Search;
         use SphinxSearch\Db\Sql\Select;
+        use Zend\Db\Sql\Expression;
+
         $search = new Search($adapter);
         $rowset = $search->search('foo', function(Select $select){
             $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
@@ -153,7 +157,7 @@ Only two drivers are supported:
 
 ### Prepared statement
 
-SphinxQL does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature. 
+SphinxQL does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature.
 
 ###### Note
 The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
@@ -178,7 +182,7 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
   `SphinxQL` does not have a native boolean type, however if you try to use a PHP bool when SphinxQL expects an integer the driver will caste the value to `0` or `1` respectively.
 
-* `integer` Both integer number and string containing integer work properly when SphinxQL expects an `uint` 
+* `integer` Both integer number and string containing integer work properly when SphinxQL expects an `uint`
   (WARNING: PHP integers are signed, instead SphinxQL supports UNSIGNED integers and UNIX timestamp)
 
 * `float`
