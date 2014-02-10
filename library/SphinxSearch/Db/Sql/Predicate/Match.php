@@ -9,6 +9,7 @@
 namespace SphinxSearch\Db\Sql\Predicate;
 
 use Zend\Db\Sql\Predicate\Expression;
+use SphinxSearch\Db\Sql\Exception;
 
 
 class Match extends Expression
@@ -21,7 +22,7 @@ class Match extends Expression
      */
     public function setExpression($expression)
     {
-        if (!is_string($expression) || $expression == '') {
+        if (!is_string($expression)) {
             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
         }
         $this->expression = 'MATCH(' . $expression . ')';
