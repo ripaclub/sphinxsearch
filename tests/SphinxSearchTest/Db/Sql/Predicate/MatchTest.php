@@ -29,7 +29,7 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
 
     public function testSetExpression()
     {
-        $this->match->setExpression('TEST');
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $this->match->setExpression('TEST'));
         $this->assertEquals('MATCH(TEST)', $this->match->getExpression());
 
         $this->assertEquals(array(
