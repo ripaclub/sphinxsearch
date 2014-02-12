@@ -11,6 +11,7 @@ namespace SphinxSearchTest\Db\Sql;
 
 use SphinxSearch\Db\Sql\Predicate\Match;
 use Zend\Db\Sql\Expression;
+use SphinxSearch\Query\QueryExpression;
 
 class MatchTest extends \PHPUnit_Framework_TestCase {
 
@@ -28,14 +29,41 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->match = new Match();
     }
 
-    public function testSetExpression()
+    public function test__constuctor()
     {
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $this->match->setQuery('TEST'));
-        $this->assertEquals('TEST', $this->match->getQuery());
+        //Assume that '?' is the placeholder
+        $match = new Match('?', array('param'));
+
+        $queryExpression = $match->getQuery();
+        $this->assertInstanceOf('SphinxSearch\Query\QueryExpression', $queryExpression);
+
+        $this->assertEquals(array('param'), $queryExpression->getParameters());
+        $this->assertEquals('?', $queryExpression->getExpression());
+
+
+        $queryExpression = new QueryExpression();
+        $match = new Match($queryExpression);
+        $this->assertSame($queryExpression, $match->getQuery());
+
+
+        //test invalid argument
+        $this->setExpectedException('SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
+        new Match(new \stdClass());
+
+    }
+
+    public function testSetGetQuery()
+    {
+        $match = new Match();
+
+        $queryExpression = new QueryExpression('test');
+
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $match->setQuery($queryExpression));
+        $this->assertSame($queryExpression, $match->getQuery());
 
         $this->assertEquals(array(
-            array('MATCH(%1$s)', array('TEST'), array(Expression::TYPE_VALUE))
-        ), $this->match->getExpressionData());
+            array('MATCH(%1$s)', array('test'), array(Match::TYPE_VALUE))
+        ), $match->getExpressionData());
 
     }
 
@@ -50,9 +78,15 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('TEST_SPECIFICATION', $match->getSpecification());
 
         $this->assertEquals(array(
-            array('TEST_SPECIFICATION', array(''), array(Expression::TYPE_VALUE))
+            array('TEST_SPECIFICATION', array(''), array(Match::TYPE_VALUE))
         ), $match->getExpressionData());
 
+    }
+
+    public function testGetExpressionData()
+    {
+        $match = new Match('foo');
+        $this->assertEquals(array(array($match->getSpecification(), array('foo'), array(Match::TYPE_VALUE))), $match->getExpressionData());
     }
 
 

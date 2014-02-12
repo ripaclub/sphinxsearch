@@ -11,11 +11,12 @@ namespace SphinxSearch\Db\Sql\Predicate;
 use Zend\Db\Sql\Predicate\Expression;
 use SphinxSearch\Db\Sql\Exception;
 use Zend\Db\Sql\Predicate\PredicateInterface;
+use SphinxSearch\Query\QueryExpression;
+use SphinxSearch\Query\QueryInterface;
 
 
 class Match implements PredicateInterface
 {
-
 
     /**
      * @var string
@@ -23,20 +24,47 @@ class Match implements PredicateInterface
     protected $specification = 'MATCH(%1$s)';
 
 
-    protected $query = '';
+    /**
+     * @var QueryInterface
+     */
+    protected $query = null;
 
 
-    public function __construct($query = '')
+    /**
+     * @param string $expression
+     * @param string $parameters
+     * @throws Exception\InvalidArgumentException
+     */
+    public function __construct($expression = '', $parameters = null)
     {
-        $this->setQuery($query);
+        if (!$expression instanceof QueryInterface) {
+            if (!is_string($expression)) {
+                throw new Exception\InvalidArgumentException('Supplied expression must be a string or an instance of SphinxSearch\Query\QueryInterface');
+            }
+
+            $expression = new QueryExpression($expression, $parameters);
+        }
+        //TODO:
+//         elseif ($parameters && method_exists($expression, 'setParameters')) {
+//             $expression->setParameters($parameters);
+//         }
+
+        $this->setQuery($expression);
     }
 
-    public function setQuery($query)
+    /**
+     * @param QueryInterface $query
+     * @return Match
+     */
+    public function setQuery(QueryInterface $query)
     {
         $this->query = $query;
         return $this;
     }
 
+    /**
+     * @return QueryExpression
+     */
     public function getQuery()
     {
         return $this->query;
@@ -66,23 +94,7 @@ class Match implements PredicateInterface
     public function getExpressionData()
     {
         return array(
-            array($this->specification, array($this->query), array(self::TYPE_VALUE))
+            array($this->specification, array($this->query->toString()), array(self::TYPE_VALUE))
         );
     }
-
-
-//     /**
-//      * @param $expression
-//      * @return Expression
-//      * @throws Exception\InvalidArgumentException
-//      */
-//     public function setExpression($expression)
-//     {
-//         if (!is_string($expression)) {
-//             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
-//         }
-//         $this->expression = 'MATCH(' . $expression . ')';
-//         return $this;
-//     }
-
 }
