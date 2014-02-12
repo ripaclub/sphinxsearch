@@ -285,7 +285,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
 
         $search = new Search($adapter);
-        $rowset = $search->search('foo', new Match('?', 'ipsum dolor'));
+        $rowset = $search->search('foo', new Match('ipsum dolor'));
 
         foreach ($rowset as $row) {
 //             echo $row['id'] . PHP_EOL;
@@ -295,7 +295,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', function(Select $select){
-            $select->where(new Match('?', 'ipsum dolor'))
+            $select->where(new Match('ipsum dolor'))
                    ->where(array('c1 > ?' => 5))
                    ->limit(1);
         });

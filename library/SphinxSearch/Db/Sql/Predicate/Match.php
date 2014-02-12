@@ -10,23 +10,79 @@ namespace SphinxSearch\Db\Sql\Predicate;
 
 use Zend\Db\Sql\Predicate\Expression;
 use SphinxSearch\Db\Sql\Exception;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 
 
-class Match extends Expression
+class Match implements PredicateInterface
 {
 
+
     /**
-     * @param $expression
-     * @return Expression
-     * @throws Exception\InvalidArgumentException
+     * @var string
      */
-    public function setExpression($expression)
+    protected $specification = 'MATCH(%1$s)';
+
+
+    protected $query = '';
+
+
+    public function __construct($query = '')
     {
-        if (!is_string($expression)) {
-            throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
-        }
-        $this->expression = 'MATCH(' . $expression . ')';
+        $this->setQuery($query);
+    }
+
+    public function setQuery($query)
+    {
+        $this->query = $query;
         return $this;
     }
+
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * @param  string $specification
+     * @return self
+     */
+    public function setSpecification($specification)
+    {
+        $this->specification = $specification;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSpecification()
+    {
+        return $this->specification;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExpressionData()
+    {
+        return array(
+            array($this->specification, array($this->query), array(self::TYPE_VALUE))
+        );
+    }
+
+
+//     /**
+//      * @param $expression
+//      * @return Expression
+//      * @throws Exception\InvalidArgumentException
+//      */
+//     public function setExpression($expression)
+//     {
+//         if (!is_string($expression)) {
+//             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
+//         }
+//         $this->expression = 'MATCH(' . $expression . ')';
+//         return $this;
+//     }
 
 }

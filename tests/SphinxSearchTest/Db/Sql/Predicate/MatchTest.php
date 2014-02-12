@@ -10,6 +10,7 @@ namespace SphinxSearchTest\Db\Sql;
 
 
 use SphinxSearch\Db\Sql\Predicate\Match;
+use Zend\Db\Sql\Expression;
 
 class MatchTest extends \PHPUnit_Framework_TestCase {
 
@@ -29,16 +30,28 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
 
     public function testSetExpression()
     {
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $this->match->setExpression('TEST'));
-        $this->assertEquals('MATCH(TEST)', $this->match->getExpression());
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $this->match->setQuery('TEST'));
+        $this->assertEquals('TEST', $this->match->getQuery());
 
         $this->assertEquals(array(
-            array('MATCH(TEST)', array(), array())
+            array('MATCH(%1$s)', array('TEST'), array(Expression::TYPE_VALUE))
         ), $this->match->getExpressionData());
 
-        $this->setExpectedException('SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
+    }
 
-        $this->match->setExpression(1); //not a string
+    public function testSetGetSpecification()
+    {
+        $match = new Match();
+
+        //test default specification
+        $this->assertEquals('MATCH(%1$s)', $match->getSpecification());
+
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $match->setSpecification('TEST_SPECIFICATION'));
+        $this->assertEquals('TEST_SPECIFICATION', $match->getSpecification());
+
+        $this->assertEquals(array(
+            array('TEST_SPECIFICATION', array(''), array(Expression::TYPE_VALUE))
+        ), $match->getExpressionData());
 
     }
 
