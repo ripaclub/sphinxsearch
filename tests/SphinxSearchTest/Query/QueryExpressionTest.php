@@ -23,23 +23,35 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox Setters and getters for expression and parameters
+     * @testdox Setters and getters for expression
      */
-    public function testSetters()
+    public function testSettersAndGettersExpression()
     {
-        $this->queryExpression->setExpression('?');
+        $this->assertInstanceOf('SphinxSearch\Query\QueryExpression', $this->queryExpression->setExpression('?'));
         $this->assertSame($this->queryExpression->getExpression(), '?');
 
         $this->setExpectedException('SphinxSearch\Query\Exception\InvalidArgumentException');
         $this->queryExpression->setExpression(array('?'));
+    }
 
-        $this->queryExpression->setParameters(array('ipsum'));
+    /**
+     * @testdox Setters and getters for parameters
+     */
+    public function testSettersAndGettersParameters()
+    {
+        $this->assertInstanceOf('SphinxSearch\Query\QueryExpression',$this->queryExpression->setParameters(array('ipsum')));
         $this->assertSame($this->queryExpression->getParameters(), array('ipsum'));
 
-        // FIXME: it does not enter
-        //$this->setExpectedException('SphinxSearch\Query\Exception\InvalidArgumentException');
-        //$this->queryExpression->setParameters(new \stdClass);
+        $this->setExpectedException('SphinxSearch\Query\Exception\InvalidArgumentException');
+        $this->queryExpression->setParameters(new \stdClass);
+    }
+
+    public function testEscapeString()
+    {
+        $this->assertEquals(
+            '\(\|\-\)\@\!\~\&\"\/\\\\ abc def 123 ?',
+            QueryExpression::escapeString('(|-)@!~&"/\\ abc def 123 ?')
+        );
     }
 
 }
- 

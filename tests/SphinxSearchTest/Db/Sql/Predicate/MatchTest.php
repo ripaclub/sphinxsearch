@@ -8,11 +8,11 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
-
 use SphinxSearch\Db\Sql\Predicate\Match;
 use SphinxSearch\Query\QueryExpression;
 
-class MatchTest extends \PHPUnit_Framework_TestCase {
+class MatchTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var Match
