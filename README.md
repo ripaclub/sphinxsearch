@@ -1,4 +1,4 @@
-Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)
+Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Coverage Status](https://coveralls.io/repos/ripaclub/sphinxsearch/badge.png)](https://coveralls.io/r/ripaclub/sphinxsearch)
 =============
 
 Sphinx Search library provides SphinxQL indexing and searching features.
@@ -234,11 +234,17 @@ _TODO_
 Testing
 ---
 
-The library source code is 100% coverade by unit tests.
+The library source code (on master) is 100% covered by unit tests.
 
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```bash
 ./vendor/bin/phpunit -c tests/
+```
+
+After this you can inspect stats about code coverage.
+
+```bash
+./vendor/bin/converalls -v
 ```
 
