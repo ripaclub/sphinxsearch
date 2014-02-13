@@ -266,6 +266,37 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testFloat()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => 11, 'f1' => pi()),
+            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10),
+            array('id' => 3, 'short' => 'hello world', 'c1' => 11, 'f1' => 10/9),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values);
+        }
+
+        $search = new Search($adapter);
+
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->where(array('f1' => 144.00 ));
+        });
+
+//         $rowset = $search->search('foo', function(Select $select) {
+//             $select->where(array('f1' => 10.0));
+//         });
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+
     public function testDocUseCase1()
     {
         $adapter = $this->adapter;
