@@ -10,7 +10,6 @@ namespace SphinxSearchTest\Db\Sql;
 
 
 use SphinxSearch\Db\Sql\Predicate\Match;
-use Zend\Db\Sql\Expression;
 use SphinxSearch\Query\QueryExpression;
 
 class MatchTest extends \PHPUnit_Framework_TestCase {
@@ -29,9 +28,12 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->match = new Match();
     }
 
+    /**
+     * @testdox Constructor
+     */
     public function test__constuctor()
     {
-        //Assume that '?' is the placeholder
+        // Assume that '?' is the placeholder
         $match = new Match('?', array('param'));
 
         $queryExpression = $match->getQuery();
@@ -46,12 +48,15 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame($queryExpression, $match->getQuery());
 
 
-        //test invalid argument
+        // Test invalid argument
         $this->setExpectedException('SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
         new Match(new \stdClass());
 
     }
 
+    /**
+     * @testdox Setter and getter query
+     */
     public function testSetGetQuery()
     {
         $match = new Match();
@@ -64,14 +69,16 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(array(
             array('MATCH(%1$s)', array('test'), array(Match::TYPE_VALUE))
         ), $match->getExpressionData());
-
     }
 
+    /**
+     * @testdox Setter and getter specificaton
+     */
     public function testSetGetSpecification()
     {
         $match = new Match();
 
-        //test default specification
+        // Test default specification
         $this->assertEquals('MATCH(%1$s)', $match->getSpecification());
 
         $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $match->setSpecification('TEST_SPECIFICATION'));
@@ -80,9 +87,11 @@ class MatchTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(array(
             array('TEST_SPECIFICATION', array(''), array(Match::TYPE_VALUE))
         ), $match->getExpressionData());
-
     }
 
+    /**
+     * @testdox Get expression data
+     */
     public function testGetExpressionData()
     {
         $match = new Match('foo');
