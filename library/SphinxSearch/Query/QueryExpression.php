@@ -10,6 +10,7 @@ namespace SphinxSearch\Query;
 
 class QueryExpression implements QueryInterface
 {
+
     /**
      * @const
      */
@@ -41,7 +42,7 @@ class QueryExpression implements QueryInterface
 
     /**
      * @param $expression
-     * @return Expression
+     * @return QueryExpression
      * @throws Exception\InvalidArgumentException
      */
     public function setExpression($expression)
@@ -50,6 +51,7 @@ class QueryExpression implements QueryInterface
             throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
         }
         $this->expression = $expression;
+
         return $this;
     }
 
@@ -63,7 +65,7 @@ class QueryExpression implements QueryInterface
 
     /**
      * @param $parameters
-     * @return Expression
+     * @return QueryExpression
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters($parameters)
@@ -72,6 +74,7 @@ class QueryExpression implements QueryInterface
             throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
         }
         $this->parameters = $parameters;
+
         return $this;
     }
 
@@ -114,7 +117,8 @@ class QueryExpression implements QueryInterface
     }
 
     /**
-     * @return array
+     * @return string
+     * @throws Exception\RuntimeException
      */
     public function toString()
     {
@@ -146,4 +150,5 @@ class QueryExpression implements QueryInterface
 
         return vsprintf($expression, $parameters);
     }
+
 }

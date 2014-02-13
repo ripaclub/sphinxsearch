@@ -59,6 +59,7 @@ class Match implements PredicateInterface
     public function setQuery(QueryInterface $query)
     {
         $this->query = $query;
+
         return $this;
     }
 
@@ -77,6 +78,7 @@ class Match implements PredicateInterface
     public function setSpecification($specification)
     {
         $this->specification = $specification;
+
         return $this;
     }
 
