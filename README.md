@@ -69,7 +69,6 @@ Then in your configuration add the `sphinxql` node and configure it with connect
 ```php
 'sphinxql' => array(
 	'driver'    => 'pdo_mysql',
-	'database'  => 'dummy',
 	'hostname'  => '127.0.0.1',
 	'port'      => 9306,
 	'charset'   => 'UTF8'
