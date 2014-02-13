@@ -113,6 +113,7 @@ class QueryExpression implements QueryInterface
                     break;
             }
         }
+
         return $output;
     }
 

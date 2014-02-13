@@ -54,4 +54,17 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testToString()
+    {
+        $this->queryExpression->setExpression('?');
+        $this->assertEmpty($this->queryExpression->toString());
+
+        $this->queryExpression->setParameters('ipsum');
+        $this->assertEquals('ipsum', $this->queryExpression->toString());
+
+        $this->queryExpression->setParameters(array('ipsum', 'dolor'));
+        $this->setExpectedException('SphinxSearch\Query\Exception\RuntimeException');
+        $this->queryExpression->toString();
+    }
+
 }
