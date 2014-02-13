@@ -69,7 +69,6 @@ Then in your configuration add the `sphinxql` node and configure it with connect
 ```php
 'sphinxql' => array(
 	'driver'    => 'pdo_mysql',
-	'database'  => 'dummy',
 	'hostname'  => '127.0.0.1',
 	'port'      => 9306,
 	'charset'   => 'UTF8'
@@ -153,6 +152,7 @@ $indexer = new Indexer($adapter);
 $indexer->insert(
 	'foo',
 	array(
+		'id' => 1,
     		'short' => 'Lorem ipsum dolor sit amet',
     		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
 	),
