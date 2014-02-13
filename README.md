@@ -140,8 +140,8 @@ Assuming `$adapter` has been retrivied via `ServiceManager` we can perform index
     $indexer->insert(
         'foo',
         array(
-            'short' => 'short text',
-            'text' => 'long document ipsum dolor sit amend'
+            'short' => 'Lorem ipsum dolor sit amet',
+            'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
         ),
         true
     );
