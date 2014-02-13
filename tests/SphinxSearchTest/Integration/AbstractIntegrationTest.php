@@ -9,6 +9,7 @@
 namespace SphinxSearchTest\IntegrationTest;
 
 use SphinxSearch\Db\Adapter\AdapterServiceFactory;
+use SphinxSearch\Query\QueryExpression;
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 use SphinxSearch\Search;
@@ -20,6 +21,7 @@ use SphinxSearch\Indexer;
 use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Replace;
 use Zend\Db\Adapter\Adapter;
+use SphinxSearch\Db\Sql\Predicate\Match;
 
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
@@ -284,24 +286,31 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
 
         $search = new Search($adapter);
-        $rowset = $search->search('foo', new Expression('MATCH(?)', 'ipsum dolor'));
-
-        foreach ($rowset as $row) {
-//             echo $row['id'] . PHP_EOL;
-        }
-
-        $this->assertEquals(11, $row['id']);
+        $rowset = $search->search('foo', new Match('ipsum dolor'));
+        $current = $rowset->current();
+        $this->assertEquals(11, $current['id']);
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', function(Select $select){
-            $select->where(new Expression('MATCH(?)', 'ipsum dolor'))
+            $select->where(new Match('ipsum dolor'))
                    ->where(array('c1 > ?' => 5))
                    ->limit(1);
         });
-
         $this->assertEquals(1, $rowset->count());
         $current = $rowset->current();
+        $this->assertEquals(11, $current['id']);
 
+        $expr = new QueryExpression('? ?', array('ipsum', 'dolor'));
+        /** @var $select Select */
+        $select = new Select('foo');
+        $select->where(new Match($expr));
+        $sql = new Sql($adapter);
+        $query = $sql->getSqlStringForSqlObject($select);
+        $results = $adapter->query(
+            $query,
+            Adapter::QUERY_MODE_EXECUTE
+        );
+        $current = $results->current();
         $this->assertEquals(11, $current['id']);
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);

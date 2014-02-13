@@ -15,9 +15,15 @@ install:
 
 before_script:
   - tests/travis/sphinx-setup.sh
+  - mkdir -p build/logs
+  - mkdir -p build/report
+  - mkdir -p build/testdox
 
 script:
  - vendor/bin/phpunit -c tests/
+
+after_script:
+ - vendor/bin/coveralls -v
 
 notifications:
   email: false

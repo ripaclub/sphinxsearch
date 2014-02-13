@@ -22,6 +22,3 @@ class PDOIntegrationTest extends AbstractIntegrationTest
     );
 }
 
-
-
-

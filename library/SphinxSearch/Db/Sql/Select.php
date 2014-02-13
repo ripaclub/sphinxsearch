@@ -55,10 +55,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     /**#@-*/
 
     /**
+     * Specification not supported by Sphinx are removed
+     *
      * @var array Specifications
      */
     protected $specifications = array(
-        'statementStart' => '%1$s',
         self::SELECT => array(
             'SELECT %1$s FROM %2$s' => array(
                 array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '),
@@ -90,8 +91,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             'OPTION %1$s' => array(
                 array(2 => '%1$s = %2$s', 'combinedby' => ', ')
             )
-        ),
-        'statementEnd' => '%1$s'
+        )
     );
 
     /**
@@ -281,7 +281,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
             $columnName = '';
             if ($column === self::SQL_STAR) {
-                $columns[] = array(self::SQL_STAR);
+                $columns[] = array(self::SQL_STAR); // Sphinx doesn't not support prefix column with table, yet
                 continue;
             }
 
@@ -297,16 +297,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $columnName .= $columnParts->getSql();
             } else {
-
-                //TODO: Sphinx doesn't not support prefix column with table, yet
-
-//                 if (strpos($column, $separator) === false) {
-//                     $columnName .= $platform->quoteIdentifier($column);
-//                 } else { // Allow prefix table in column name
-//                     $column = explode($separator, $column);
-//                     $columnName .= $platform->quoteIdentifier($column[0]) . $separator . $platform->quoteIdentifier($column[1]);
-//                 }
-
+                // Sphinx doesn't not support prefix column with table, yet
                 $columnName .= $platform->quoteIdentifier($column);
             }
 
