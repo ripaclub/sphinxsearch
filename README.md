@@ -132,7 +132,23 @@ Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syn
 
 ### Indexer
 
-_TODO_
+Assuming `$adapter` has been retrivied via `ServiceManager` we can perform indexing of documents, provided that the indices on which we act are [real time](http://sphinxsearch.com/docs/2.2.2/rt-overview.html).
+
+    use SphinxSearch\Indexer;
+
+    $indexer = new Indexer($adapter);
+    $indexer->insert(
+        'foo',
+        array(
+            'short' => 'short text',
+            'text' => 'long document ipsum dolor sit amend'
+        ),
+        true
+    );
+
+Note tha the third parameter of `insert` method is a boolean flag indicating wheter a _"uspert"_ rather than an insert have to be done.
+
+Furthermore, an `Indexer` instance allows to update and delete rows from real time indices (using the methods `update` and `delete`, respectively).
 
 ## Advanced
 
