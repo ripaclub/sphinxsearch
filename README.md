@@ -1,4 +1,4 @@
-Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Coverage Status](https://coveralls.io/repos/ripaclub/sphinxsearch/badge.png)](https://coveralls.io/r/ripaclub/sphinxsearch)
+Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Coverage Status](https://coveralls.io/repos/ripaclub/sphinxsearch/badge.png?branch=master)](https://coveralls.io/r/ripaclub/sphinxsearch?branch=master)
 =============
 
 Sphinx Search library provides SphinxQL indexing and searching features.
