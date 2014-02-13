@@ -175,7 +175,7 @@ Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#config
 ```php
 'service_manager' => array(
 	'abstract_factories' => array(
-  	'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
+  		'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
 	),
 )
 ```
