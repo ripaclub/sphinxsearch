@@ -540,14 +540,11 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         // FIXME
         // NOTE: assuming float as literal [default behaviour]
         $select12 = new Select;
-        $select12->from('foo')->where(new ExpressionDecorator(new Expression('f1 = ?', 10.0)));
+        $select12->from('foo')->columns(array('f1', 'test' => new Expression('?', 10.0)));
         $sqlPrep12 = // same
-        $sqlStr12 = 'SELECT * FROM `foo` WHERE `f1` = 10.0';
-        $params12 = array('where1' => 10.0);
+        $sqlStr12 = 'SELECT `f1`, 10.000000 AS `test` FROM `foo`';
         $internalTests12 = array(
-            'processSelect' => array(array(array('*')), '`foo`'),
-            'processWhere'  => array('f1 = ' . sprintf('%F', 10.0)),
-            'processExpression' => array('f1 = ' . sprintf('%F', 10.0)) // NOTE: this is the literal conversion
+            'processSelect' => array(array(array('`f1`'), array('10.000000', '`test`')), '`foo`'),
         );
 
 //         // join with alternate type
@@ -995,7 +992,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
-            array($select12, $sqlPrep12, $params12,    $sqlStr12, $internalTests12),
+            array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
 //             array($select13, $sqlPrep13, array(),    $sqlStr13, $internalTests13),
 //             array($select14, $sqlPrep14, array(),    $sqlStr14, $internalTests14),
             array($select15, $sqlPrep15, array(),    $sqlStr15, $internalTests15),
