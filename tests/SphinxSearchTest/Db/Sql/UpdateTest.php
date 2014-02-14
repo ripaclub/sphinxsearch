@@ -8,6 +8,7 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
+use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
 use SphinxSearch\Db\Sql\Update;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
@@ -51,7 +52,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('foo', $this->update->getRawState('table'));
         $this->assertEquals(true, $this->update->getRawState('emptyWhereProtection'));
         $this->assertEquals(array('bar' => 'baz'), $this->update->getRawState('set'));
-        $this->assertEquals(array('ranker' => 'bm25'), $this->update->getRawState('option')); // FIXME: option
+        $this->assertEquals(array('ranker' => 'bm25'), $this->update->getRawState('option'));
         $this->assertInstanceOf('Zend\Db\Sql\Where', $this->update->getRawState('where'));
     }
 
@@ -101,7 +102,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception with null values
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNullOptionValues(Update $update)
@@ -111,7 +112,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception when value keys are not strings
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNotStringOptionValueKeys(Update $update)

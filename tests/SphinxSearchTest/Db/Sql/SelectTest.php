@@ -8,6 +8,7 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
+use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
 use SphinxSearch\Db\Sql\Select;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;
@@ -257,7 +258,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception with null values
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNullOptionValues(Select $select)
@@ -267,7 +268,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception when value keys are not strings
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNotStringOptionValueKeys(Select $select)
@@ -745,9 +746,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '(SELECT * FROM `bar` WHERE `y` = ?)'),
         );
 
-
-
-        //Not yet supported by Sphinx
+        // not yet supported by Sphinx
         $select33 = new Select;
         $select33->from('foo')->columns(array('*'))->where(array(
             'c1' => null,
@@ -761,7 +760,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')
         );
 
-        //Not yet supported by Sphinx
+        // not yet supported by Sphinx
         // @author Demian Katz
         $select34 = new Select;
         $select34->from('foo')->order(array(
@@ -1026,7 +1025,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @testdox Columns cannot be prefixed with the table name
      */
     public function testPrefixColumnsWithTable()

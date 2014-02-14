@@ -121,7 +121,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-            //mixing order col and expr not fully supported
+            // Mixing order col and expr not fully supported
             if (strpos($sqlPrep, 'DESC, RAND()')) {
                 continue;
             }
