@@ -22,6 +22,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\ExpressionInterface;
 
 /**
  *
@@ -259,6 +260,18 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             self::OFFSET     => $this->offset,
         );
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
+    }
+
+    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
+    {
+        if ($expression instanceof ExpressionDecorator) {
+            $expressionDecorator = $expression;
+        } else {
+            $expressionDecorator = new ExpressionDecorator();
+            $expressionDecorator->setSubject($expression);
+        }
+
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
 
     /**
