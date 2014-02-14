@@ -212,16 +212,24 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
    Not supported by SphinxQL. The library transparently handle it for SQL compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
 
+
 * `boolean`
 
-  `SphinxQL` does not have a native boolean type, however if you try to use a PHP bool when SphinxQL expects an integer the driver will caste the value to `0` or `1` respectively.
+  `SphinxQL` does not have a native boolean type, however if you try to use a PHP bool when SphinxQL expects an integer the driver will cast the value to `0` or `1` respectively.
 
-* `integer` Both integer number and string containing integer work properly when SphinxQL expects an `uint`
+
+* `integer` 
+
+  Both integer number and string containing integer work properly when SphinxQL expects an `uint`
   (WARNING: PHP integers are signed, instead SphinxQL supports UNSIGNED integers and UNIX timestamp)
+
 
 * `float`
 
-  Due to some limitations of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
+  Due to sphinx specific issues related to `float` (especially in `WHERE` clause), by default this library attach an Expression Decorator that converts floats value to a sphinx compatible literal rappresentation by `sprintf('%F', ...)`. This feature works only if value is a native PHP float, also it can be globally disabled by using `ShpinxSearch\Db\Sql\ExpressionDecorator::setFloatAsLiteral(false)`.
+WARNING: disabling this feature can produce unexpected behaviors. Some notable example:
+  - Actually Sphinx SQL interpreter consider a number without decimal as a integer always. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
+  - Due to the fact that Sphinx doesn't support float quoted as strings and PDO driver has no way to bind a double (sql float) param in prepared statement mode, the interal PDO driver conversion will be locale aware (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
 
 For those reasons we suggest to use proper PHP native types always (i.e., not use strings for numeric fields) when building queries.
 
