@@ -216,8 +216,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
         } else {
-            $expressionDecorator = new ExpressionDecorator();
-            $expressionDecorator->setSubject($expression);
+            $expressionDecorator = new ExpressionDecorator($expression);
         }
 
         return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);

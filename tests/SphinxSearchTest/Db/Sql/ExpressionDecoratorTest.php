@@ -25,7 +25,16 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->expr = new ExpressionDecorator;
+        $this->expr = new ExpressionDecorator(new Expression);
+    }
+
+    public function test__construct()
+    {
+        $expr = new Expression();
+
+        $decorator = new ExpressionDecorator($expr);
+
+        $this->assertSame($expr, $decorator->getSubject());
     }
 
     public function testSetGetFloatAsLiteral()

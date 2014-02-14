@@ -10,6 +10,7 @@ namespace SphinxSearch\Db\Sql;
 
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 
 class ExpressionDecorator implements ExpressionInterface
 {
@@ -23,6 +24,14 @@ class ExpressionDecorator implements ExpressionInterface
      * @var ExpressionInterface
      */
     protected $subject;
+
+    /**
+     * @param ExpressionInterface $subject
+     */
+    public function __construct(ExpressionInterface $subject)
+    {
+        $this->setSubject($subject);
+    }
 
     /**
      * @param ExpressionInterface $expression
