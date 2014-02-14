@@ -14,6 +14,7 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;
+use SphinxSearch\Db\Sql\ExpressionDecorator;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase {
 
@@ -119,6 +120,33 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
     {
         $update->option(array(1 => 'opt_values4'));
     }
+
+    /**
+     * @testdox Method processExpression() methods will return proper array when internally called, part of extension API
+     * @covers SphinxSearch\Db\Sql\Update::processExpression
+     */
+    public function testProcessExpression()
+    {
+        $select = new Update();
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $parameterContainer = new ParameterContainer();
+
+        $selectReflect = new \ReflectionObject($select);
+        $mr = $selectReflect->getMethod('processExpression');
+        $mr->setAccessible(true);
+
+        //Test with an Expression
+        $return = $mr->invokeArgs($select, array(new Expression('?', 10.0), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $this->assertEquals('10.000000', $return->getSql());
+
+        //Test with an ExpressionDecorator
+        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0)), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $this->assertEquals('10.000000', $return->getSql());
+    }
+
 
     /**
      * @covers SphinxSearch\Db\Sql\Update::prepareStatement

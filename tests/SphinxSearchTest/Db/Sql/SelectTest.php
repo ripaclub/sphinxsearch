@@ -390,6 +390,32 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @testdox Method processExpression() methods will return proper array when internally called, part of extension API
+     * @covers SphinxSearch\Db\Sql\Select::processExpression
+     */
+    public function testProcessExpression()
+    {
+        $select = new Select();
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $parameterContainer = new ParameterContainer();
+
+        $selectReflect = new \ReflectionObject($select);
+        $mr = $selectReflect->getMethod('processExpression');
+        $mr->setAccessible(true);
+
+        //Test with an Expression
+        $return = $mr->invokeArgs($select, array(new Expression('?', 10.0), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $this->assertEquals('10.000000', $return->getSql());
+
+        //Test with an ExpressionDecorator
+        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0)), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $this->assertEquals('10.000000', $return->getSql());
+    }
+
+    /**
      * @testdox Method process*() methods will return proper array when internally called, part of extension API
      * @dataProvider providerData
      * @covers SphinxSearch\Db\Sql\Select::processSelect
