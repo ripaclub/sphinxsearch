@@ -302,7 +302,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $adapter = $this->adapter;
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
 
-
         $indexer = new Indexer($adapter);
 
         $indexer->insert('foo', array(
@@ -314,7 +313,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             'c3'    => 1000,
             'f1'    => pi(),
         ), true);
-
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', new Match('ipsum dolor'));
@@ -343,6 +341,90 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         );
         $current = $results->current();
         $this->assertEquals(11, $current['id']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testOrderWithCompoundName()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 11,
+                'short' => 'hello world',
+                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 1000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 12,
+                'short' => 'hello world 2',
+                'text'  => 'Lorem ipsum dolor sit amet ...',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 2000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+
+        $select29 = new Select;
+        $select29->from('foo')->order('c1.c2');
+        $search = new Search($adapter);
+        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $search->searchWith($select29);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testGroupWithCompoundName()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 11,
+                'short' => 'hello world',
+                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 1000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 12,
+                'short' => 'hello world 2',
+                'text'  => 'Lorem ipsum dolor sit amet ...',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 2000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+
+        $select30 = new Select;
+        $select30->from('foo')->group('c1.d2');
+        $search = new Search($adapter);
+        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $search->searchWith($select30);
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
