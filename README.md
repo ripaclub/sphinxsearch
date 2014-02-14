@@ -126,8 +126,8 @@ $select->order($order)
 $select->limit($limit)
 $select->offset($offset)
 // And also variable overloading for:
-$select->->where
-$select->->having
+$select->where
+$select->having
 ```
 
 Thus it adds some SphinxQL specific methods:
