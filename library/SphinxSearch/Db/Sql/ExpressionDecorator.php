@@ -90,7 +90,7 @@ class ExpressionDecorator implements ExpressionInterface
         if (self::getFloatAsLiteral()) {
             foreach ($expressionData as &$expressionPart) {
                 $parametersCount = count($expressionPart[1]);
-                for ($i=0; $i<$parametersCount; $i++) {
+                for ($i = 0; $i < $parametersCount; $i++) {
                     if (is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
                         $expressionPart[1][$i] = sprintf('%F', $expressionPart[1][$i]);
                         $expressionPart[2][$i] = Expression::TYPE_LITERAL;

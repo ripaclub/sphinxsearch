@@ -9,6 +9,7 @@
 namespace SphinxSearchTest\Db\Sql;
 
 use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
+use SphinxSearch\Db\Sql\ExpressionDecorator;
 use SphinxSearch\Db\Sql\Select;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;
@@ -211,7 +212,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zend\Db\Sql\Having', $select->getRawState('having'));
     }
 
-
     /**
      * @testdox Method option() returns same Select object (is chainable)
      * @covers SphinxSearch\Db\Sql\Select::option
@@ -396,6 +396,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
      * @covers SphinxSearch\Db\Sql\Select::processWithinGroupOrder
      * @covers SphinxSearch\Db\Sql\Select::processLimitOffset
      * @covers SphinxSearch\Db\Sql\Select::processOption
+     * @covers SphinxSearch\Db\Sql\Select::processExpression
      */
     public function testProcessMethods(Select $select, $unused, $unused2, $unused3, $internalTests)
     {
@@ -416,7 +417,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($expected, $return);
         }
     }
-
 
     public function providerData()
     {
@@ -535,6 +535,19 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $sqlStr11 = 'SELECT * FROM `foo`';
         $internalTests11 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
+        );
+
+        // FIXME
+        // NOTE: assuming float as literal [default behaviour]
+        $select12 = new Select;
+        $select12->from('foo')->where(new ExpressionDecorator(new Expression('f1 = ?', 10.0)));
+        $sqlPrep12 = // same
+        $sqlStr12 = 'SELECT * FROM `foo` WHERE `f1` = 10.0';
+        $params12 = array('where1' => 10.0);
+        $internalTests12 = array(
+            'processSelect' => array(array(array('*')), '`foo`'),
+            'processWhere'  => array('f1 = ' . sprintf('%F', 10.0)),
+            'processExpression' => array('f1 = ' . sprintf('%F', 10.0)) // NOTE: this is the literal conversion
         );
 
 //         // join with alternate type
@@ -982,7 +995,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
-//             array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
+            array($select12, $sqlPrep12, $params12,    $sqlStr12, $internalTests12),
 //             array($select13, $sqlPrep13, array(),    $sqlStr13, $internalTests13),
 //             array($select14, $sqlPrep14, array(),    $sqlStr14, $internalTests14),
             array($select15, $sqlPrep15, array(),    $sqlStr15, $internalTests15),
