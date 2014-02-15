@@ -96,7 +96,7 @@ foreach ($rowset as $row) {
 }
 ```
 
-The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`).
+The `search()` method takes as first argument the index name (or an array of indicies) and the second one accepts a where condition (same as `Zend\Db\Sql\Select::where()`).
 Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current `Select` object that is being used to build the `SELECT` query.
 
 The following usage is possible:
@@ -114,7 +114,7 @@ $rowset = $search->search('foo', function(Select $select) {
 });
 ```
 
-The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from), supports the following methods related to SQL standard clauses:
+The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
 
 ```php
 $select->from($table)
@@ -137,7 +137,7 @@ $select->withinGroupOrder($withinGroupOrder)
 $select->option(array $values, $flag = self::OPTIONS_MERGE)
 ```
 
-Other utility methods as `setSpecifications`, `getRawState` and `reset` are fully supported.
+Other utility methods like `setSpecifications`, `getRawState` and `reset` are fully supported.
 
 Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syntax doesn't have them.
 
@@ -160,7 +160,7 @@ $indexer->insert(
 );
 ```
 
-Note tha the third parameter of `insert` method is a boolean flag indicating wheter a _"uspert"_ rather than an insert have to be done.
+Note that third parameter of `insert` method is a boolean flag indicating wheter a _"upsert"_ rather than an insert have to be done.
 
 Furthermore, an `Indexer` instance allows to update and delete rows from real time indices (using the methods `update` and `delete`, respectively).
 
@@ -170,7 +170,7 @@ Furthermore, an `Indexer` instance allows to update and delete rows from real ti
 
 This library come with two factories in bundle in order to properly configure the `Zend\Db\Adapter\Adapter` to work with Sphinx Search.
 
-Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection or, if you need to use multiple connection, use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
+Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection else if you need to use multiple connections use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
 
 ```php
 'service_manager' => array(
@@ -226,12 +226,12 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
 * `float`
 
-  Due to SphinxQL specific issues related to `float` (especially in `WHERE` clause), by default this library attach an Expression Decorator that converts floats value to a Sphinx compatible literal rappresentation by `sprintf('%F', ...)`. This feature works only if value is a native PHP float, also it can be globally disabled by using `ShpinxSearch\Db\Sql\ExpressionDecorator::setFloatAsLiteral(false)`.
+  Due to SphinxQL specific issues related to `float` (especially in `WHERE` clause), by default this library attach an Expression Decorator that converts floats value to a Sphinx compatible literal rappresentation by `sprintf('%F', ...)`. This feature works only if value is a native PHP float. However it can be globally disabled by using `ShpinxSearch\Db\Sql\ExpressionDecorator::setFloatAsLiteral(false)`.
 WARNING: disabling this feature can produce unexpected behaviors. Some notable example:
   - Actually Sphinx SQL interpreter treats a number without decimal part always as a integer. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
   - Due to the fact that SphinxQL does not support float quoted as strings and PDO driver has no way to bind a double (SQL float) param in prepared statement mode, the interal PDO driver conversion will be locale aware (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
 
-For those reasons we suggest to **use proper PHP native types always** (i.e., not use strings for numeric fields) when building queries.
+For those reasons we suggest to **use always proper PHP native types** (i.e., not use strings for numeric fields) when building queries.
 
 Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
