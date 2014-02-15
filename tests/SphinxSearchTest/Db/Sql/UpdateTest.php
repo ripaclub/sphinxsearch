@@ -14,7 +14,7 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;
-use SphinxSearch\Db\Sql\ExpressionDecorator;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase {

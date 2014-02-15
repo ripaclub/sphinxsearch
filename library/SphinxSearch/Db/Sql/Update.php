@@ -22,6 +22,7 @@ use Zend\Db\Sql\Predicate;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 
 /**
  * @property Where $where

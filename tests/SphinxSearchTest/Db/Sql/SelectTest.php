@@ -9,7 +9,7 @@
 namespace SphinxSearchTest\Db\Sql;
 
 use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
-use SphinxSearch\Db\Sql\ExpressionDecorator;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use SphinxSearch\Db\Sql\Select;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;

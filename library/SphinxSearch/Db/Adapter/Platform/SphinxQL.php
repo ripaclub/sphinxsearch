@@ -15,6 +15,8 @@ use Zend\Db\Adapter\Driver\DriverInterface;
 class SphinxQL extends Mysql implements PlatformInterface
 {
 
+    protected $floatConversion = true;
+
     /**
      * @return string
      */
@@ -32,9 +34,9 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function quoteValue($value)
     {
         if (is_int($value)) {
-            return $value;
+            return (string) $value;
         } elseif (is_float($value)) {
-            return $this->toSingleFloatPrecision($value);
+            return $this->floatConversion ? $this->toSingleFloatPrecision($value) : (string) $value;
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -53,9 +55,9 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function quoteTrustedValue($value)
     {
         if (is_int($value)) {
-            return $value;
+            return (string) $value;
         } elseif (is_float($value)) {
-            return $this->toSingleFloatPrecision($value);
+            return $this->floatConversion ? $this->toSingleFloatPrecision($value) : (string) $value;
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -65,14 +67,14 @@ class SphinxQL extends Mysql implements PlatformInterface
 
     /**
      * Converts PHP floats (double precision) to Sphinx floats (single precision)
-     * 
+     *
      * 32-bit, IEEE 754 single precision gives from 6 to 9 significant decimal digits precision.
-     * If a decimal string with at most 6 significant decimal is converted to IEEE 754 single precision 
-     * and then converted back to the same number of significant decimal, then the final string should match the original; 
-     * and if an IEEE 754 single precision is converted to a decimal string with at least 9 significant decimal 
+     * If a decimal string with at most 6 significant decimal is converted to IEEE 754 single precision
+     * and then converted back to the same number of significant decimal, then the final string should match the original;
+     * and if an IEEE 754 single precision is converted to a decimal string with at least 9 significant decimal
      * and then converted back to single, then the final number MUST match the original.
-     * 
-     * To ensure full camptibility this method converts float to a string with at most 9 significat decimal, 
+     *
+     * To ensure full camptibility this method converts float to a string with at most 9 significat decimal,
      * then trim trim leading zeros. Note that '123.' is a valid SphinxQL syntax for float numbers.
      *
      * @param float $value
@@ -81,6 +83,24 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function toSingleFloatPrecision($value)
     {
         return rtrim(sprintf('%.9F', (float) $value), '0');
+    }
+
+    /**
+     * @param string $flag
+     * @return SphinxQL
+     */
+    public function enableFloatConversion($flag = true)
+    {
+        $this->floatConversion = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFloatConversionEnabled()
+    {
+        return $this->floatConversion;
     }
 
 }

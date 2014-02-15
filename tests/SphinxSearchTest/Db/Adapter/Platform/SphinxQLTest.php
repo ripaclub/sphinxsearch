@@ -60,4 +60,32 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1.11, $this->platform->quoteTrustedValue(1.11));
     }
 
+    public function testFloatConversion()
+    {
+        //assume default enabled
+        $this->assertTrue($this->platform->isFloatConversionEnabled());
+
+        $this->assertInstanceOf('SphinxSearch\Db\Adapter\Platform\SphinxQL', $this->platform->enableFloatConversion(false));
+        $this->assertFalse($this->platform->isFloatConversionEnabled());
+
+        $this->platform->enableFloatConversion(true);
+        $this->assertTrue($this->platform->isFloatConversionEnabled());
+
+        //test default param value in method
+        $this->platform->enableFloatConversion();
+        $this->assertTrue($this->platform->isFloatConversionEnabled());
+
+        $singlePrecisionPi = '3.141592654';
+        $doublePrecisionPi = '3.1415926535898';
+
+        $this->assertSame($singlePrecisionPi, $this->platform->toSingleFloatPrecision(pi()));
+
+        $this->platform->enableFloatConversion(false);
+        $this->assertSame($doublePrecisionPi, $this->platform->quoteTrustedValue(pi()));
+
+        $this->platform->enableFloatConversion(true);
+        $this->assertSame($singlePrecisionPi, $this->platform->quoteTrustedValue(pi()));
+
+    }
+
 }
