@@ -284,9 +284,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $search = new Search($adapter);
 
-
-
-        //1: float with few decimals
+        //test TRUE
         $rowset = $search->search('foo', function(Select $select) {
             $select->columns(array('id', 'c1'))
             ->where(array('c1' => true));
@@ -296,7 +294,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         //Assume not identical but equal (result values are strings)
         $this->assertEquals(array('id' => 1, 'c1' => true), $rowset->current()->getArrayCopy());
 
-        //1: float with few decimals
+        //test FALSE
         $rowset = $search->search('foo', function(Select $select) {
             $select->columns(array('id', 'c1'))
             ->where(array('c1' => false));
@@ -308,6 +306,51 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         //array('id' => 2, 'c1' => false) == array('id' => '2', 'c1' => '0') but assertEquals doesn't work
         $this->assertEquals(2, $result['id']);
         $this->assertTrue(false == $result['c1']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testInteger()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => 1000),
+            array('id' => 2, 'short' => 'hello world', 'c1' => -1000),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values, true);
+        }
+
+        $search = new Search($adapter);
+
+
+
+        //1: simple int
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => 1000));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1, 'c1' => 1000), $rowset->current()->getArrayCopy());
+
+        //1: overflow with unsigned
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => pow(2, 32) - 1000)); //sphinx has 32-bit unsigned integer
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 2, 'c1' => pow(2, 32) - 1000), $rowset->current()->getArrayCopy());
+
+
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
