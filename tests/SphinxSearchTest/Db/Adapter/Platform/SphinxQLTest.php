@@ -78,7 +78,7 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
         $singlePrecisionPi = '3.141592654';
         $doublePrecisionPi = '3.1415926535898';
 
-        $this->assertSame($singlePrecisionPi, $this->platform->toSingleFloatPrecision(pi()));
+        $this->assertSame($singlePrecisionPi, $this->platform->toFloatSinglePrecision(pi()));
 
         $this->platform->enableFloatConversion(false);
         $this->assertSame($doublePrecisionPi, $this->platform->quoteTrustedValue(pi()));

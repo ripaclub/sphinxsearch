@@ -77,7 +77,7 @@ class ExpressionDecorator implements ExpressionInterface
             $parametersCount = count($expressionPart[1]);
             for ($i = 0; $i < $parametersCount; $i++) {
                 if ($this->platform->isFloatConversionEnabled() && is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
-                    $expressionPart[1][$i] = $this->platform->toSingleFloatPrecision($expressionPart[1][$i]);
+                    $expressionPart[1][$i] = $this->platform->toFloatSinglePrecision($expressionPart[1][$i]);
                     $expressionPart[2][$i] = Expression::TYPE_LITERAL;
                 }
                 if (is_bool($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {

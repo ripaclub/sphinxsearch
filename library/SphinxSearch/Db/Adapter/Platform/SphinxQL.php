@@ -36,7 +36,7 @@ class SphinxQL extends Mysql implements PlatformInterface
         if (is_int($value)) {
             return (string) $value;
         } elseif (is_float($value)) {
-            return $this->floatConversion ? $this->toSingleFloatPrecision($value) : (string) $value;
+            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string) $value;
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -57,7 +57,7 @@ class SphinxQL extends Mysql implements PlatformInterface
         if (is_int($value)) {
             return (string) $value;
         } elseif (is_float($value)) {
-            return $this->floatConversion ? $this->toSingleFloatPrecision($value) : (string) $value;
+            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string) $value;
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -77,16 +77,16 @@ class SphinxQL extends Mysql implements PlatformInterface
      * To ensure full camptibility this method converts float to a string with at most 9 significat decimal,
      * then trim trim leading zeros. Note that '123.' is a valid SphinxQL syntax for float numbers.
      *
-     * @param float $value
+     * @param number $value
      * @return string
      */
-    public function toSingleFloatPrecision($value)
+    public function toFloatSinglePrecision($value)
     {
         return rtrim(sprintf('%.9F', (float) $value), '0');
     }
 
     /**
-     * @param string $flag
+     * @param bool $flag
      * @return SphinxQL
      */
     public function enableFloatConversion($flag = true)
