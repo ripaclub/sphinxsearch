@@ -32,9 +32,9 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function quoteValue($value)
     {
         if (is_int($value)) {
-            return (int) $value;
+            return $value;
         } elseif (is_float($value)) {
-            return sprintf('%F', $value);
+            return $this->toSingleFloatPrecision($value);
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -53,9 +53,9 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function quoteTrustedValue($value)
     {
         if (is_int($value)) {
-            return (int) $value;
+            return $value;
         } elseif (is_float($value)) {
-            return sprintf('%F', $value);
+            return $this->toSingleFloatPrecision($value);
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
@@ -63,5 +63,24 @@ class SphinxQL extends Mysql implements PlatformInterface
         return parent::quoteTrustedValue($value);
     }
 
+    /**
+     * Converts PHP floats (double precision) to Sphinx floats (single precision)
+     * 
+     * 32-bit, IEEE 754 single precision gives from 6 to 9 significant decimal digits precision.
+     * If a decimal string with at most 6 significant decimal is converted to IEEE 754 single precision 
+     * and then converted back to the same number of significant decimal, then the final string should match the original; 
+     * and if an IEEE 754 single precision is converted to a decimal string with at least 9 significant decimal 
+     * and then converted back to single, then the final number MUST match the original.
+     * 
+     * To ensure full camptibility this method converts float to a string with at most 9 significat decimal, 
+     * then trim trim leading zeros. Note that '123.' is a valid SphinxQL syntax for float numbers.
+     *
+     * @param float $value
+     * @return string
+     */
+    public function toSingleFloatPrecision($value)
+    {
+        return rtrim(sprintf('%.9F', (float) $value), '0');
+    }
 
 }

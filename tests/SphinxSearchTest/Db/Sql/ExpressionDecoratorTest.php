@@ -10,6 +10,8 @@ namespace SphinxSearchTest\Db\Sql;
 
 use SphinxSearch\Db\Sql\ExpressionDecorator;
 use Zend\Db\Sql\Expression;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,14 +27,14 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->expr = new ExpressionDecorator(new Expression);
+        $this->expr = new ExpressionDecorator(new Expression, new SphinxQL());
     }
 
     public function test__construct()
     {
         $expr = new Expression();
 
-        $decorator = new ExpressionDecorator($expr);
+        $decorator = new ExpressionDecorator($expr, new SphinxQL());
 
         $this->assertSame($expr, $decorator->getSubject());
     }
@@ -65,8 +67,9 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         ExpressionDecorator::setFloatAsLiteral(false);
         $this->assertSame(array(array('%s', array(33.0), array(Expression::TYPE_VALUE))), $this->expr->getExpressionData());
 
+        $platform = new TrustedSphinxQL(); //use platform to ensure same float point precision
         ExpressionDecorator::setFloatAsLiteral(true);
-        $this->assertSame(array(array('%s', array(sprintf('%F', 33.0)), array(Expression::TYPE_LITERAL))), $this->expr->getExpressionData());
+        $this->assertSame(array(array('%s', array($platform->quoteTrustedValue(33.0)), array(Expression::TYPE_LITERAL))), $this->expr->getExpressionData());
     }
 
 }

@@ -15,6 +15,7 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;
 use SphinxSearch\Db\Sql\ExpressionDecorator;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase {
 
@@ -142,7 +143,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('10.000000', $return->getSql());
 
         //Test with an ExpressionDecorator
-        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0)), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
         $this->assertEquals('10.000000', $return->getSql());
     }

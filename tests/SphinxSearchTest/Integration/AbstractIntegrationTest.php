@@ -274,24 +274,81 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $indexer = new Indexer($adapter);
 
         $dataset = array(
-            array('id' => 1, 'short' => 'hello world', 'c1' => 11, 'f1' => pi()),
-            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10),
-            array('id' => 3, 'short' => 'hello world', 'c1' => 11, 'f1' => 10/9),
+            array('id' => 1, 'short' => 'hello world', 'c1' => 11, 'f1' => 55.55),
+            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10), //integers for float column are working in insert
+            array('id' => 3, 'short' => 'hello world', 'c1' => 11, 'f1' => pi()),
         );
 
         foreach ($dataset as $values) {
-            $indexer->insert('foo', $values);
+            $indexer->insert('foo', $values, true);
         }
 
         $search = new Search($adapter);
 
+
+
+
+        /*
+          floating point values (32-bit, IEEE 754 single precision)
+          @link http://en.wikipedia.org/wiki/Single-precision_floating-point_format
+
+          Keep in mind float precision issues:
+
+            mysql> insert into foo (id, f1) values (1, 55.55);
+            Query OK, 1 row affected (0.01 sec)
+
+            mysql> select * from foo;
+            +------+------+------+------+------+------+-----------+------+
+            | id   | baz  | bam  | c1   | c2   | c3   | f1        | bar  |
+            +------+------+------+------+------+------+-----------+------+
+            |    1 |    0 |    0 |    0 |    0 |    0 | 55.549999 |      |
+            +------+------+------+------+------+------+-----------+------+
+            1 row in set (0.00 sec)
+
+            mysql> select * from foo where f1 = 55.55;
+            +------+------+------+------+------+------+-----------+------+
+            | id   | baz  | bam  | c1   | c2   | c3   | f1        | bar  |
+            +------+------+------+------+------+------+-----------+------+
+            |    1 |    0 |    0 |    0 |    0 |    0 | 55.549999 |      |
+            +------+------+------+------+------+------+-----------+------+
+            1 row in set (0.00 sec)
+
+         */
+
+
+        //1: float with few decimals
         $rowset = $search->search('foo', function(Select $select) {
-            $select->where(array('f1' => 144.00 ));
+            $select->columns(array('id'))
+            ->where(array('f1' => 55.55));
         });
 
-//         $rowset = $search->search('foo', function(Select $select) {
-//             $select->where(array('f1' => 10.0));
-//         });
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1), $rowset->current()->getArrayCopy()); //Due to precision issue we can't assert against f1 value in result
+
+
+        //2: special case (no decimals)
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'f1'))
+                   ->where(array('f1' => 10.00));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 2,'f1' => 10), $rowset->current()->getArrayCopy());
+
+
+
+        //3: precision of irrational number
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id'))
+                ->where(array('f1' => pi()));
+        });
+
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 3), $rowset->current()->getArrayCopy());
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }

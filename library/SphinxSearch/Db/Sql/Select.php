@@ -267,7 +267,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
         } else {
-            $expressionDecorator = new ExpressionDecorator($expression);
+            $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 
         return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);

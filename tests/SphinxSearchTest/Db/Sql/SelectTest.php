@@ -15,6 +15,7 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class SelectTest extends \PHPUnit_Framework_TestCase {
 
@@ -410,7 +411,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('10.000000', $return->getSql());
 
         //Test with an ExpressionDecorator
-        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0)), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
         $this->assertEquals('10.000000', $return->getSql());
     }
@@ -565,12 +566,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
         // FIXME
         // NOTE: assuming float as literal [default behaviour]
+        $platform = new TrustedSphinxQL(); //use platform to ensure same float point precision
+        $ten = $platform->quoteValue(10.0);
         $select12 = new Select;
         $select12->from('foo')->columns(array('f1', 'test' => new Expression('?', 10.0)));
         $sqlPrep12 = // same
-        $sqlStr12 = 'SELECT `f1`, 10.000000 AS `test` FROM `foo`';
+        $sqlStr12 = 'SELECT `f1`, '.$ten.' AS `test` FROM `foo`';
         $internalTests12 = array(
-            'processSelect' => array(array(array('`f1`'), array('10.000000', '`test`')), '`foo`'),
+            'processSelect' => array(array(array('`f1`'), array($ten, '`test`')), '`foo`'),
         );
 
 //         // join with alternate type

@@ -11,6 +11,7 @@ namespace SphinxSearch\Db\Sql;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class ExpressionDecorator implements ExpressionInterface
 {
@@ -26,11 +27,17 @@ class ExpressionDecorator implements ExpressionInterface
     protected $subject;
 
     /**
+     * @var SphinxQL
+     */
+    protected $platform;
+
+    /**
      * @param ExpressionInterface $subject
      */
-    public function __construct(ExpressionInterface $subject)
+    public function __construct(ExpressionInterface $subject, SphinxQL $platform)
     {
         $this->setSubject($subject);
+        $this->platform = $platform;
     }
 
     /**
@@ -92,7 +99,7 @@ class ExpressionDecorator implements ExpressionInterface
                 $parametersCount = count($expressionPart[1]);
                 for ($i = 0; $i < $parametersCount; $i++) {
                     if (is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
-                        $expressionPart[1][$i] = sprintf('%F', $expressionPart[1][$i]);
+                        $expressionPart[1][$i] = $this->platform->toSingleFloatPrecision($expressionPart[1][$i]);
                         $expressionPart[2][$i] = Expression::TYPE_LITERAL;
                     }
                 }
