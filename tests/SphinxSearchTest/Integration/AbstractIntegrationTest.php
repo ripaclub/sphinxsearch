@@ -266,6 +266,52 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testBoolean()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => true),
+            array('id' => 2, 'short' => 'hello world', 'c1' => false),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values, true);
+        }
+
+        $search = new Search($adapter);
+
+
+
+        //1: float with few decimals
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => true));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1, 'c1' => true), $rowset->current()->getArrayCopy());
+
+        //1: float with few decimals
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => false));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $result = $rowset->current()->getArrayCopy();
+        //array('id' => 2, 'c1' => false) == array('id' => '2', 'c1' => '0') but assertEquals doesn't work
+        $this->assertEquals(2, $result['id']);
+        $this->assertTrue(false == $result['c1']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
     public function testFloat()
     {
         $adapter = $this->adapter;

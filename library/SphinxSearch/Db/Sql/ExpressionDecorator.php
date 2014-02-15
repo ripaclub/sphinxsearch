@@ -94,14 +94,15 @@ class ExpressionDecorator implements ExpressionInterface
     {
         $expressionData = $this->subject->getExpressionData();
 
-        if (self::getFloatAsLiteral()) {
-            foreach ($expressionData as &$expressionPart) {
-                $parametersCount = count($expressionPart[1]);
-                for ($i = 0; $i < $parametersCount; $i++) {
-                    if (is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
-                        $expressionPart[1][$i] = $this->platform->toSingleFloatPrecision($expressionPart[1][$i]);
-                        $expressionPart[2][$i] = Expression::TYPE_LITERAL;
-                    }
+        foreach ($expressionData as &$expressionPart) {
+            $parametersCount = count($expressionPart[1]);
+            for ($i = 0; $i < $parametersCount; $i++) {
+                if (self::getFloatAsLiteral() && is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
+                    $expressionPart[1][$i] = $this->platform->toSingleFloatPrecision($expressionPart[1][$i]);
+                    $expressionPart[2][$i] = Expression::TYPE_LITERAL;
+                }
+                if (is_bool($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
+                    $expressionPart[1][$i] = (int) $expressionPart[1][$i];
                 }
             }
         }
