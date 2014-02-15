@@ -57,16 +57,16 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExpressionData()
     {
-        $subject = new Expression('?', array(33.0));
+        $subject = new Expression('? = ?', array(33.0, true));
         $this->expr->setSubject($subject);
 
         $this->platform->enableFloatConversion(false);
-        $this->assertSame(array(array('%s', array(33.0), array(Expression::TYPE_VALUE))), $this->expr->getExpressionData());
+        $this->assertSame(array(array('%s = %s', array(33.0, 1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))), $this->expr->getExpressionData());
 
         $platform = new TrustedSphinxQL(); //use platform to ensure same float point precision
         $platform->enableFloatConversion(true);
         $this->platform->enableFloatConversion(true);
-        $this->assertSame(array(array('%s', array($platform->quoteTrustedValue(33.0)), array(Expression::TYPE_LITERAL))), $this->expr->getExpressionData());
+        $this->assertSame(array(array('%s = %s', array($platform->quoteTrustedValue(33.0), 1), array(Expression::TYPE_LITERAL, Expression::TYPE_VALUE))), $this->expr->getExpressionData());
     }
 
 }
