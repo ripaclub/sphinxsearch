@@ -74,8 +74,14 @@ class SphinxQL extends Mysql implements PlatformInterface
      * and if an IEEE 754 single precision is converted to a decimal string with at least 9 significant decimal
      * and then converted back to single, then the final number MUST match the original.
      *
-     * To ensure full camptibility this method converts float to a string with at most 9 significat decimal,
-     * then trim trim leading zeros. Note that '123.' is a valid SphinxQL syntax for float numbers.
+     * To ensure full campatibility this method converts float to a string with at least 9 significat decimal,
+     * then trim leading zeros ('123.' is a valid SphinxQL syntax for float numbers).
+     *
+     * Keep in mind that, even if Sphinx accepts string with 9 significant decimal, it prints out always 6 decimal in query results,
+     * anyway we've to use 9 decimal in order to ensure filters working (i.e. WHERE clause 6 decimal could not work due to precision loss).
+     * As consequence float values in query results will be not comparable with values returned by this method.
+     *
+     * To simulate Sphinx output you can use: sprintf('%.6F', unpack('f', pack('f', (float) $value))[1])
      *
      * @param number $value
      * @return string
