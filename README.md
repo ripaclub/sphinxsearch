@@ -14,6 +14,7 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 	- [Prepared statement](#prepared-statement)
 	- [Working with types](#working-with-types)
 	- [SQL Objects](#sql-objects)
+	- [Query expression](#query-expression)
 - [Testing](#testing)
 
 ## Introduction
@@ -153,8 +154,8 @@ $indexer->insert(
 	'foo',
 	array(
 		'id' => 1,
-    		'short' => 'Lorem ipsum dolor sit amet',
-    		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
+		'short' => 'Lorem ipsum dolor sit amet',
+		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
 	),
 	true
 );
@@ -239,7 +240,92 @@ Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#
 
 ### SQL Objects
 
-_TODO_
+As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
+
+* `SphinxSearch\Db\Sql\Select` explained in [Search](#search) paragraph
+* `SphinxSearch\Db\Sql\Insert` 
+* `SphinxSearch\Db\Sql\Replace` same as insert, but overwrites duplicate IDs
+* `SphinxSearch\Db\Sql\Update` with the ability to handle `OPTION` clause
+* `SphinxSearch\Db\Sql\Delete`
+
+Each of them can be retrivied by `SphinxSearch\Db\Sql\Sql` class methods:
+
+```php
+use SphinxSearch\Db\Sql\Sql;
+
+$sql = new Sql($adapter);
+$select = $sql->select();  // @return SphinxSearch\Db\Sql\Select
+$insert = $sql->insert();  // @return SphinxSearch\Db\Sql\Insert
+$insert = $sql->replace(); // @return SphinxSearch\Db\Sql\Insert
+$update = $sql->update();  // @return SphinxSearch\Db\Sql\Update
+$delete = $sql->delete();  // @return SphinxSearch\Db\Sql\Delete
+```
+
+Or can be instanziated directly like in the following example:
+
+```php
+use SphinxSearch\Db\Sql\Update;
+use SphinxSearch\Db\Sql\Predicate\Match;
+
+$update = new Update;
+$update->from('myindex')
+       ->set(array('bigattr' => 1000, 'fattr' => 3465.23))
+       ->where(new Match('?', 'hehe'))
+       ->where(array('enabled' => 1))
+       ->option('strict', 1);
+```
+
+Then you can perform your query by:
+
+```php
+$statement = $sql->prepareStatementForSqlObject($select);
+$results = $statement->execute();
+```
+
+Or using the `Search` or the `Indexer` components:
+
+```php
+$resultset = $indexer->updateWith($update);
+```
+
+Thus, every object (that has `where()`) supports the `Match` expression, as explained in next paragrah.
+
+### Query expression
+
+The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). Also, the component design permits to use it standalone, or you can just extend it in order to write your custom query expression.
+
+Some examples:
+
+```php
+use SphinxSearch\Query\QueryExpression;
+
+$query = new QueryExpression('@title ? @body ?', array('hello', 'world'));
+echo $query->toString(); //outputs: @title hello @body world
+
+
+echo $query->setExpression('"?"/3')
+           ->setParameters(array('the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'))
+           ->toString(); //outputs: "the world is a wonderful place, but sometimes people uses spe\(ia\| ch\@rs"/3
+           
+echo $query->setExpression('? NEAR/? ? NEAR/? "?"')
+           ->setParameters(array('hello', 3, 'world', 4, '"my test"'))
+           ->toString(); //outputs: hello NEAR/3 world NEAR/4 "my test"
+```
+
+The `SphinxSearch\Db\Sql\Predicate\Match` class uses internally the `QueryExpression`, so you can use it in your SQL queries directly:
+
+```php
+use SphinxSearch\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Sql\Select;
+use SphinxSearch\Db\Sql\Predicate\Match;
+
+$select = new Select;
+$select->from('myindex')
+       ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
+       ->where(array('enabled' => 1));
+       
+echo $select->getSqlString(new SphinxQL()); //outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"')
+```
 
 Testing
 ---
