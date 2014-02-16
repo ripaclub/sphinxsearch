@@ -292,7 +292,8 @@ Thus, every object (that has `where()`) supports the `Match` expression, as expl
 
 ### Query expression
 
-The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). Also, the component design permits to use it standalone, or you can just extend it in order to write your custom query expression.
+The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). 
+Also, the component design permits to use it standalone, since it has no dependencies on other library's components.
 
 Some examples:
 
@@ -323,8 +324,9 @@ $select = new Select;
 $select->from('myindex')
        ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
        ->where(array('enabled' => 1));
-       
-echo $select->getSqlString(new SphinxQL()); //outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"')
+
+//outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1       
+echo $select->getSqlString(new SphinxQL()); 
 ```
 
 Testing
