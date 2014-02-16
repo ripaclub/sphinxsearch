@@ -8,8 +8,6 @@
  */
 namespace SphinxSearch\Db\Sql;
 
-use Zend\Db\Sql\Insert;
-
 class Replace extends Insert
 {
 

@@ -54,6 +54,21 @@ class SqlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers SphinxSearch\Db\Sql\Sql::insert
+     */
+    public function testInsert()
+    {
+        $insert = $this->sql->insert();
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Insert', $insert);
+        $this->assertSame('foo', $insert->getRawState('table'));
+
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            'This Sql object is intended to work with only the table "foo" provided at construction time.');
+        $this->sql->insert('bar');
+    }
+
+    /**
      * @covers SphinxSearch\Db\Sql\Sql::replace
      */
     public function testReplace()
@@ -81,6 +96,21 @@ class SqlTest extends \PHPUnit_Framework_TestCase
             'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->update('bar');
+    }
+
+    /**
+     * @covers SphinxSearch\Db\Sql\Sql::delete
+     */
+    public function testDelete()
+    {
+        $update = $this->sql->delete();
+        $this->assertInstanceOf('Zend\Db\Sql\Delete', $update);
+        $this->assertSame('foo', $update->getRawState('table'));
+
+        $this->setExpectedException(
+            'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            'This Sql object is intended to work with only the table "foo" provided at construction time.');
+        $this->sql->delete('bar');
 
     }
 

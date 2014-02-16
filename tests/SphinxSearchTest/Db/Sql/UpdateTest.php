@@ -42,6 +42,19 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @covers SphinxSearch\Db\Sql\Update::table
+     */
+    public function testTable()
+    {
+        $this->update->table('foo', 'bar');
+        $this->assertEquals('foo', $this->readAttribute($this->update, 'table'));
+
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $this->update->table($tableIdentifier);
+        $this->assertEquals('foo', $this->readAttribute($this->update, 'table'));
+    }
+
+    /**
      * @covers SphinxSearch\Db\Sql\Update::getRawState
      */
     public function testGetRawState()
@@ -128,24 +141,25 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
      */
     public function testProcessExpression()
     {
-        $select = new Update();
+        $update = new Update();
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
         $parameterContainer = new ParameterContainer();
 
-        $selectReflect = new \ReflectionObject($select);
+        $selectReflect = new \ReflectionObject($update);
         $mr = $selectReflect->getMethod('processExpression');
         $mr->setAccessible(true);
 
         //Test with an Expression
-        $return = $mr->invokeArgs($select, array(new Expression('?', 10.0), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return = $mr->invokeArgs($update, array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
-        $this->assertEquals('10.000000', $return->getSql());
 
         //Test with an ExpressionDecorator
-        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return2 = $mr->invokeArgs($update, array(new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
-        $this->assertEquals('10.000000', $return->getSql());
+
+        $this->assertSame($return->getSql(), $return2->getSql());
+        $this->assertEquals('10.1', $return->getSql());
     }
 
 

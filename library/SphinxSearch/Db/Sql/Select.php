@@ -124,6 +124,10 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             throw new Exception\InvalidArgumentException('$table must be a string, array, an instance of TableIdentifier, or an instance of Select');
         }
 
+        if ($table instanceof TableIdentifier) {
+            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
+        }
+
         $this->table = $table;
         return $this;
     }
@@ -342,9 +346,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 if ($table instanceof Select) {
                     $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
                 } else {
-                    if ($table instanceof TableIdentifier) {
-                        list($table, $schema) = $table->getTableAndSchema(); // NOTE: schema not supported by SphinxQL
-                    }
                     $table = $platform->quoteIdentifier($table);
                 }
             }

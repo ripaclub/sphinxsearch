@@ -36,8 +36,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     public function testFrom()
     {
         $select = new Select;
-        $return = $select->from('foo', 'bar');
+        $return = $select->from('baz', 'ignore schema');
         $this->assertSame($select, $return);
+        $this->assertEquals('baz', $this->readAttribute($select, 'table'));
+
+
+        $tableIdentifier = new TableIdentifier('foo', 'ignore schema');
+        $select->from($tableIdentifier);
+        $this->assertEquals('foo', $this->readAttribute($select, 'table'));
 
         return $return;
     }
@@ -406,14 +412,15 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $mr->setAccessible(true);
 
         //Test with an Expression
-        $return = $mr->invokeArgs($select, array(new Expression('?', 10.0), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return = $mr->invokeArgs($select, array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
-        $this->assertEquals('10.000000', $return->getSql());
 
         //Test with an ExpressionDecorator
-        $return = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.0), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $return2 = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
         $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
-        $this->assertEquals('10.000000', $return->getSql());
+
+        $this->assertSame($return->getSql(), $return2->getSql());
+        $this->assertEquals('10.1', $return->getSql());
     }
 
     /**

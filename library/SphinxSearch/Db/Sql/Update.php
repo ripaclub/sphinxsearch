@@ -58,6 +58,21 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
      */
     protected $option = array();
 
+    /**
+     * Specify table for statement
+     *
+     * @param  string|TableIdentifier $table
+     * @return Update
+     */
+    public function table($table)
+    {
+        if ($table instanceof TableIdentifier) {
+            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
+        }
+
+        $this->table = $table;
+        return $this;
+    }
 
     /**
      * Set key/value pairs to option
@@ -120,13 +135,6 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         $table = $this->table;
-        $schema = null;
-
-        // Create quoted table name to use in update processing
-        if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema(); // NOTE: schema not supported by SphinxQL
-        }
-
         $table = $platform->quoteIdentifier($table);
 
         $set = $this->set;
@@ -173,13 +181,6 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     {
         $adapterPlatform = ($adapterPlatform) ? : new Sql92;
         $table = $this->table;
-        $schema = null;
-
-        // Create quoted table name to use in update processing
-        if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema();
-        }
-
         $table = $adapterPlatform->quoteIdentifier($table);
 
         $set = $this->set;
