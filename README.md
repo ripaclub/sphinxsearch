@@ -216,13 +216,12 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
 * `boolean`
 
-  SphinxQL does not have a native boolean type, however if you try to use a PHP bool the library and the driver will cast the value to `0` or `1` respectively.
+  SphinxQL does not have a native boolean type but if you try to use a PHP `bool` the library and the driver will cast the value to `0` or `1` respectively.
 
 
 * `integer`
 
-  PHP native integers work properly when SphinxQL expects an `uint`. Note that strings containing integers do not work in filters (i.e. `WHERE` clause).
-  WARNING: PHP integers are signed, instead SphinxQL supports only UNSIGNED integers and UNIX timestamp
+  PHP native integers work properly when SphinxQL expects an `uint`. Note that strings containing integers do not work in filters (i.e. `WHERE` clause).<br/>_WARNING: PHP integers are signed, instead SphinxQL supports only UNSIGNED integers and UNIX timestamp._
 
 
 * `float`
