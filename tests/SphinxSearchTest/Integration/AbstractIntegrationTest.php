@@ -121,7 +121,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-            //mixing order col and expr not fully supported
+            // Mixing order col and expr not fully supported
             if (strpos($sqlPrep, 'DESC, RAND()')) {
                 continue;
             }
@@ -266,11 +266,187 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testDocUseCase1()
+    public function testBoolean()
     {
         $adapter = $this->adapter;
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
 
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => true),
+            array('id' => 2, 'short' => 'hello world', 'c1' => false),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values, true);
+        }
+
+        $search = new Search($adapter);
+
+        //test TRUE
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => true));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1, 'c1' => true), $rowset->current()->getArrayCopy());
+
+        //test FALSE
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => false));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $result = $rowset->current()->getArrayCopy();
+        //array('id' => 2, 'c1' => false) == array('id' => '2', 'c1' => '0') but assertEquals doesn't work
+        $this->assertEquals(2, $result['id']);
+        $this->assertTrue(false == $result['c1']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testInteger()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => 1000),
+            array('id' => 2, 'short' => 'hello world', 'c1' => -1000),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values, true);
+        }
+
+        $search = new Search($adapter);
+
+
+
+        //1: simple int
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => 1000));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1, 'c1' => 1000), $rowset->current()->getArrayCopy());
+
+        //1: overflow with unsigned
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'c1'))
+            ->where(array('c1' => pow(2, 32) - 1000)); //sphinx has 32-bit unsigned integer
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 2, 'c1' => pow(2, 32) - 1000), $rowset->current()->getArrayCopy());
+
+
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testFloat()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+
+        $dataset = array(
+            array('id' => 1, 'short' => 'hello world', 'c1' => 11, 'f1' => 55.55),
+            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10), //integers for float column are working in insert
+            array('id' => 3, 'short' => 'hello world', 'c1' => 11, 'f1' => pi()),
+        );
+
+        foreach ($dataset as $values) {
+            $indexer->insert('foo', $values, true);
+        }
+
+        $search = new Search($adapter);
+
+
+
+
+        /*
+          floating point values (32-bit, IEEE 754 single precision)
+          @link http://en.wikipedia.org/wiki/Single-precision_floating-point_format
+
+          Keep in mind float precision issues:
+
+            mysql> insert into foo (id, f1) values (1, 55.55);
+            Query OK, 1 row affected (0.01 sec)
+
+            mysql> select * from foo;
+            +------+------+------+------+------+------+-----------+------+
+            | id   | baz  | bam  | c1   | c2   | c3   | f1        | bar  |
+            +------+------+------+------+------+------+-----------+------+
+            |    1 |    0 |    0 |    0 |    0 |    0 | 55.549999 |      |
+            +------+------+------+------+------+------+-----------+------+
+            1 row in set (0.00 sec)
+
+            mysql> select * from foo where f1 = 55.55;
+            +------+------+------+------+------+------+-----------+------+
+            | id   | baz  | bam  | c1   | c2   | c3   | f1        | bar  |
+            +------+------+------+------+------+------+-----------+------+
+            |    1 |    0 |    0 |    0 |    0 |    0 | 55.549999 |      |
+            +------+------+------+------+------+------+-----------+------+
+            1 row in set (0.00 sec)
+
+         */
+
+
+        //1: float with few decimals
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id'))
+            ->where(array('f1' => 55.55));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 1), $rowset->current()->getArrayCopy()); //Due to precision issue we can't assert against f1 value in result
+
+
+        //2: special case (no decimals)
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id', 'f1'))
+                   ->where(array('f1' => 10.00));
+        });
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 2,'f1' => 10), $rowset->current()->getArrayCopy());
+
+
+
+        //3: precision of irrational number
+        $rowset = $search->search('foo', function(Select $select) {
+            $select->columns(array('id'))
+                ->where(array('f1' => pi()));
+        });
+
+
+        $this->assertCount(1, $rowset);
+        //Assume not identical but equal (result values are strings)
+        $this->assertEquals(array('id' => 3), $rowset->current()->getArrayCopy());
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+
+    public function testDocUseCase1()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
 
         $indexer = new Indexer($adapter);
 
@@ -283,7 +459,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             'c3'    => 1000,
             'f1'    => pi(),
         ), true);
-
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', new Match('ipsum dolor'));
@@ -312,6 +487,90 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         );
         $current = $results->current();
         $this->assertEquals(11, $current['id']);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testOrderWithCompoundName()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 11,
+                'short' => 'hello world',
+                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 1000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 12,
+                'short' => 'hello world 2',
+                'text'  => 'Lorem ipsum dolor sit amet ...',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 2000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+
+        $select29 = new Select;
+        $select29->from('foo')->order('c1.c2');
+        $search = new Search($adapter);
+        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $search->searchWith($select29);
+
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+    }
+
+    public function testGroupWithCompoundName()
+    {
+        $adapter = $this->adapter;
+        $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
+
+        $indexer = new Indexer($adapter);
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 11,
+                'short' => 'hello world',
+                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 1000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+        $indexer->insert(
+            'foo',
+            array(
+                'id'    => 12,
+                'short' => 'hello world 2',
+                'text'  => 'Lorem ipsum dolor sit amet ...',
+                'c1'    => 10,
+                'c2'    => 100,
+                'c3'    => 2000,
+                'f1'    => pi(),
+            ),
+            true
+        );
+
+        $select30 = new Select;
+        $select30->from('foo')->group('c1.d2');
+        $search = new Search($adapter);
+        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $search->searchWith($select30);
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }

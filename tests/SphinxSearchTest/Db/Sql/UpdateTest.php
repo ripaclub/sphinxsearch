@@ -8,11 +8,14 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
+use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
 use SphinxSearch\Db\Sql\Update;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class UpdateTest extends \PHPUnit_Framework_TestCase {
 
@@ -39,6 +42,19 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @covers SphinxSearch\Db\Sql\Update::table
+     */
+    public function testTable()
+    {
+        $this->update->table('foo', 'bar');
+        $this->assertEquals('foo', $this->readAttribute($this->update, 'table'));
+
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $this->update->table($tableIdentifier);
+        $this->assertEquals('foo', $this->readAttribute($this->update, 'table'));
+    }
+
+    /**
      * @covers SphinxSearch\Db\Sql\Update::getRawState
      */
     public function testGetRawState()
@@ -51,7 +67,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('foo', $this->update->getRawState('table'));
         $this->assertEquals(true, $this->update->getRawState('emptyWhereProtection'));
         $this->assertEquals(array('bar' => 'baz'), $this->update->getRawState('set'));
-        $this->assertEquals(array('ranker' => 'bm25'), $this->update->getRawState('option')); // FIXME: option
+        $this->assertEquals(array('ranker' => 'bm25'), $this->update->getRawState('option'));
         $this->assertInstanceOf('Zend\Db\Sql\Where', $this->update->getRawState('where'));
     }
 
@@ -101,7 +117,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception with null values
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNullOptionValues(Update $update)
@@ -111,13 +127,41 @@ class UpdateTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception when value keys are not strings
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNotStringOptionValueKeys(Update $update)
     {
         $update->option(array(1 => 'opt_values4'));
     }
+
+    /**
+     * @testdox Method processExpression() methods will return proper array when internally called, part of extension API
+     * @covers SphinxSearch\Db\Sql\Update::processExpression
+     */
+    public function testProcessExpression()
+    {
+        $update = new Update();
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $parameterContainer = new ParameterContainer();
+
+        $selectReflect = new \ReflectionObject($update);
+        $mr = $selectReflect->getMethod('processExpression');
+        $mr->setAccessible(true);
+
+        //Test with an Expression
+        $return = $mr->invokeArgs($update, array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+
+        //Test with an ExpressionDecorator
+        $return2 = $mr->invokeArgs($update, array(new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+
+        $this->assertSame($return->getSql(), $return2->getSql());
+        $this->assertEquals('10.1', $return->getSql());
+    }
+
 
     /**
      * @covers SphinxSearch\Db\Sql\Update::prepareStatement

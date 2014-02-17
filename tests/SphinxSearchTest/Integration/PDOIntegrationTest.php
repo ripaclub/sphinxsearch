@@ -15,7 +15,6 @@ class PDOIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(
         'driver'    => 'pdo_mysql',
-        'database'  => 'dummy',
         'hostname'  => '127.0.0.1',
         'port'      => 9306,
         'charset'   => 'UTF8'

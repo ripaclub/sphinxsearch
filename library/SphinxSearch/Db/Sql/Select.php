@@ -22,6 +22,8 @@ use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Having;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\ExpressionInterface;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 
 /**
  *
@@ -120,6 +122,10 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
         if (!is_string($table) && !is_array($table) && !$table instanceof TableIdentifier && !$table instanceof Select) {
             throw new Exception\InvalidArgumentException('$table must be a string, array, an instance of TableIdentifier, or an instance of Select');
+        }
+
+        if ($table instanceof TableIdentifier) {
+            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
         }
 
         $this->table = $table;
@@ -261,6 +267,17 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
+    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
+    {
+        if ($expression instanceof ExpressionDecorator) {
+            $expressionDecorator = $expression;
+        } else {
+            $expressionDecorator = new ExpressionDecorator($expression, $platform);
+        }
+
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
+    }
+
     /**
      * Process the select part
      *
@@ -329,9 +346,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 if ($table instanceof Select) {
                     $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
                 } else {
-                    if ($table instanceof TableIdentifier) {
-                        list($table, $schema) = $table->getTableAndSchema(); // NOTE: schema not supported by SphinxQL
-                    }
                     $table = $platform->quoteIdentifier($table);
                 }
             }

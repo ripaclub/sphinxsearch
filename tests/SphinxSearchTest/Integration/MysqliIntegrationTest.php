@@ -15,7 +15,6 @@ class MysqliIntegrationTest extends AbstractIntegrationTest
 {
     protected $config = array(
         'driver'    => 'Mysqli',
-        'database'  => 'dummy',
         'hostname'  => '127.0.0.1',
         'port'      => 9306,
         'charset'   => 'UTF8'

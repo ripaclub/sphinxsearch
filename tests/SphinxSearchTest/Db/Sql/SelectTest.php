@@ -8,11 +8,14 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
+use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use SphinxSearch\Db\Sql\Select;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class SelectTest extends \PHPUnit_Framework_TestCase {
 
@@ -33,8 +36,14 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     public function testFrom()
     {
         $select = new Select;
-        $return = $select->from('foo', 'bar');
+        $return = $select->from('baz', 'ignore schema');
         $this->assertSame($select, $return);
+        $this->assertEquals('baz', $this->readAttribute($select, 'table'));
+
+
+        $tableIdentifier = new TableIdentifier('foo', 'ignore schema');
+        $select->from($tableIdentifier);
+        $this->assertEquals('foo', $this->readAttribute($select, 'table'));
 
         return $return;
     }
@@ -210,7 +219,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Zend\Db\Sql\Having', $select->getRawState('having'));
     }
 
-
     /**
      * @testdox Method option() returns same Select object (is chainable)
      * @covers SphinxSearch\Db\Sql\Select::option
@@ -257,7 +265,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception with null values
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNullOptionValues(Select $select)
@@ -267,7 +275,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @testdox Method option() launch exception when value keys are not strings
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @depends testGetRawOption
      */
     public function testNotStringOptionValueKeys(Select $select)
@@ -389,12 +397,40 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @testdox Method processExpression() methods will return proper array when internally called, part of extension API
+     * @covers SphinxSearch\Db\Sql\Select::processExpression
+     */
+    public function testProcessExpression()
+    {
+        $select = new Select();
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $parameterContainer = new ParameterContainer();
+
+        $selectReflect = new \ReflectionObject($select);
+        $mr = $selectReflect->getMethod('processExpression');
+        $mr->setAccessible(true);
+
+        //Test with an Expression
+        $return = $mr->invokeArgs($select, array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+
+        //Test with an ExpressionDecorator
+        $return2 = $mr->invokeArgs($select, array(new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+
+        $this->assertSame($return->getSql(), $return2->getSql());
+        $this->assertEquals('10.1', $return->getSql());
+    }
+
+    /**
      * @testdox Method process*() methods will return proper array when internally called, part of extension API
      * @dataProvider providerData
      * @covers SphinxSearch\Db\Sql\Select::processSelect
      * @covers SphinxSearch\Db\Sql\Select::processWithinGroupOrder
      * @covers SphinxSearch\Db\Sql\Select::processLimitOffset
      * @covers SphinxSearch\Db\Sql\Select::processOption
+     * @covers SphinxSearch\Db\Sql\Select::processExpression
      */
     public function testProcessMethods(Select $select, $unused, $unused2, $unused3, $internalTests)
     {
@@ -415,7 +451,6 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($expected, $return);
         }
     }
-
 
     public function providerData()
     {
@@ -534,6 +569,18 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
         $sqlStr11 = 'SELECT * FROM `foo`';
         $internalTests11 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
+        );
+
+        // FIXME
+        // NOTE: assuming float as literal [default behaviour]
+        $platform = new TrustedSphinxQL(); //use platform to ensure same float point precision
+        $ten = $platform->quoteValue(10.0);
+        $select12 = new Select;
+        $select12->from('foo')->columns(array('f1', 'test' => new Expression('?', 10.0)));
+        $sqlPrep12 = // same
+        $sqlStr12 = 'SELECT `f1`, '.$ten.' AS `test` FROM `foo`';
+        $internalTests12 = array(
+            'processSelect' => array(array(array('`f1`'), array($ten, '`test`')), '`foo`'),
         );
 
 //         // join with alternate type
@@ -745,9 +792,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processSelect' => array(array(array('*')), '(SELECT * FROM `bar` WHERE `y` = ?)'),
         );
 
-
-
-        //Not yet supported by Sphinx
+        // not yet supported by Sphinx
         $select33 = new Select;
         $select33->from('foo')->columns(array('*'))->where(array(
             'c1' => null,
@@ -761,7 +806,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             'processWhere'  => array('`c1` IS NULL AND `c2` IN (?, ?, ?) AND `c3` IS NOT NULL')
         );
 
-        //Not yet supported by Sphinx
+        // not yet supported by Sphinx
         // @author Demian Katz
         $select34 = new Select;
         $select34->from('foo')->order(array(
@@ -983,7 +1028,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
             array($select9,  $sqlPrep9,  $params9,   $sqlStr9,  $internalTests9),
             array($select10, $sqlPrep10, array(),    $sqlStr10, $internalTests10),
             array($select11, $sqlPrep11, array(),    $sqlStr11, $internalTests11),
-//             array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
+            array($select12, $sqlPrep12, array(),    $sqlStr12, $internalTests12),
 //             array($select13, $sqlPrep13, array(),    $sqlStr13, $internalTests13),
 //             array($select14, $sqlPrep14, array(),    $sqlStr14, $internalTests14),
             array($select15, $sqlPrep15, array(),    $sqlStr15, $internalTests15),
@@ -1026,7 +1071,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException SphinxSearch\Db\Sql\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @testdox Columns cannot be prefixed with the table name
      */
     public function testPrefixColumnsWithTable()

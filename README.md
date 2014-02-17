@@ -14,6 +14,7 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 	- [Prepared statement](#prepared-statement)
 	- [Working with types](#working-with-types)
 	- [SQL Objects](#sql-objects)
+	- [Query expression](#query-expression)
 - [Testing](#testing)
 
 ## Introduction
@@ -38,7 +39,7 @@ Add the following to your `composer.json` file:
 ```json
 "require": {
 	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.4",
+	"ripaclub/sphinxsearch": "~0.5",
 }
 ```
 
@@ -69,7 +70,6 @@ Then in your configuration add the `sphinxql` node and configure it with connect
 ```php
 'sphinxql' => array(
 	'driver'    => 'pdo_mysql',
-	'database'  => 'dummy',
 	'hostname'  => '127.0.0.1',
 	'port'      => 9306,
 	'charset'   => 'UTF8'
@@ -97,7 +97,7 @@ foreach ($rowset as $row) {
 }
 ```
 
-The `search()` method takes as first argument the index name (or an array of indicies) and the second one is the where condition (same as `Zend\Db\Sql\Select::where()`).
+The `search()` method takes as first argument the index name (or an array of indicies) and the second one accepts a where condition (same as `Zend\Db\Sql\Select::where()`).
 Furthermore `search()` second argument can accept a closure, which in turn, will be passed the current `Select` object that is being used to build the `SELECT` query.
 
 The following usage is possible:
@@ -115,7 +115,7 @@ $rowset = $search->search('foo', function(Select $select) {
 });
 ```
 
-The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from), supports the following methods related to SQL standard clauses:
+The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
 
 ```php
 $select->from($table)
@@ -127,8 +127,8 @@ $select->order($order)
 $select->limit($limit)
 $select->offset($offset)
 // And also variable overloading for:
-$select->->where
-$select->->having
+$select->where
+$select->having
 ```
 
 Thus it adds some SphinxQL specific methods:
@@ -138,7 +138,7 @@ $select->withinGroupOrder($withinGroupOrder)
 $select->option(array $values, $flag = self::OPTIONS_MERGE)
 ```
 
-Other utility methods as `setSpecifications`, `getRawState` and `reset` are fully supported.
+Other utility methods like `setSpecifications`, `getRawState` and `reset` are fully supported.
 
 Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syntax doesn't have them.
 
@@ -153,14 +153,15 @@ $indexer = new Indexer($adapter);
 $indexer->insert(
 	'foo',
 	array(
-    		'short' => 'Lorem ipsum dolor sit amet',
-    		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
+		'id' => 1,
+		'short' => 'Lorem ipsum dolor sit amet',
+		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
 	),
 	true
 );
 ```
 
-Note tha the third parameter of `insert` method is a boolean flag indicating wheter a _"uspert"_ rather than an insert have to be done.
+Note that third parameter of `insert` method is a boolean flag indicating wheter a _"upsert"_ rather than an insert have to be done.
 
 Furthermore, an `Indexer` instance allows to update and delete rows from real time indices (using the methods `update` and `delete`, respectively).
 
@@ -170,7 +171,7 @@ Furthermore, an `Indexer` instance allows to update and delete rows from real ti
 
 This library come with two factories in bundle in order to properly configure the `Zend\Db\Adapter\Adapter` to work with Sphinx Search.
 
-Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection or, if you need to use multiple connection, use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
+Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection else if you need to use multiple connections use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
 
 ```php
 'service_manager' => array(
@@ -192,7 +193,7 @@ Only two drivers are supported:
 SphinxQL does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature.
 
 ###### Note
-The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
+The PDO driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
 
 For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setQueryMode()` using one of the following flags:
 
@@ -212,24 +213,122 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
    Not supported by SphinxQL. The library transparently handle it for SQL compatibility: an exception will be thrown by the driver if you try to use a value = `NULL`.
 
+
 * `boolean`
 
-  `SphinxQL` does not have a native boolean type, however if you try to use a PHP bool when SphinxQL expects an integer the driver will caste the value to `0` or `1` respectively.
+  SphinxQL does not have a native boolean type, however if you try to use a PHP bool the library and the driver will cast the value to `0` or `1` respectively.
 
-* `integer` Both integer number and string containing integer work properly when SphinxQL expects an `uint`
-  (WARNING: PHP integers are signed, instead SphinxQL supports UNSIGNED integers and UNIX timestamp)
+
+* `integer`
+
+  PHP native integers work properly when SphinxQL expects an `uint`. Note that strings containing integers do not work in filters (i.e. `WHERE` clause).
+  WARNING: PHP integers are signed, instead SphinxQL supports only UNSIGNED integers and UNIX timestamp
+
 
 * `float`
 
-  Due to some limitations of PDO driver, only proper PHP float values work in prepared statement mode. Also the PDO decimal point conversion is locale aware: will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation.
+    Due to SphinxQL specific issues related to `float` values (especially in `WHERE` clause), by default them are converted to a 32-bit-single-precision compatible string rappresentation which are then included into the SQL query as literals, even in the case where prepared statements are used.
+    
+    This feature works only if value is a native PHP `float`. If it is needed, this behaviour can be globally disabled using `$adapter->getPlatform()->enableFloatConversion(false)`. <br/>_WARNING: disabling this feature can produce unexpected behaviors._
+    
+    Some notable examples:
+    - Actually Sphinx SQL interpreter treats a number without decimal part as an integer. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
+    - Due to the fact that SphinxQL does not support float quoted as strings and PDO driver has no way to bind a double (SQL float) parameter in prepared statement mode, PDO driver will just cast to string producing a locale aware conversion (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
 
-For those reasons we suggest to use proper PHP native types always (i.e., not use strings for numeric fields) when building queries.
+For those reasons we suggest to **always use proper PHP native types** (i.e., not use strings for numeric fields) when building queries.
 
 Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
 ### SQL Objects
 
-_TODO_
+As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
+
+* `SphinxSearch\Db\Sql\Select` explained in [Search](#search) paragraph
+* `SphinxSearch\Db\Sql\Insert` 
+* `SphinxSearch\Db\Sql\Replace` same as insert, but overwrites duplicate IDs
+* `SphinxSearch\Db\Sql\Update` with the ability to handle `OPTION` clause
+* `SphinxSearch\Db\Sql\Delete`
+
+Each of them can be retrivied by `SphinxSearch\Db\Sql\Sql` class methods:
+
+```php
+use SphinxSearch\Db\Sql\Sql;
+
+$sql = new Sql($adapter);
+$select = $sql->select();  // @return SphinxSearch\Db\Sql\Select
+$insert = $sql->insert();  // @return SphinxSearch\Db\Sql\Insert
+$insert = $sql->replace(); // @return SphinxSearch\Db\Sql\Insert
+$update = $sql->update();  // @return SphinxSearch\Db\Sql\Update
+$delete = $sql->delete();  // @return SphinxSearch\Db\Sql\Delete
+```
+
+Or can be instanziated directly like in the following example:
+
+```php
+use SphinxSearch\Db\Sql\Update;
+use SphinxSearch\Db\Sql\Predicate\Match;
+
+$update = new Update;
+$update->from('myindex')
+       ->set(array('bigattr' => 1000, 'fattr' => 3465.23))
+       ->where(new Match('?', 'hehe'))
+       ->where(array('enabled' => 1))
+       ->option('strict', 1);
+```
+
+Then you can perform your query by:
+
+```php
+$statement = $sql->prepareStatementForSqlObject($select);
+$results = $statement->execute();
+```
+
+Or using the `Search` or the `Indexer` components:
+
+```php
+$resultset = $indexer->updateWith($update);
+```
+
+Thus, every object (that has `where()`) supports the `Match` expression, as explained in next paragrah.
+
+### Query expression
+
+The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). 
+Also, the component design permits to use it standalone, since it has no dependencies on other library's components.
+
+Some examples:
+
+```php
+use SphinxSearch\Query\QueryExpression;
+
+$query = new QueryExpression('@title ? @body ?', array('hello', 'world'));
+echo $query->toString(); //outputs: @title hello @body world
+
+
+echo $query->setExpression('"?"/3')
+           ->setParameters(array('the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'))
+           ->toString(); //outputs: "the world is a wonderful place, but sometimes people uses spe\(ia\| ch\@rs"/3
+           
+echo $query->setExpression('? NEAR/? ? NEAR/? "?"')
+           ->setParameters(array('hello', 3, 'world', 4, '"my test"'))
+           ->toString(); //outputs: hello NEAR/3 world NEAR/4 "my test"
+```
+
+The `SphinxSearch\Db\Sql\Predicate\Match` class uses internally the `QueryExpression`, so you can use it in your SQL queries directly:
+
+```php
+use SphinxSearch\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Sql\Select;
+use SphinxSearch\Db\Sql\Predicate\Match;
+
+$select = new Select;
+$select->from('myindex')
+       ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
+       ->where(array('enabled' => 1));
+
+//outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1       
+echo $select->getSqlString(new SphinxQL()); 
+```
 
 Testing
 ---
