@@ -39,7 +39,7 @@ Add the following to your `composer.json` file:
 ```json
 "require": {
 	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.4",
+	"ripaclub/sphinxsearch": "~0.5",
 }
 ```
 
@@ -193,7 +193,7 @@ Only two drivers are supported:
 SphinxQL does not support prepared statement, but [PDO drivers are able to emulate prepared statement client side](http://it1.php.net/manual/en/pdo.prepared-statements.php). To achive prepared query benefits this library fully supports this feature.
 
 ###### Note
-The `Pdo` driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
+The PDO driver supports prepared and non-prepared queries. The `Mysqli` driver does not support prepared queries.
 
 For both `SphinxSearch\Search` and `SphinxSearch\Indexer` you can choose the working mode via `setQueryMode()` using one of the following flags:
 
@@ -216,25 +216,25 @@ This library aims to normalize API usage among supported drivers and modes, but 
 
 * `boolean`
 
-  SphinxQL does not have a native boolean type, however if you try to use a PHP bool the library and the driver will cast the value to `0` or `1` respectively.
+  SphinxQL does not have a native boolean type but if you try to use a PHP `bool` the library and the driver will cast the value to `0` or `1` respectively.
 
 
 * `integer`
 
-  PHP native integers work properly when SphinxQL expects an `uint`. Note that strings containing integers do not work in filters (i.e. `WHERE` clause).
-  WARNING: PHP integers are signed, instead SphinxQL supports only UNSIGNED integers and UNIX timestamp
+  PHP native integers work properly when SphinxQL expects an `uint`. Note that strings containing integers do not work in filters (i.e. `WHERE` clause).<br/>_WARNING: PHP integers are signed, instead SphinxQL supports only UNSIGNED integers and UNIX timestamp._
 
 
 * `float`
 
-  Due to SphinxQL specific issues related to `float` (especially in `WHERE` clause), by default this library converts float values to a Sphinx-32-bit-single-precision compatible string rappresentation then putting them into SQL as literals, also when using prepared statement.
-  This feature works only if value is a native PHP float.
-  That can be globally disabled by using `$adapter->getPlatform()->enableFloatConversion(false)`, if it's needed.
-  WARNING: disabling this feature can produce unexpected behaviors. Some notable examples:
-  - Actually Sphinx SQL interpreter treats a number without decimal part as an integer. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
-  - Due to the fact that SphinxQL does not support float quoted as strings and PDO driver has no way to bind a double (SQL float) param in prepared statement mode, PDO driver will just cast to string producing a locale aware conversion (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
+    Due to SphinxQL specific issues related to `float` values (especially in `WHERE` clause), by default them are converted to a 32-bit-single-precision compatible string rappresentation which are then included into the SQL query as literals, even in the case where prepared statements are used.
+    
+    This feature works only if value is a native PHP `float`. If it is needed, this behaviour can be globally disabled using `$adapter->getPlatform()->enableFloatConversion(false)`. <br/>_WARNING: disabling this feature can produce unexpected behaviors._
+    
+    Some notable examples:
+    - Actually Sphinx SQL interpreter treats a number without decimal part as an integer. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
+    - Due to the fact that SphinxQL does not support float quoted as strings and PDO driver has no way to bind a double (SQL float) parameter in prepared statement mode, PDO driver will just cast to string producing a locale aware conversion (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
 
-For those reasons we suggest to **use always proper PHP native types** (i.e., not use strings for numeric fields) when building queries.
+For those reasons we suggest to **always use proper PHP native types** (i.e., not use strings for numeric fields) when building queries.
 
 Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#attributes).
 
@@ -292,7 +292,8 @@ Thus, every object (that has `where()`) supports the `Match` expression, as expl
 
 ### Query expression
 
-The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). Also, the component design permits to use it standalone, or you can just extend it in order to write your custom query expression.
+The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). 
+Also, the component design permits to use it standalone, since it has no dependencies on other library's components.
 
 Some examples:
 
@@ -323,8 +324,9 @@ $select = new Select;
 $select->from('myindex')
        ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
        ->where(array('enabled' => 1));
-       
-echo $select->getSqlString(new SphinxQL()); //outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"')
+
+//outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1       
+echo $select->getSqlString(new SphinxQL()); 
 ```
 
 Testing
