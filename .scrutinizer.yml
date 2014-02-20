@@ -12,7 +12,7 @@ tools:
         config:
             standard: PSR2
         filter:
-            paths: ["library/*", "tests/*"]
+            paths: ["library/*"]
     php_cpd:
         enabled: true
         excluded_dirs: ["build/*", "docs", "examples", "tests", "vendor"]

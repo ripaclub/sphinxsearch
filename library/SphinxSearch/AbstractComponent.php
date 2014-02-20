@@ -3,7 +3,9 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014,
+ *              Leonardo Di Donato <leodidonato at gmail dot com>,
+ *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearch;
@@ -22,7 +24,6 @@ abstract class AbstractComponent
      */
     protected $adapter;
 
-
     /**
      * @var \SphinxSearch\Db\Sql\Sql
      */
@@ -32,7 +33,6 @@ abstract class AbstractComponent
      * @var string
      */
     protected $executeMode = self::QUERY_MODE_AUTO;
-
 
     /**
      * @return \Zend\Db\Adapter\Adapter
@@ -57,7 +57,8 @@ abstract class AbstractComponent
      */
     public function setQueryMode($flag)
     {
-        if (!in_array($flag, array(self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE))) {
+        $flags = array(self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE);
+        if (!in_array($flag, $flags)) {
             throw new \InvalidArgumentException('Invalid execution mode. Must be one of: auto, prepared or query');
         }
 
@@ -117,5 +118,4 @@ abstract class AbstractComponent
 
         return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
-
 }
