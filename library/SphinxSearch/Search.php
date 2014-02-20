@@ -25,9 +25,9 @@ class Search extends AbstractComponent
     protected $resultSetPrototype;
 
     /**
-     * @param ZendDBAdapter $adapter
+     * @param ZendDBAdapter      $adapter
      * @param ResultSetInterface $resultSetPrototype
-     * @param Sql $sql
+     * @param Sql                $sql
      */
     public function __construct(ZendDBAdapter $adapter, ResultSetInterface $resultSetPrototype = null, Sql $sql = null)
     {
@@ -45,8 +45,8 @@ class Search extends AbstractComponent
     }
 
     /**
-     * @param string|array $index
-     * @param Where|\Closure|string|array $where
+     * @param  string|array                $index
+     * @param  Where|\Closure|string|array $where
      * @return ResultSet
      */
     public function search($index, $where = null)
@@ -63,7 +63,7 @@ class Search extends AbstractComponent
     }
 
     /**
-     * @param Select $select
+     * @param  Select                                  $select
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
     public function searchWith(Select $select)

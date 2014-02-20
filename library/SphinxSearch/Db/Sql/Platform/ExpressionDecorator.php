@@ -12,7 +12,6 @@ namespace SphinxSearch\Db\Sql\Platform;
 
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\Expression;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class ExpressionDecorator implements ExpressionInterface
@@ -29,7 +28,7 @@ class ExpressionDecorator implements ExpressionInterface
 
     /**
      * @param ExpressionInterface $subject
-     * @param SphinxQL $platform
+     * @param SphinxQL            $platform
      */
     public function __construct(ExpressionInterface $subject, SphinxQL $platform)
     {
@@ -38,12 +37,13 @@ class ExpressionDecorator implements ExpressionInterface
     }
 
     /**
-     * @param ExpressionInterface $expression
+     * @param  ExpressionInterface $expression
      * @return ExpressionDecorator
      */
     public function setSubject(ExpressionInterface $expression)
     {
         $this->subject = $expression;
+
         return $this;
     }
 

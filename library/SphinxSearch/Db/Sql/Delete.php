@@ -32,6 +32,7 @@ class Delete extends ZendDelete
         }
 
         $this->table = $table;
+
         return $this;
     }
 

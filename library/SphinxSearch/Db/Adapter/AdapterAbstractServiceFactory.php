@@ -35,8 +35,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * Can we create an adapter by the requested name?
      *
      * @param  ServiceLocatorInterface $services
-     * @param  string $name
-     * @param  string $requestedName
+     * @param  string                  $name
+     * @param  string                  $requestedName
      * @return bool
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $services, $name, $requestedName)
@@ -56,9 +56,9 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Create a DB adapter
      *
-     * @param  ServiceLocatorInterface $services
-     * @param  string                  $name
-     * @param  string                  $requestedName
+     * @param  ServiceLocatorInterface              $services
+     * @param  string                               $name
+     * @param  string                               $requestedName
      * @throws Exception\UnsupportedDriverException
      * @return \Zend\Db\Adapter\Adapter
      */
@@ -99,6 +99,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         if (!$services->has('Config')) {
             $this->config = array();
+
             return $this->config;
         }
 
@@ -107,6 +108,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             || !is_array($config['sphinxql'])
         ) {
             $this->config = array();
+
             return $this->config;
         }
 
@@ -115,10 +117,12 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             || !is_array($config['adapters'])
         ) {
             $this->config = array();
+
             return $this->config;
         }
 
         $this->config = $config['adapters'];
+
         return $this->config;
     }
 }

@@ -12,7 +12,6 @@ namespace SphinxSearch\Db\Adapter\Platform;
 
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Platform\Mysql;
-use Zend\Db\Adapter\Driver\DriverInterface;
 
 class SphinxQL extends Mysql implements PlatformInterface
 {
@@ -87,7 +86,7 @@ class SphinxQL extends Mysql implements PlatformInterface
      *
      * To simulate Sphinx output you can use: sprintf('%.6F', unpack('f', pack('f', (float) $value))[1])
      *
-     * @param number $value
+     * @param  number $value
      * @return string
      */
     public function toFloatSinglePrecision($value)
@@ -96,12 +95,13 @@ class SphinxQL extends Mysql implements PlatformInterface
     }
 
     /**
-     * @param bool $flag
+     * @param  bool     $flag
      * @return SphinxQL
      */
     public function enableFloatConversion($flag = true)
     {
         $this->floatConversion = (bool) $flag;
+
         return $this;
     }
 

@@ -51,7 +51,7 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param string $flag
+     * @param  string                          $flag
      * @throws \InvalidArgumentException
      * @return \SphinxSearch\AbstractComponent
      */
@@ -63,6 +63,7 @@ abstract class AbstractComponent
         }
 
         $this->executeMode = $flag;
+
         return $this;
     }
 
@@ -99,8 +100,8 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param AbstractSql $sqlObject
-     * @param bool $usePreparedStatement
+     * @param  AbstractSql                             $sqlObject
+     * @param  bool                                    $usePreparedStatement
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
     public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
@@ -111,6 +112,7 @@ abstract class AbstractComponent
 
         if ($usePreparedStatement) {
             $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
+
             return $statement->execute();
         }
 
