@@ -337,13 +337,13 @@ The library source code (on master) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
-./vendor/bin/phpunit -c tests/
+vendor/bin/phpunit -c tests/
 ```
 
 After this you can inspect stats about code coverage.
 
 ```
-./vendor/bin/converalls -v
+vendor/bin/converalls -v
 ```
 
 Code quality
@@ -352,5 +352,11 @@ Code quality
 Run [phpmd](https://github.com/phpmd/phpmd).
 
 ```
- vendor/bin/phpmd library/ text phpmd.xml
+vendor/bin/phpmd library/ text phpmd.xml
+```
+
+Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
+
+```
+vendor/bin/phpcs --standard=PSR2 library/
 ```
