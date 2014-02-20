@@ -23,16 +23,14 @@ class Match implements PredicateInterface
      */
     protected $specification = 'MATCH(%1$s)';
 
-
     /**
      * @var QueryInterface
      */
     protected $query = null;
 
-
     /**
-     * @param string $expression
-     * @param string $parameters
+     * @param  string                             $expression
+     * @param  string                             $parameters
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($expression = '', $parameters = null)
@@ -55,7 +53,7 @@ class Match implements PredicateInterface
     }
 
     /**
-     * @param QueryInterface $query
+     * @param  QueryInterface $query
      * @return Match
      */
     public function setQuery(QueryInterface $query)

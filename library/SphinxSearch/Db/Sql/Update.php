@@ -73,14 +73,15 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         $this->table = $table;
+
         return $this;
     }
 
     /**
      * Set key/value pairs to option
      *
-     * @param  array $values Associative array of key values
-     * @param  string $flag One of the OPTIONS_* constants
+     * @param  array                              $values Associative array of key values
+     * @param  string                             $flag   One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
      * @return Select
      */
@@ -104,7 +105,6 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         return $this;
     }
 
-
     public function getRawState($key = null)
     {
         $rawState = array(
@@ -121,8 +121,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * Prepare statement
      *
-     * @param AdapterInterface $adapter
-     * @param StatementContainerInterface $statementContainer
+     * @param  AdapterInterface            $adapter
+     * @param  StatementContainerInterface $statementContainer
      * @return void
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
@@ -258,6 +258,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
         }
+
         return array($options);
     }
 }

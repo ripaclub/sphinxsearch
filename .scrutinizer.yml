@@ -14,19 +14,21 @@ tools:
         config:
             standard: PSR2
         filter:
-            paths: ["library/*"]
+            paths: ["library"]
     php_cpd:
         enabled: true
         command: vendor/bin/phpcpd
         excluded_dirs: ["docs", "tests", "vendor"]
     php_cs_fixer:
         enabled: true
+        command: vendor/bin/php-cs-fixer
         config:
             level: all
         filter:
-            paths: ["library/*"]
+            paths: ["library"]
     php_loc:
         enabled: true
+        command: vendor/bin/phploc
         excluded_dirs: ["docs", "tests", "vendor"]
     php_mess_detector:
         enabled: true
@@ -34,7 +36,7 @@ tools:
         config:
             ruleset: phpmd.xml
         filter:
-            paths: ["library/*"]
+            paths: ["library"]
     php_pdepend:
         enabled: true
         command: vendor/bin/pdepend

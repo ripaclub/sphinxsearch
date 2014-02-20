@@ -11,7 +11,6 @@
 namespace SphinxSearch\Db\Sql;
 
 use Zend\Db\Sql\Sql as ZendSql;
-use Zend\Db\Sql\Platform;
 
 class Sql extends ZendSql
 {
@@ -23,6 +22,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
+
         return new Select(($table) ? : $this->table);
     }
 
@@ -34,6 +34,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
+
         return new Insert(($table) ? : $this->table);
     }
 
@@ -45,6 +46,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
+
         return new Replace(($table) ? : $this->table);
     }
 
@@ -56,6 +58,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
+
         return new Update(($table) ? : $this->table);
     }
 
@@ -67,6 +70,7 @@ class Sql extends ZendSql
                 $this->table
             ));
         }
+
         return new Delete(($table) ? : $this->table);
     }
 }

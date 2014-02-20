@@ -24,7 +24,7 @@ class AdapterServiceFactory implements FactoryInterface
     /**
      * Create db adapter service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface              $serviceLocator
      * @throws Exception\UnsupportedDriverException
      * @return \Zend\Db\Adapter\Adapter
      */

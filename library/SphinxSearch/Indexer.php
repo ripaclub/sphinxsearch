@@ -22,7 +22,7 @@ class Indexer extends AbstractComponent
 {
     /**
      * @param ZendDBAdapter $adapter
-     * @param Sql $sql
+     * @param Sql           $sql
      */
     public function __construct(ZendDBAdapter $adapter, Sql $sql = null)
     {
@@ -61,9 +61,9 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param string|TableIdentifier    $index
-     * @param array                     $values
-     * @param bool                      $replace
+     * @param  string|TableIdentifier $index
+     * @param  array                  $values
+     * @param  bool                   $replace
      * @return number
      */
     public function insert($index, array $values, $replace = false)
@@ -75,7 +75,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param Insert $insert
+     * @param  Insert $insert
      * @return number
      */
     public function insertWith(Insert $insert)
@@ -86,9 +86,9 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param string|TableIdentifier        $index
-     * @param array                         $values
-     * @param Where|\Closure|string|array   $where
+     * @param  string|TableIdentifier      $index
+     * @param  array                       $values
+     * @param  Where|\Closure|string|array $where
      * @return number
      */
     public function update($index, array $values, $where = null)
@@ -106,7 +106,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param Update $update
+     * @param  Update $update
      * @return number
      */
     public function updateWith(Update $update)
@@ -117,8 +117,8 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param string|TableIdentifier        $index
-     * @param Where|\Closure|string|array   $where
+     * @param  string|TableIdentifier      $index
+     * @param  Where|\Closure|string|array $where
      * @return number
      */
     public function delete($index, $where)
@@ -135,7 +135,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param Delete $delete
+     * @param  Delete $delete
      * @return number
      */
     public function deleteWith(Delete $delete)

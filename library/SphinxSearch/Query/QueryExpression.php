@@ -28,7 +28,7 @@ class QueryExpression implements QueryInterface
     protected $parameters = array();
 
     /**
-     * @param string $expression
+     * @param string       $expression
      * @param string|array $parameters
      */
     public function __construct($expression = '', $parameters = null)
@@ -87,14 +87,13 @@ class QueryExpression implements QueryInterface
         return $this->parameters;
     }
 
-
     /**
      * Escape a string value for Sphinx Query Syntax
      *
      * @link http://sphinxsearch.com/docs/2.2.2/api-func-escapestring.html
      * @link https://github.com/php/pecl-search_engine-sphinx/blob/master/sphinx.c#L1531
      *
-     * @param string $value
+     * @param  string $value
      * @return string
      */
     public static function escapeString($value)

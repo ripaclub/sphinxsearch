@@ -10,13 +10,9 @@
  */
 namespace SphinxSearch\Db\Sql;
 
-use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
-use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Platform\Sql92 as AdapterSql92Platform;
-use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\Select as ZendSelect;
 use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
@@ -108,11 +104,10 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      */
     protected $option = array();
 
-
     /**
      * Create from clause
      *
-     * @param  string|array|TableIdentifier $table
+     * @param  string|array|TableIdentifier       $table
      * @throws Exception\InvalidArgumentException
      * @return Select
      */
@@ -138,6 +133,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         }
 
         $this->table = $table;
+
         return $this;
     }
 
@@ -154,8 +150,8 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      *   array(string => value, ...)
      *     key string will be use as alias,
      *     value can be string or Expression objects
-     * @param array $columns
-     * @param bool $prefixColumnsWithTable
+     * @param  array                              $columns
+     * @param  bool                               $prefixColumnsWithTable
      * @return Select
      * @throws Exception\InvalidArgumentException
      */
@@ -173,7 +169,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * @param string|array $withinGroupOrder
+     * @param  string|array $withinGroupOrder
      * @return Select
      */
     public function withinGroupOrder($withinGroupOrder)
@@ -194,14 +190,15 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $this->withinGroupOrder[] = $v;
             }
         }
+
         return $this;
     }
 
     /**
      * Set key/value pairs to option
      *
-     * @param  array $values Associative array of key values
-     * @param  string $flag One of the OPTIONS_* constants
+     * @param  array                              $values Associative array of key values
+     * @param  string                             $flag   One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
      * @return Select
      */
@@ -226,7 +223,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * @param string $part
+     * @param  string                             $part
      * @return Select
      * @throws Exception\InvalidArgumentException
      */
@@ -275,6 +272,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             self::OPTION     => $this->option,
             self::OFFSET     => $this->offset,
         );
+
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
@@ -292,9 +290,9 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     /**
      * Process the select part
      *
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
+     * @param  PlatformInterface  $platform
+     * @param  DriverInterface    $driver
+     * @param  ParameterContainer $parameterContainer
      * @return null|array
      */
     protected function processSelect(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
@@ -338,7 +336,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             $columns[] = isset($columnAs) ? array($colName, $platform->quoteIdentifier($columnAs)) : array($colName);
         }
 
-
         if ($this->table) {
             $tableList = $this->table;
 
@@ -359,6 +356,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             }
 
             $tableList = implode(', ', $tableList);
+
             return array($columns, $tableList);
         }
 
@@ -395,13 +393,14 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $withinGroupOrders[] = array($platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING);
             }
         }
+
         return array($withinGroupOrders);
     }
 
     /**
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param ParameterContainer $parameterContainer
+     * @param  PlatformInterface  $platform
+     * @param  DriverInterface    $driver
+     * @param  ParameterContainer $parameterContainer
      * @return array|null
      */
     protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
@@ -416,6 +415,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         if ($driver) {
             $parameterContainer->offsetSet('limit', $limit, ParameterContainer::TYPE_INTEGER);
             $parameterContainer->offsetSet('offset', $offset, ParameterContainer::TYPE_INTEGER);
+
             return array(
                 $driver->formatParameterName('offset'),
                 $driver->formatParameterName('limit')
@@ -452,6 +452,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             }
             $options[] = array($platform->quoteIdentifier($optName), $optionSql);
         }
+
         return array($options);
     }
 }
