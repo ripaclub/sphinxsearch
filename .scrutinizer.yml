@@ -1,4 +1,5 @@
 before_commands:
+    - "composer self-update && composer --version"
     - "composer install --dev --prefer-source"
 
 tools:
@@ -7,6 +8,7 @@ tools:
         test_command: vendor/bin/phpunit -c tests/
     php_code_sniffer:
         enabled: true
+        command: vendor/bin/phpcs
         config:
             standard: PSR2
         filter:
@@ -25,6 +27,9 @@ tools:
         excluded_dirs: ["build", "docs", "examples", "tests", "vendor"]
     php_mess_detector:
         enabled: true
+        command: vendor/bin/phpmd
+        config:
+            ruleset: phpmd.xml
         filter:
             paths: ["library/*"]
     php_pdepend:

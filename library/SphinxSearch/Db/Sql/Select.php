@@ -290,8 +290,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     {
         $expr = 1;
 
-        $separator = $platform->getIdentifierSeparator();
-
         // process table columns
         $columns = array();
         foreach ($this->columns as $columnIndexOrAs => $column) {

@@ -67,7 +67,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     public function table($table)
     {
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
+            list($table, ) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
         }
 
         $this->table = $table;
@@ -234,7 +234,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
             if ($optValue instanceof Expression) {
-                $optionParts = $this->processExpression($optValue, $platform, $driver, $this->processInfo['paramPrefix'] . 'option');
+                $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
                 if ($parameterContainer) {
                     $parameterContainer->merge($optionParts->getParameterContainer());
                 }
