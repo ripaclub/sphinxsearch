@@ -79,7 +79,7 @@ abstract class AbstractComponent
      *
      * @return boolean
      */
-    public function getUsePreparedStatement()
+    public function isPreparedStatementUsed()
     {
         if ($this->executeMode === self::QUERY_MODE_AUTO) {
             // Mysqli doesn't support client side prepared statement emulation
@@ -106,7 +106,7 @@ abstract class AbstractComponent
     public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
     {
         if ($usePreparedStatement === null) {
-            $usePreparedStatement = $this->getUsePreparedStatement();
+            $usePreparedStatement = $this->isPreparedStatementUsed();
         }
 
         if ($usePreparedStatement) {
