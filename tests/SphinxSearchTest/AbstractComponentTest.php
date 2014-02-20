@@ -107,20 +107,20 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SphinxSearch\AbstractComponent::getUsePreparedStatement
+     * @covers SphinxSearch\AbstractComponent::isPreparedStatementUsed
      * @depends testSetQueryMode
      */
     public function testGetUsePreparedStatement()
     {
         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_EXECUTE);
-        $this->assertEquals(false, $this->component->getUsePreparedStatement());
+        $this->assertEquals(false, $this->component->isPreparedStatementUsed());
 
         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_PREPARED);
-        $this->assertEquals(true, $this->component->getUsePreparedStatement());
+        $this->assertEquals(true, $this->component->isPreparedStatementUsed());
 
         //Assuming generic mock driver
         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_AUTO);
-        $this->assertEquals(true, $this->component->getUsePreparedStatement());
+        $this->assertEquals(true, $this->component->isPreparedStatementUsed());
 
 
         // testing Mysqli driver
@@ -133,7 +133,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $component = new ConcreteComponentAsset($mysqliMockAdapter);
 
         $component->setQueryMode(AbstractComponent::QUERY_MODE_AUTO);
-        $this->assertEquals(false, $component->getUsePreparedStatement());
+        $this->assertEquals(false, $component->isPreparedStatementUsed());
     }
 
     /**

@@ -3,14 +3,15 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014,
+ *              Leonardo Di Donato <leodidonato at gmail dot com>,
+ *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearch\Query;
 
 class QueryExpression implements QueryInterface
 {
-
     /**
      * @const
      */
@@ -102,7 +103,7 @@ class QueryExpression implements QueryInterface
             array(  '\\',   '(',   ')',   '|',   '-',   '!',   '@',   '~',   '"',   '&',   '/'),
             array('\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'),
             $value
-       );
+        );
     }
 
     /**
@@ -113,9 +114,7 @@ class QueryExpression implements QueryInterface
     {
         $parameters = (is_scalar($this->parameters)) ? array($this->parameters) : $this->parameters;
 
-        $types = array();
         $parametersCount = count($parameters);
-
         if ($parametersCount == 0 && strpos($this->expression, self::PLACEHOLDER) !== false) {
             // if there are no parameters, but there is a placeholder
             $parametersCount = substr_count($this->expression, self::PLACEHOLDER);
@@ -133,11 +132,12 @@ class QueryExpression implements QueryInterface
             $count = 0;
             $expression = str_replace(self::PLACEHOLDER, '%s', $expression, $count);
             if ($count !== $parametersCount) {
-                throw new Exception\RuntimeException('The number of replacements in the expression does not match the number of parameters');
+                throw new Exception\RuntimeException(
+                    'The number of replacements in the expression does not match the number of parameters'
+                );
             }
         }
 
         return vsprintf($expression, $parameters);
     }
-
 }

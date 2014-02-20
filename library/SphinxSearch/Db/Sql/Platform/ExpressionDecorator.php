@@ -3,7 +3,9 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014,
+ *              Leonardo Di Donato <leodidonato at gmail dot com>,
+ *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearch\Db\Sql\Platform;
@@ -15,7 +17,6 @@ use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class ExpressionDecorator implements ExpressionInterface
 {
-
     /**
      * @var ExpressionInterface
      */
@@ -79,7 +80,9 @@ class ExpressionDecorator implements ExpressionInterface
             }
             $parametersCount = count($expressionPart[1]);
             for ($i = 0; $i < $parametersCount; $i++) {
-                if ($this->platform->isFloatConversionEnabled() && is_float($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
+                if ($this->platform->isFloatConversionEnabled() &&
+                    is_float($expressionPart[1][$i]) &&
+                    $expressionPart[2][$i] == Expression::TYPE_VALUE) {
                     $expressionPart[1][$i] = $this->platform->toFloatSinglePrecision($expressionPart[1][$i]);
                     $expressionPart[2][$i] = Expression::TYPE_LITERAL;
                 }
@@ -91,5 +94,4 @@ class ExpressionDecorator implements ExpressionInterface
 
         return $expressionData;
     }
-
 }

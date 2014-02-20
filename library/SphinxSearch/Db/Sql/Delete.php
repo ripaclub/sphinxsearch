@@ -3,7 +3,9 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014,
+ *              Leonardo Di Donato <leodidonato at gmail dot com>,
+ *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearch\Db\Sql;
@@ -26,7 +28,7 @@ class Delete extends ZendDelete
     public function from($table)
     {
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
+            list($table, ) = $table->getTableAndSchema(); // Ignore schema because it is not supported by SphinxQL
         }
 
         $this->table = $table;
@@ -43,5 +45,4 @@ class Delete extends ZendDelete
 
         return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
-
 }
