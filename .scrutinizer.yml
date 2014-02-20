@@ -1,0 +1,37 @@
+before_commands:
+    - "composer install --dev --prefer-source"
+
+tools:
+    php_code_coverage:
+        enabled: true
+        test_command: vendor/bin/phpunit -c tests/
+    php_code_sniffer:
+        enabled: true
+        config:
+            standard: PSR2
+        filter:
+            paths: ["library/*", "tests/*"]
+    php_cpd:
+        enabled: true
+        excluded_dirs: ["build/*", "docs", "examples", "tests", "vendor"]
+    php_cs_fixer:
+        enabled: true
+        config:
+            level: all
+        filter:
+            paths: ["library/*", "tests/*"]
+    php_loc:
+        enabled: true
+        excluded_dirs: ["build", "docs", "examples", "tests", "vendor"]
+    php_mess_detector:
+        enabled: true
+        filter:
+            paths: ["library/*"]
+    php_pdepend:
+        enabled: true
+        excluded_dirs: ["build", "docs", "examples", "tests", "vendor"]
+    php_analyzer: true
+    php_analyzer:
+        filter:
+            paths: ["library/*", "tests/*", "examples/*"]
+    sensiolabs_security_checker: true
