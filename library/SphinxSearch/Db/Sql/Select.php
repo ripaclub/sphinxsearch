@@ -154,10 +154,10 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      *   array(string => value, ...)
      *     key string will be use as alias,
      *     value can be string or Expression objects
-     *
-     * @param  array $columns
-     * @param  bool  $prefixColumnsWithTable
+     * @param array $columns
+     * @param bool $prefixColumnsWithTable
      * @return Select
+     * @throws Exception\InvalidArgumentException
      */
     public function columns(array $columns, $prefixColumnsWithTable = false)
     {
@@ -173,7 +173,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * @param string|array $order
+     * @param string|array $withinGroupOrder
      * @return Select
      */
     public function withinGroupOrder($withinGroupOrder)
@@ -402,9 +402,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @param PlatformInterface $platform
      * @param DriverInterface $driver
      * @param ParameterContainer $parameterContainer
-     * @param $sqls
-     * @param $parameters
-     * @return null
+     * @return array|null
      */
     protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
     {
