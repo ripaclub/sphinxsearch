@@ -12,7 +12,6 @@ namespace SphinxSearch\Query;
 
 class QueryExpression implements QueryInterface
 {
-
     /**
      * @const
      */
@@ -104,7 +103,7 @@ class QueryExpression implements QueryInterface
             array(  '\\',   '(',   ')',   '|',   '-',   '!',   '@',   '~',   '"',   '&',   '/'),
             array('\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'),
             $value
-       );
+        );
     }
 
     /**
@@ -141,5 +140,4 @@ class QueryExpression implements QueryInterface
 
         return vsprintf($expression, $parameters);
     }
-
 }

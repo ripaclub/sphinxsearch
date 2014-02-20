@@ -70,10 +70,14 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         $adapter  = new ZendDBAdapter($config[$requestedName], $platform);
         $driver   = $adapter->getDriver();
         // Check driver
-        if ($driver instanceof ZendPdoDriver && $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql') {
+        if ($driver instanceof ZendPdoDriver &&
+            $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql') {
             $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
         } elseif (!$driver instanceof ZendMysqliDriver) {
-            throw new UnsupportedDriverException(get_class($driver) . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli');
+            $class = get_class($driver);
+            throw new UnsupportedDriverException(
+                $class . ' not supported. Use Zend\Db\Adapter\Driver\Pdo\Pdo or Zend\Db\Adapter\Driver\Mysqli\Mysqli'
+            );
         }
 
         $platform->setDriver($adapter->getDriver());

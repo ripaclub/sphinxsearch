@@ -51,6 +51,5 @@ class Statement extends ZendPdoStatement
             $parameter = is_int($name) ? ($name + 1) : $name;
             $this->resource->bindParam($parameter, $value, $type);
         }
-
     }
 }

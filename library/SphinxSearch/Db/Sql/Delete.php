@@ -45,5 +45,4 @@ class Delete extends ZendDelete
 
         return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
-
 }

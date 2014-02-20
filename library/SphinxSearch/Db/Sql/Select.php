@@ -119,11 +119,18 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
     public function from($table)
     {
         if ($this->tableReadOnly) {
-            throw new Exception\InvalidArgumentException('Since this object was created with a table and/or schema in the constructor, it is read only.');
+            throw new Exception\InvalidArgumentException(
+                'Since this object was created with a table and/or schema in the constructor, it is read only.'
+            );
         }
 
-        if (!is_string($table) && !is_array($table) && !$table instanceof TableIdentifier && !$table instanceof Select) {
-            throw new Exception\InvalidArgumentException('$table must be a string, array, an instance of TableIdentifier, or an instance of Select');
+        if (!is_string($table) &&
+            !is_array($table) &&
+            !$table instanceof TableIdentifier &&
+            !$table instanceof Select) {
+            throw new Exception\InvalidArgumentException(
+                '$table must be a string, array, an instance of TableIdentifier, or an instance of Select'
+            );
         }
 
         if ($table instanceof TableIdentifier) {
@@ -157,7 +164,9 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         $this->columns = $columns;
 
         if ($prefixColumnsWithTable) {
-            throw new Exception\InvalidArgumentException('SphinxQL syntax does not support prefixing columns with table name');
+            throw new Exception\InvalidArgumentException(
+                'SphinxQL syntax does not support prefixing columns with table name'
+            );
         }
 
         return $this;
@@ -296,7 +305,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         $columns = array();
         foreach ($this->columns as $columnIndexOrAs => $column) {
 
-            $columnName = '';
+            $colName = '';
             if ($column === self::SQL_STAR) {
                 $columns[] = array(self::SQL_STAR); // Sphinx doesn't not support prefix column with table, yet
                 continue;
@@ -312,26 +321,25 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 if ($parameterContainer) {
                     $parameterContainer->merge($columnParts->getParameterContainer());
                 }
-                $columnName .= $columnParts->getSql();
+                $colName .= $columnParts->getSql();
             } else {
                 // Sphinx doesn't not support prefix column with table, yet
-                $columnName .= $platform->quoteIdentifier($column);
+                $colName .= $platform->quoteIdentifier($column);
             }
 
             // process As portion
             $columnAs = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $columnIndexOrAs;
-            } elseif (stripos($columnName, ' as ') === false && !is_string($column)) {
+            } elseif (stripos($colName, ' as ') === false && !is_string($column)) {
                 $columnAs = 'Expression' . $expr++;
             }
 
-            $columns[] = (isset($columnAs)) ? array($columnName, $platform->quoteIdentifier($columnAs)) : array($columnName);
+            $columns[] = isset($columnAs) ? array($colName, $platform->quoteIdentifier($columnAs)) : array($colName);
         }
 
 
         if ($this->table) {
-
             $tableList = $this->table;
 
             if (is_string($tableList) && strpos($tableList, ',') !== false) {
@@ -429,7 +437,8 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
             if ($optValue instanceof Expression) {
-                $optionParts = $this->processExpression($optValue, $platform, $driver, $this->processInfo['paramPrefix'] . 'option');
+                $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
                 if ($parameterContainer) {
                     $parameterContainer->merge($optionParts->getParameterContainer());
                 }

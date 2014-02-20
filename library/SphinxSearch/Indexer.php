@@ -20,7 +20,6 @@ use Zend\Db\Sql\TableIdentifier;
 
 class Indexer extends AbstractComponent
 {
-
     /**
      * @param ZendDBAdapter $adapter
      * @param Sql $sql
@@ -145,5 +144,4 @@ class Indexer extends AbstractComponent
 
         return $result->getAffectedRows();
     }
-
 }

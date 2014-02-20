@@ -16,10 +16,8 @@ use Zend\Db\Sql\Predicate\PredicateInterface;
 use SphinxSearch\Query\QueryExpression;
 use SphinxSearch\Query\QueryInterface;
 
-
 class Match implements PredicateInterface
 {
-
     /**
      * @var string
      */
@@ -41,7 +39,9 @@ class Match implements PredicateInterface
     {
         if (!$expression instanceof QueryInterface) {
             if (!is_string($expression)) {
-                throw new Exception\InvalidArgumentException('Supplied expression must be a string or an instance of SphinxSearch\Query\QueryInterface');
+                throw new Exception\InvalidArgumentException(
+                    'Supplied expression must be a string or an instance of SphinxSearch\Query\QueryInterface'
+                );
             }
 
             $expression = new QueryExpression($expression, $parameters);

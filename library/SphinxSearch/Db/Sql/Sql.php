@@ -15,7 +15,6 @@ use Zend\Db\Sql\Platform;
 
 class Sql extends ZendSql
 {
-
     public function select($table = null)
     {
         if ($this->table !== null && $table !== null) {
@@ -70,5 +69,4 @@ class Sql extends ZendSql
         }
         return new Delete(($table) ? : $this->table);
     }
-
 }

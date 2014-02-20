@@ -31,5 +31,4 @@ class Insert extends ZendInsert
         $this->table = $table;
         return $this;
     }
-
 }

@@ -19,7 +19,6 @@ use Zend\Db\Sql\Where;
 
 class Search extends AbstractComponent
 {
-
     /**
      * @var ResultSetInterface
      */
@@ -76,5 +75,4 @@ class Search extends AbstractComponent
 
         return $resultSet;
     }
-
 }
