@@ -15,7 +15,6 @@
         "pdepend/pdepend": "1.1.*",
         "squizlabs/php_codesniffer": "1.5.*",
         "sebastian/phpcpd": "2.0.*",
-        "fabpot/php-cs-fixer": "0.4.*",
         "phploc/phploc": "2.0.*",
         "satooshi/php-coveralls": "dev-master"
     },

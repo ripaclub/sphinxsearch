@@ -7,7 +7,8 @@ before_commands:
     - "composer install --dev --prefer-source"
 
 tools:
-    external_code_coverage: true
+    external_code_coverage:
+        timeout: 1800
     php_code_sniffer:
         enabled: true
         command: vendor/bin/phpcs
@@ -21,7 +22,6 @@ tools:
         excluded_dirs: ["docs", "tests", "vendor"]
     php_cs_fixer:
         enabled: true
-        command: vendor/bin/php-cs-fixer
         config:
             level: all
         filter:
