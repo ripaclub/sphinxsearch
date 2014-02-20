@@ -45,7 +45,7 @@ Add the following to your `composer.json` file:
 
 Alternately with git submodules:
 
-```bash
+```
 git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
 ```
 
@@ -330,19 +330,27 @@ echo $select->getSqlString(new SphinxQL());
 ```
 
 Testing
----
+-------
 
 The library source code (on master) is 100% covered by unit tests.
 
 Once installed development dependencies through composer you can run `phpunit`.
 
-```bash
+```
 ./vendor/bin/phpunit -c tests/
 ```
 
 After this you can inspect stats about code coverage.
 
-```bash
+```
 ./vendor/bin/converalls -v
 ```
 
+Code quality
+------------
+
+Run [phpmd](https://github.com/phpmd/phpmd).
+
+```
+ vendor/bin/phpmd library/ text phpmd.xml
+```

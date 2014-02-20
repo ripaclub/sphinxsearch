@@ -46,7 +46,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         return (
             isset($config[$requestedName])
-            //&& is_array($config[$requestedName]) //omitted because could be a driver instance
+            // && is_array($config[$requestedName]) // Omitted because could be a driver instance
             && !empty($config[$requestedName])
         );
     }

@@ -26,7 +26,7 @@ class Delete extends ZendDelete
     public function from($table)
     {
         if ($table instanceof TableIdentifier) {
-            list($table, $schema) = $table->getTableAndSchema(); //ignore schema not supported by SphinxQL
+            list($table, ) = $table->getTableAndSchema(); // Ignore schema because it is not supported by SphinxQL
         }
 
         $this->table = $table;
