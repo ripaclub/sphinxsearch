@@ -29,6 +29,7 @@ class ExpressionDecorator implements ExpressionInterface
 
     /**
      * @param ExpressionInterface $subject
+     * @param SphinxQL $platform
      */
     public function __construct(ExpressionInterface $subject, SphinxQL $platform)
     {
