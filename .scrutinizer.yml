@@ -36,7 +36,6 @@ tools:
             paths: ["library"]
     php_pdepend:
         enabled: true
-        command: vendor/bin/pdepend
         excluded_dirs: ["docs", "tests", "vendor"]
     php_analyzer:
         enabled: true
