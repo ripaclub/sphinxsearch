@@ -50,7 +50,7 @@ class SphinxQL extends Mysql implements PlatformInterface
      * The ability to quote values without notices
      *
      * @param $value
-     * @return mixed
+     * @return string
      */
     public function quoteTrustedValue($value)
     {

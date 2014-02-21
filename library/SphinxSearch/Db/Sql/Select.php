@@ -276,6 +276,13 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
+    /**
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param string $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
+     */
     protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
     {
         if ($expression instanceof ExpressionDecorator) {

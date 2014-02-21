@@ -83,7 +83,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
      * @param  array                              $values Associative array of key values
      * @param  string                             $flag   One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
-     * @return Select
+     * @return Update
      */
     public function option(array $values, $flag = self::OPTIONS_MERGE)
     {
@@ -221,6 +221,13 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         return $sql;
     }
 
+    /**
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param string $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
+     */
     protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
     {
         if ($expression instanceof ExpressionDecorator) {
