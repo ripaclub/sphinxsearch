@@ -13,6 +13,7 @@ namespace SphinxSearch;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Select;
+use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
@@ -64,7 +65,7 @@ class Search extends AbstractComponent
 
     /**
      * @param  Select                                  $select
-     * @return \Zend\Db\Adapter\Driver\ResultInterface
+     * @return ResultInterface
      */
     public function searchWith(Select $select)
     {

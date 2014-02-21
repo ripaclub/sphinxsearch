@@ -42,7 +42,7 @@ class QueryExpression implements QueryInterface
     }
 
     /**
-     * @param $expression
+     * @param string $expression
      * @return QueryExpression
      * @throws Exception\InvalidArgumentException
      */

@@ -64,7 +64,7 @@ class Indexer extends AbstractComponent
      * @param  string|TableIdentifier $index
      * @param  array                  $values
      * @param  bool                   $replace
-     * @return number
+     * @return integer
      */
     public function insert($index, array $values, $replace = false)
     {
@@ -76,7 +76,7 @@ class Indexer extends AbstractComponent
 
     /**
      * @param  Insert $insert
-     * @return number
+     * @return integer
      */
     public function insertWith(Insert $insert)
     {
@@ -89,7 +89,7 @@ class Indexer extends AbstractComponent
      * @param  string|TableIdentifier      $index
      * @param  array                       $values
      * @param  Where|\Closure|string|array $where
-     * @return number
+     * @return integer
      */
     public function update($index, array $values, $where = null)
     {
@@ -107,7 +107,7 @@ class Indexer extends AbstractComponent
 
     /**
      * @param  Update $update
-     * @return number
+     * @return integer
      */
     public function updateWith(Update $update)
     {
@@ -119,7 +119,7 @@ class Indexer extends AbstractComponent
     /**
      * @param  string|TableIdentifier      $index
      * @param  Where|\Closure|string|array $where
-     * @return number
+     * @return integer
      */
     public function delete($index, $where)
     {
@@ -136,7 +136,7 @@ class Indexer extends AbstractComponent
 
     /**
      * @param  Delete $delete
-     * @return number
+     * @return integer
      */
     public function deleteWith(Delete $delete)
     {

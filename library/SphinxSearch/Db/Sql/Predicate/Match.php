@@ -10,7 +10,6 @@
  */
 namespace SphinxSearch\Db\Sql\Predicate;
 
-use Zend\Db\Sql\Predicate\Expression;
 use SphinxSearch\Db\Sql\Exception;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use SphinxSearch\Query\QueryExpression;

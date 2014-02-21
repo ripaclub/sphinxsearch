@@ -12,5 +12,8 @@ namespace SphinxSearch\Query;
 
 interface QueryInterface
 {
+    /**
+     * @return string
+     */
     public function toString();
 }
