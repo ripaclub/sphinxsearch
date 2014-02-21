@@ -361,12 +361,6 @@ Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
 vendor/bin/phpcs --standard=PSR2 library/
 ```
 
-Run [phpcpd](https://github.com/sebastianbergmann/phpcpd).
-
-```
-vendor/bin/phpcpd --progress library/
-```
-
 Run [pdepend](https://github.com/pdepend/pdepend).
 
 ```
