@@ -227,10 +227,10 @@ This library aims to normalize API usage among supported drivers and modes, but 
 * `float`
 
     Due to SphinxQL specific issues related to `float` values (especially in `WHERE` clause), by default them are converted to a 32-bit-single-precision compatible string rappresentation which are then included into the SQL query as literals, even in the case where prepared statements are used.
-    
-    This feature works only if value is a native PHP `float`. If it is needed, this behaviour can be globally disabled using `$adapter->getPlatform()->enableFloatConversion(false)`. <br/>_WARNING: disabling this feature can produce unexpected behaviors._
-    
-    Some notable examples:
+
+    This feature works only if value is a native PHP `float` (anyway strings containing floats do not work within Sphinx). If it is needed, this behaviour can be globally disabled using `$adapter->getPlatform()->enableFloatConversion(false)`. <br/>
+
+    _WARNING: disabling float conversion feature can produce unexpected behaviors, some notable examples:_
     - Actually Sphinx SQL interpreter treats a number without decimal part as an integer. So, assumming `f1` as float column, if you try `WHERE f1 = 10` you will get `42000 - 1064 - index foo: unsupported filter type 'intvalues' on float column` else if you try `WHERE f1 = 10.0` it will work fine.
     - Due to the fact that SphinxQL does not support float quoted as strings and PDO driver has no way to bind a double (SQL float) parameter in prepared statement mode, PDO driver will just cast to string producing a locale aware conversion (same as PHP `echo`), so it will work only if `LC_NUMERIC` setting is compliant with point as separator in decimal notation (for example you can use `LC_NUMERIC='C'`)
 
@@ -243,7 +243,7 @@ Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#
 As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
 
 * `SphinxSearch\Db\Sql\Select` explained in [Search](#search) paragraph
-* `SphinxSearch\Db\Sql\Insert` 
+* `SphinxSearch\Db\Sql\Insert`
 * `SphinxSearch\Db\Sql\Replace` same as insert, but overwrites duplicate IDs
 * `SphinxSearch\Db\Sql\Update` with the ability to handle `OPTION` clause
 * `SphinxSearch\Db\Sql\Delete`
@@ -256,7 +256,7 @@ use SphinxSearch\Db\Sql\Sql;
 $sql = new Sql($adapter);
 $select = $sql->select();  // @return SphinxSearch\Db\Sql\Select
 $insert = $sql->insert();  // @return SphinxSearch\Db\Sql\Insert
-$insert = $sql->replace(); // @return SphinxSearch\Db\Sql\Insert
+$insert = $sql->replace(); // @return SphinxSearch\Db\Sql\Replace
 $update = $sql->update();  // @return SphinxSearch\Db\Sql\Update
 $delete = $sql->delete();  // @return SphinxSearch\Db\Sql\Delete
 ```
@@ -292,7 +292,7 @@ Thus, every object (that has `where()`) supports the `Match` expression, as expl
 
 ### Query expression
 
-The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html). 
+The `SphinxSearch\Query\QueryExpression` class provides a placeholder expression way and a string excape mechanism in order to use safely the [Sphinx query syntax](http://sphinxsearch.com/docs/2.2.2/extended-syntax.html).
 Also, the component design permits to use it standalone, since it has no dependencies on other library's components.
 
 Some examples:
@@ -307,7 +307,7 @@ echo $query->toString(); //outputs: @title hello @body world
 echo $query->setExpression('"?"/3')
            ->setParameters(array('the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'))
            ->toString(); //outputs: "the world is a wonderful place, but sometimes people uses spe\(ia\| ch\@rs"/3
-           
+
 echo $query->setExpression('? NEAR/? ? NEAR/? "?"')
            ->setParameters(array('hello', 3, 'world', 4, '"my test"'))
            ->toString(); //outputs: hello NEAR/3 world NEAR/4 "my test"
@@ -325,8 +325,8 @@ $select->from('myindex')
        ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
        ->where(array('enabled' => 1));
 
-//outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1       
-echo $select->getSqlString(new SphinxQL()); 
+//outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1
+echo $select->getSqlString(new SphinxQL());
 ```
 
 Testing
