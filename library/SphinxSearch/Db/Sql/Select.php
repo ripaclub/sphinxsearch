@@ -129,7 +129,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         }
 
         if ($table instanceof TableIdentifier) {
-            list($table, ) = $table->getTableAndSchema(); // Ignore schema because it is not supported by SphinxQL
+            $table = $table->getTable(); // Ignore schema because it is not supported by SphinxQL
         }
 
         $this->table = $table;
