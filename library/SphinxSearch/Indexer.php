@@ -31,7 +31,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function beginTransaction()
     {
@@ -41,7 +41,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function commit()
     {
@@ -51,7 +51,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function rollback()
     {

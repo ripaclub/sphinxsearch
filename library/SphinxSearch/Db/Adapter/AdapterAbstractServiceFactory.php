@@ -89,7 +89,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * Get db configuration, if any
      *
      * @param  ServiceLocatorInterface $services
-     * @return null|\Zend\Db\Adapter\Platform\PlatformInterface
+     * @return array
      */
     protected function getConfig(ServiceLocatorInterface $services)
     {

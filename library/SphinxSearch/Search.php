@@ -38,7 +38,7 @@ class Search extends AbstractComponent
     }
 
     /**
-     * @return \Zend\Db\ResultSet\ResultSetInterface
+     * @return ResultSetInterface
      */
     public function getResultSetPrototype()
     {
