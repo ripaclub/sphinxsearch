@@ -37,7 +37,7 @@ class AdapterServiceFactory implements FactoryInterface
         // Check driver
         if ($driver instanceof ZendPdoDriver &&
             $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql') {
-            $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
+            $driver->registerStatementPrototype(new PdoStatement());
         } elseif (!$driver instanceof ZendMysqliDriver) {
             $class = get_class($driver);
             throw new UnsupportedDriverException(
