@@ -16,6 +16,7 @@ use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class Delete extends ZendDelete
 {
@@ -40,7 +41,7 @@ class Delete extends ZendDelete
     {
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
-        } else {
+        } elseif ($platform instanceof SphinxQL) {
             $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 
