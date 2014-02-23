@@ -419,7 +419,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         $offset = (int) $this->offset;
         $limit  = (int) $this->limit;
 
-        if ($driver) {
+        if ($driver && $parameterContainer) {
             $parameterContainer->offsetSet('limit', $limit, ParameterContainer::TYPE_INTEGER);
             $parameterContainer->offsetSet('offset', $offset, ParameterContainer::TYPE_INTEGER);
 
@@ -449,7 +449,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                if ($driver) {
+                if ($driver && $parameterContainer) {
                     $parameterContainer->offsetSet('option_' .  $optName, $optValue);
                     $optionSql .= $driver->formatParameterName('option_' .  $optName);
                 } else {

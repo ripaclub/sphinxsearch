@@ -256,7 +256,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
                 }
                 $optionSql .= $optionParts->getSql();
             } else {
-                if ($driver) {
+                if ($driver && $parameterContainer) {
                     $parameterContainer->offsetSet('option_' .  $optName, $optValue);
                     $optionSql .= $driver->formatParameterName('option_' .  $optName);
                 } else {
