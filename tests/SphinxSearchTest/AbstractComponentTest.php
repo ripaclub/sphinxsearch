@@ -16,6 +16,7 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\ResultSet\ResultSet;
 use SphinxSearchTest\TestAsset\ConcreteComponentAsset;
 use SphinxSearch\AbstractComponent;
+use SphinxSearchTest\TestAsset\ConcreteSqlObjectAsset;
 class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -158,6 +159,9 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 
          $result = $this->component->executeSqlObject($sqlObj);
          $this->assertInstanceOf('Zend\Db\Adapter\Driver\ResultInterface', $result);
+
+         $this->setExpectedException('SphinxSearch\Exception\InvalidArgumentException');
+         $this->component->executeSqlObject(new ConcreteSqlObjectAsset());
     }
 
     /**

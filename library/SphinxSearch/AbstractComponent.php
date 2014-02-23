@@ -11,7 +11,10 @@
 namespace SphinxSearch;
 
 use Zend\Db\Sql\AbstractSql;
-use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Sql\PreparableSqlInterface;
+use Zend\Db\Sql\SqlInterface;
+use SphinxSearch\Exception;
 
 abstract class AbstractComponent
 {
@@ -53,7 +56,7 @@ abstract class AbstractComponent
     /**
      * @param  string                          $flag
      * @throws \InvalidArgumentException
-     * @return \SphinxSearch\AbstractComponent
+     * @return AbstractComponent
      */
     public function setQueryMode($flag)
     {
@@ -110,14 +113,16 @@ abstract class AbstractComponent
             $usePreparedStatement = $this->isPreparedStatementUsed();
         }
 
-        if ($usePreparedStatement) {
+        if ($usePreparedStatement && $sqlObject instanceof PreparableSqlInterface) {
             $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
-
             return $statement->execute();
         }
 
-        $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+        if ($sqlObject instanceof SqlInterface) {
+            $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+            return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
+        }
 
-        return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
+        throw new Exception\InvalidArgumentException('$sqlObject must be an instance of SqlInterface or PreparableSqlInterface');
     }
 }
