@@ -15,6 +15,8 @@ use Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
 use SphinxSearch\Exception;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Sql\Predicate\Like;
 
 abstract class AbstractComponent
 {
@@ -125,4 +127,14 @@ abstract class AbstractComponent
 
         throw new Exception\InvalidArgumentException('$sqlObject must be an instance of SqlInterface or PreparableSqlInterface');
     }
+
+    /**
+     * @param string $sql
+     * @return \Zend\Db\ResultSet\ResultSet
+     */
+    public function execute($sql)
+    {
+        return $this->getAdapter()->query($sql, Adapter::QUERY_MODE_EXECUTE);
+    }
+
 }

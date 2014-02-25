@@ -575,4 +575,18 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
 
+    public function testShowMeta()
+    {
+        $search = $this->search;
+
+        $search->search('foo');
+        $resultSet = $search->execute('SHOW META');
+        $result = $resultSet->toArray();
+
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('Variable_name', $result[0]);
+        $this->assertArrayHasKey('Value', $result[0]);
+    }
+
+
 }
