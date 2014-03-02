@@ -88,6 +88,7 @@ class ShowTest extends \PHPUnit_Framework_TestCase {
         $expectedSqlString  = 'SHOW META LIKE ?';
         $expectedParameters = array('like' => 'bar');
 
+        $useNamedParameters = false;
         $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnCallback(
             function ($name) use ($useNamedParameters) { return (($useNamedParameters) ? ':' . $name : '?'); }
