@@ -103,6 +103,14 @@ class ShowTest extends \PHPUnit_Framework_TestCase {
 
         $this->show->prepareStatement($mockAdapter, $mockStatement);
         $this->assertEquals($expectedParameters, $parameterContainer->getNamedArray());
+
+        //test without ParameterContainer
+        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue(null));
+        $mockStatement->expects($this->any())->method('setParameterContainer')->with($this->isInstanceOf('Zend\Db\Adapter\ParameterContainer'));
+        $mockStatement->expects($this->any())->method('setSql')->with($this->equalTo($expectedSqlString));
+        $this->show->prepareStatement($mockAdapter, $mockStatement);
+
     }
 
     /**
@@ -118,6 +126,12 @@ class ShowTest extends \PHPUnit_Framework_TestCase {
                    ->like('bar');
 
         $expectedSqlString  = 'SHOW META LIKE \'bar\'';
+        $this->assertEquals($expectedSqlString, $this->show->getSqlString(new TrustedSphinxQL()));
+
+        $this->show->show(Show::SHOW_WARNINGS)
+                   ->like(null);
+
+        $expectedSqlString  = 'SHOW WARNINGS';
         $this->assertEquals($expectedSqlString, $this->show->getSqlString(new TrustedSphinxQL()));
     }
 
