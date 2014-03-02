@@ -73,4 +73,9 @@ class Sql extends ZendSql
 
         return new Delete(($table) ? : $this->table);
     }
+
+    public function show()
+    {
+        return new Show();
+    }
 }

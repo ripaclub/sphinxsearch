@@ -17,6 +17,7 @@ use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Where;
+use SphinxSearch\Db\Sql\Show;
 
 class Search extends AbstractComponent
 {
@@ -75,5 +76,35 @@ class Search extends AbstractComponent
         $resultSet->initialize($result);
 
         return $resultSet;
+    }
+
+    protected function show($show, $like)
+    {
+        $show = $this->getSql()->show()->show($show)
+                                       ->like($like);
+
+        $result = $this->executeSqlObject($show);
+
+        $return = array();
+        foreach ($result as $row) {
+            $return[$row['Variable_name']] = $row['Value'];
+        }
+
+        return $return;
+    }
+
+    public function showMeta($like = null)
+    {
+        return $this->show(Show::SHOW_META, $like);
+    }
+
+    public function showWarnings($like = null)
+    {
+        return $this->show(Show::SHOW_WARNINGS, $like);
+    }
+
+    public function showStatus($like = null)
+    {
+        return $this->show(Show::SHOW_STATUS, $like);
     }
 }
