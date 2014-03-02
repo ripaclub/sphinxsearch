@@ -10,6 +10,8 @@ namespace SphinxSearchTest\Db\Sql;
 
 use Zend\Db\Sql\TableIdentifier;
 use SphinxSearch\Db\Sql\Show;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
+use Zend\Db\Adapter\ParameterContainer;
 
 class ShowTest extends \PHPUnit_Framework_TestCase {
 
@@ -35,8 +37,87 @@ class ShowTest extends \PHPUnit_Framework_TestCase {
     {
     }
 
+    /**
+     * @testdox Method getRawState() returns default values
+     * @covers SphinxSearch\Db\Sql\Show::getRawState
+     */
+    public function testDefaultsViaGetRawState()
+    {
+        $this->assertEquals(Show::SHOW_META, $this->show->getRawState(Show::SHOW));
+        $this->assertEmpty($this->show->getRawState(Show::LIKE));
+        $this->assertEquals(array(Show::SHOW => Show::SHOW_META, Show::LIKE => null), $this->show->getRawState());
+    }
+
+    /**
+     * @testdox Method show()
+     * @covers SphinxSearch\Db\Sql\Show::show
+     * @depends testDefaultsViaGetRawState
+     */
     public function testShow()
     {
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Show', $this->show->show(Show::SHOW_WARNINGS));
+        $this->assertEquals(Show::SHOW_WARNINGS, $this->show->getRawState(Show::SHOW));
 
+        $this->setExpectedException('SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
+        $this->show->show('invalid value');
     }
+
+    /**
+     * @testdox Method like()
+     * @covers SphinxSearch\Db\Sql\Show::like
+     * @depends testDefaultsViaGetRawState
+     */
+    public function testLike()
+    {
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Show', $this->show->like('foo'));
+        $this->assertEquals('foo', $this->show->getRawState(Show::LIKE));
+    }
+
+    /**
+     * @testdox Method prepareStatement() will produce expected sql and parameters
+     * @covers SphinxSearch\Db\Sql\Show::prepareStatement
+     * @covers SphinxSearch\Db\Sql\Show::processLike
+     * @depends testShow
+     * @depends testLike
+     */
+    public function testPrepareStatement()
+    {
+        $this->show->show(Show::SHOW_META)
+                   ->like('bar');
+
+        $expectedSqlString  = 'SHOW META LIKE ?';
+        $expectedParameters = array('like' => 'bar');
+
+        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnCallback(
+            function ($name) use ($useNamedParameters) { return (($useNamedParameters) ? ':' . $name : '?'); }
+        ));
+        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+
+        $parameterContainer = new ParameterContainer();
+
+        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($parameterContainer));
+        $mockStatement->expects($this->any())->method('setSql')->with($this->equalTo($expectedSqlString));
+
+        $this->show->prepareStatement($mockAdapter, $mockStatement);
+        $this->assertEquals($expectedParameters, $parameterContainer->getNamedArray());
+    }
+
+    /**
+     * @testdox Method getSqlString() will produce expected sql and parameters based on a variety of provided arguments [uses data provider]
+     * @covers SphinxSearch\Db\Sql\Show::getSqlString
+     * @covers SphinxSearch\Db\Sql\Show::processLike
+     * @depends testShow
+     * @depends testLike
+     */
+    public function testGetSqlString()
+    {
+        $this->show->show(Show::SHOW_META)
+                   ->like('bar');
+
+        $expectedSqlString  = 'SHOW META LIKE \'bar\'';
+        $this->assertEquals($expectedSqlString, $this->show->getSqlString(new TrustedSphinxQL()));
+    }
+
 }

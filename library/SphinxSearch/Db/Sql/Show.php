@@ -10,14 +10,15 @@
  */
 namespace SphinxSearch\Db\Sql;
 
+use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\Adapter\StatementContainerInterface;
+use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\ParameterContainer;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Adapter\StatementContainerInterface;
-use Zend\Db\Adapter\ParameterContainer;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
-use Zend\Db\Adapter\Platform\PlatformInterface;
 
 class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
 {
@@ -133,10 +134,11 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
         $sqls = array();
 
         $sqls[self::SHOW] = sprintf($this->specifications[static::SHOW], $this->show);
-        $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[static::LIKE],
-            $this->processLike($adapter->getPlatform(), $adapter->getDriver(), $parameterContainer)
-        );
+
+        $likePart = $this->processLike($adapter->getPlatform(), $adapter->getDriver(), $parameterContainer);
+        if (is_array($likePart)) {
+            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters($this->specifications[static::LIKE], $likePart);
+        }
 
         $sql = implode(' ', $sqls);
 
@@ -158,10 +160,11 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
         $sqls = array();
 
         $sqls[self::SHOW] = sprintf($this->specifications[static::SHOW], $this->show);
-        $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters(
-            $this->specifications[static::LIKE],
-            $this->processLike($adapterPlatform)
-        );
+
+        $likePart = $this->processLike($adapterPlatform);
+        if (is_array($likePart)) {
+            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters($this->specifications[static::LIKE], $likePart);
+        }
 
         $sql = implode(' ', $sqls);
         return $sql;
