@@ -83,9 +83,14 @@ class Search extends AbstractComponent
         $show = $this->getSql()->show()->show($show)
                                        ->like($like);
 
-        $result = $this->executeSqlObject($show);
+        return $this->executeSqlObject($show);
+    }
 
+    public function showMeta($like = null)
+    {
+        $result = $this->show(Show::SHOW_META, $like);
         $return = array();
+
         foreach ($result as $row) {
             $return[$row['Variable_name']] = $row['Value'];
         }
@@ -93,18 +98,25 @@ class Search extends AbstractComponent
         return $return;
     }
 
-    public function showMeta($like = null)
+    public function showWarnings()
     {
-        return $this->show(Show::SHOW_META, $like);
-    }
+        $result = $this->show(Show::SHOW_WARNINGS, null);
+        $return = array();
+        foreach ($result as $row) {
+            $return[] = $row;
+        }
 
-    public function showWarnings($like = null)
-    {
-        return $this->show(Show::SHOW_WARNINGS, $like);
+        return $return;
     }
 
     public function showStatus($like = null)
     {
-        return $this->show(Show::SHOW_STATUS, $like);
+        $result = $this->show(Show::SHOW_STATUS, $like);
+        $return = array();
+        foreach ($result as $row) {
+            $return[$row['Counter']] = $row['Value'];
+        }
+
+        return $return;
     }
 }

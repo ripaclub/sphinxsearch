@@ -10,6 +10,7 @@ namespace SphinxSearchTest;
 
 
 use SphinxSearch\Db\Sql\Select;
+use SphinxSearch\Db\Sql\Show;
 use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
@@ -32,19 +33,28 @@ class SearchTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // mock the adapter, driver, and parts
-        $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockResult = $this->getMock('\Zend\Db\Adapter\Driver\ResultInterface');
+        $this->mockResult = $mockResult;
+
+        $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
         $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
-        $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockConnection = $this->getMock('\Zend\Db\Adapter\Driver\ConnectionInterface');
+        $mockConnection->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $this->mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
-        $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('select'), array($this->mockAdapter, 'foo'));
-        $this->mockSql->expects($this->any())->method('select')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))));
+        $this->mockSql = $this->getMock('\SphinxSearch\Db\Sql\Sql', array('select', 'show'), array($this->mockAdapter, 'foo'));
+        $this->mockSql->expects($this->any())->method('select')->will($this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))));
+
+        $mockShow = $this->getMock('\SphinxSearch\Db\Sql\Show');
+        $mockShow->expects($this->any())->method('show')->will($this->returnSelf());
+        $mockShow->expects($this->any())->method('like')->will($this->returnSelf());
+        $this->mockSql->expects($this->any())->method('show')->will($this->returnValue($mockShow));
 
         // setup the search object
         $this->search = new Search($this->mockAdapter, null, $this->mockSql);
@@ -61,8 +71,8 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame($this->mockAdapter, $search->getAdapter());
-        $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $search->getResultSetPrototype());
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $search->getSql());
+        $this->assertInstanceOf('\Zend\Db\ResultSet\ResultSet', $search->getResultSetPrototype());
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Sql', $search->getSql());
 
         // injecting all args
         $search = new Search(
@@ -75,7 +85,6 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($resultSet, $search->getResultSetPrototype());
         $this->assertSame($sql, $search->getSql());
     }
-
 
     /**
      * @covers SphinxSearch\Search::getAdapter
@@ -90,7 +99,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSql()
     {
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $this->search->getSql());
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Sql', $this->search->getSql());
     }
 
     /**
@@ -98,7 +107,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSelectResultPrototype()
     {
-        $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $this->search->getResultSetPrototype());
+        $this->assertInstanceOf('\Zend\Db\ResultSet\ResultSet', $this->search->getResultSetPrototype());
     }
 
     /**
@@ -110,7 +119,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $resultSet = $this->search->search('foo');
 
         // check return types
-        $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $resultSet);
+        $this->assertInstanceOf('\Zend\Db\ResultSet\ResultSet', $resultSet);
         $this->assertNotSame($this->search->getResultSetPrototype(), $resultSet);
     }
 
@@ -157,10 +166,83 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         });
     }
 
-//    public function testShowMeta()
-//    {
-//        $mock
-//        $this->search->showMeta();
-//    }
+    /**
+     * @covers SphinxSearch\Search::showMeta
+     */
+    public function testShowMeta()
+    {
+        $mockShow = $this->mockSql->show();
+        $mockShow->expects($this->once())
+            ->method('show')
+            ->with($this->equalTo(Show::SHOW_META));
+        $mockShow->expects($this->once())
+            ->method('like')
+            ->with($this->equalTo('tot'));
+
+        // Assumes prepared statement
+        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue(
+                array('Variable_name' => 'total', 'Value' => '0')
+            ));
+        $this->mockResult->expects($this->at(3))->method('next');
+        $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
+
+        $result = $this->search->showMeta('tot');
+        $this->assertInternalType('array', $result);
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertEquals('0', $result['total']);
+    }
+
+    public function testShowWarnings()
+    {
+        $mockShow = $this->mockSql->show();
+        $mockShow->expects($this->once())
+            ->method('show')
+            ->with($this->equalTo(Show::SHOW_WARNINGS));
+
+        // Assumes prepared statement
+        $expected = array('Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold');
+        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue($expected));
+        $this->mockResult->expects($this->at(3))->method('next');
+        $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
+
+        $result = $this->search->showWarnings();
+        $this->assertInternalType('array', $result);
+        $this->assertCount(1, $result);
+        $this->assertEquals(array($expected), $result);
+    }
+
+    /**
+     * @covers SphinxSearch\Search::showStatus
+     */
+    public function testShowStatus()
+    {
+        $mockShow = $this->mockSql->show();
+        $mockShow->expects($this->once())
+            ->method('show')
+            ->with($this->equalTo(Show::SHOW_STATUS));
+        $mockShow->expects($this->once())
+            ->method('like')
+            ->with($this->equalTo('up%'));
+
+        // Assumes prepared statement
+        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
+        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue(
+                array('Counter' => 'uptime', 'Value' => '1392')
+            ));
+        $this->mockResult->expects($this->at(3))->method('next');
+        $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
+
+        $result = $this->search->showStatus('up%');
+        $this->assertInternalType('array', $result);
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey('uptime', $result);
+        $this->assertEquals('1392', $result['uptime']);
+    }
 
 }
