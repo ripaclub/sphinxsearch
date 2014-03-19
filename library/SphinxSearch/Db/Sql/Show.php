@@ -22,7 +22,6 @@ use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
 class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
 {
-
     const SHOW = 'show';
     const LIKE = 'like';
     const SHOW_META     = 'META';

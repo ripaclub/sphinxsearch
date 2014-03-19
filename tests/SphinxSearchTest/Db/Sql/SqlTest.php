@@ -33,7 +33,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));// FIXME: give here the platform?
+        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL())); // FIXME: give here the platform?
 
         $this->sql = new Sql($this->mockAdapter, 'foo'); // FIXME: append SphinxQL platform as 3 parameter ?
     }
@@ -103,15 +103,23 @@ class SqlTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelete()
     {
-        $update = $this->sql->delete();
-        $this->assertInstanceOf('Zend\Db\Sql\Delete', $update);
-        $this->assertSame('foo', $update->getRawState('table'));
+        $delete = $this->sql->delete();
+        $this->assertInstanceOf('Zend\Db\Sql\Delete', $delete);
+        $this->assertSame('foo', $delete->getRawState('table'));
 
         $this->setExpectedException(
             'SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
             'This Sql object is intended to work with only the table "foo" provided at construction time.');
         $this->sql->delete('bar');
+    }
 
+    /**
+     * @covers SphinxSearch\Db\Sql\Sql::show
+     */
+    public function testShow()
+    {
+        $show = $this->sql->show();
+        $this->assertInstanceOf('SphinxSearch\Db\Sql\Show', $show);
     }
 
 }

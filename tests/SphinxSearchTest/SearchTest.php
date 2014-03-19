@@ -60,7 +60,6 @@ class SearchTest extends \PHPUnit_Framework_TestCase
             $this->mockAdapter
         );
 
-
         $this->assertSame($this->mockAdapter, $search->getAdapter());
         $this->assertInstanceOf('Zend\Db\ResultSet\ResultSet', $search->getResultSetPrototype());
         $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $search->getSql());
@@ -158,5 +157,10 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         });
     }
 
+//    public function testShowMeta()
+//    {
+//        $mock
+//        $this->search->showMeta();
+//    }
 
 }

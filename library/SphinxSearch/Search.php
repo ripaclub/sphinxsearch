@@ -53,7 +53,7 @@ class Search extends AbstractComponent
      */
     public function search($index, $where = null)
     {
-        $select = $this->sql->select($index);
+        $select = $this->getSql()->select($index);
 
         if ($where instanceof \Closure) {
             $where($select);

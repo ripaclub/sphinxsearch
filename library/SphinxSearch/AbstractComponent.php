@@ -105,9 +105,10 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param  AbstractSql                             $sqlObject
-     * @param  bool                                    $usePreparedStatement
+     * @param AbstractSql $sqlObject
+     * @param null $usePreparedStatement
      * @return \Zend\Db\Adapter\Driver\ResultInterface
+     * @throws Exception\InvalidArgumentException
      */
     public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
     {
