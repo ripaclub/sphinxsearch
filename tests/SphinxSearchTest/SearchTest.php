@@ -8,22 +8,31 @@
  */
 namespace SphinxSearchTest;
 
-
-use SphinxSearch\Db\Sql\Select;
 use SphinxSearch\Db\Sql\Show;
-use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
+use SphinxSearch\Search;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
+use Zend\Db\Adapter\Adapter;
+use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSet;
+
 class SearchTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var Adapter
+     */
     protected $mockAdapter = null;
 
     /**
      * @var Sql
      */
     protected $mockSql = null;
+
+    /**
+     * @var ResultInterface
+     */
+    protected $mockResult = null;
 
     /**
      * @var Search
@@ -33,23 +42,34 @@ class SearchTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // mock the adapter, driver, and parts
-        $mockResult = $this->getMock('\Zend\Db\Adapter\Driver\ResultInterface');
-        $this->mockResult = $mockResult;
+        $this->mockResult = $this->getMock('\Zend\Db\Adapter\Driver\ResultInterface');
 
         $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($this->mockResult));
         $mockConnection = $this->getMock('\Zend\Db\Adapter\Driver\ConnectionInterface');
-        $mockConnection->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockConnection->expects($this->any())->method('execute')->will($this->returnValue($this->mockResult));
 
         $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $this->mockAdapter = $this->getMock(
+            '\Zend\Db\Adapter\Adapter',
+            null,
+            array($mockDriver, new TrustedSphinxQL())
+        );
 
-        $this->mockSql = $this->getMock('\SphinxSearch\Db\Sql\Sql', array('select', 'show'), array($this->mockAdapter, 'foo'));
-        $this->mockSql->expects($this->any())->method('select')->will($this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))));
+        $this->mockSql = $this->getMock(
+            '\SphinxSearch\Db\Sql\Sql',
+            array('select', 'show'),
+            array($this->mockAdapter, 'foo')
+        );
+        $this->mockSql->expects($this->any())->method('select')->will(
+            $this->returnValue(
+                $this->getMock('\SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))
+            )
+        );
 
         $mockShow = $this->getMock('\SphinxSearch\Db\Sql\Show');
         $mockShow->expects($this->any())->method('show')->will($this->returnSelf());
@@ -132,16 +152,19 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $mockSelect = $this->mockSql->select();
 
         $mockSelect->expects($this->any())
-        ->method('getRawState')
-        ->will($this->returnValue(array(
-            'table' => 'foo',
-        ))
-        );
+            ->method('getRawState')
+            ->will(
+                $this->returnValue(
+                    array(
+                        'table' => 'foo',
+                    )
+                )
+            );
 
         // assert select::from() is called
         $mockSelect->expects($this->once())
-                   ->method('where')
-                   ->with($this->equalTo('foo'));
+            ->method('where')
+            ->with($this->equalTo('foo'));
 
         $this->search->search('foo', 'foo');
     }
@@ -155,15 +178,21 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $mockSelect = $this->mockSql->select();
 
         $mockSelect->expects($this->any())
-                    ->method('getRawState')
-                    ->will($this->returnValue(array(
+            ->method('getRawState')
+            ->will(
+                $this->returnValue(
+                    array(
                         'table' => 'foo',
-                    ))
-        );
+                    )
+                )
+            );
 
-        $this->search->search('foo', function($select) use ($mockSelect) {
-            SearchTest::assertSame($mockSelect, $select);
-        });
+        $this->search->search(
+            'foo',
+            function ($select) use ($mockSelect) {
+                SearchTest::assertSame($mockSelect, $select);
+            }
+        );
     }
 
     /**
@@ -182,9 +211,11 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         // Assumes prepared statement
         $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
-        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue(
+        $this->mockResult->expects($this->at(2))->method('current')->will(
+            $this->returnValue(
                 array('Variable_name' => 'total', 'Value' => '0')
-            ));
+            )
+        );
         $this->mockResult->expects($this->at(3))->method('next');
         $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
 
@@ -232,9 +263,11 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         // Assumes prepared statement
         $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
-        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue(
+        $this->mockResult->expects($this->at(2))->method('current')->will(
+            $this->returnValue(
                 array('Counter' => 'uptime', 'Value' => '1392')
-            ));
+            )
+        );
         $this->mockResult->expects($this->at(3))->method('next');
         $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
 

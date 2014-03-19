@@ -14,7 +14,8 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
-class ReplaceTest extends \PHPUnit_Framework_TestCase {
+class ReplaceTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var Replace
@@ -22,25 +23,16 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase {
     protected $replace;
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->replace = new Replace;
-    }
-
-    /**
      * @covers SphinxSearch\Db\Sql\Replace::prepareStatement
      */
     public function testPrepareStatement()
     {
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
         $pContainer = new ParameterContainer(array());
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
@@ -54,12 +46,12 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase {
 
         // with TableIdentifier
         $this->replace = new Replace;
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
 
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
         $pContainer = new ParameterContainer(array());
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
@@ -67,7 +59,7 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase {
             ->with($this->equalTo('REPLACE INTO `foo` (`bar`, `boo`) VALUES (?, NOW())'));
 
         $this->replace->into(new TableIdentifier('foo')) // FIXME: SphinxQL does not support schema
-            ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()')));
+        ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()')));
 
         $this->replace->prepareStatement($mockAdapter, $mockStatement);
     }
@@ -88,12 +80,21 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase {
         // with TableIdentifier
         $this->replace = new Replace;
         $this->replace->into(new TableIdentifier('foo')) // FIXME: SphinxQL does not support schema
-            ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null));
+        ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null));
 
         $this->assertEquals(
             'REPLACE INTO `foo` (`bar`, `boo`, `bam`) VALUES (\'baz\', NOW(), NULL)',
             $this->replace->getSqlString(new TrustedSphinxQL())
         );
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->replace = new Replace;
     }
 
 }

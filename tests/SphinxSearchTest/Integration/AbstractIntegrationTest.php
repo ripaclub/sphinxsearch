@@ -8,60 +8,60 @@
  */
 namespace SphinxSearchTest\IntegrationTest;
 
-use SphinxSearch\Db\Adapter\AdapterServiceFactory;
-use SphinxSearch\Query\QueryExpression;
-use Zend\ServiceManager\ServiceManager;
-use Zend\ServiceManager\Config;
-use SphinxSearch\Search;
-use SphinxSearchTest\Db\Sql\SelectTest;
+use SphinxSearch\Db\Sql\Predicate\Match;
+use SphinxSearch\Db\Sql\Replace;
 use SphinxSearch\Db\Sql\Select;
-use Zend\Db\Sql\Expression;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
-use Zend\Db\Sql\Insert;
-use SphinxSearch\Db\Sql\Replace;
+use SphinxSearch\Query\QueryExpression;
+use SphinxSearch\Search;
+use SphinxSearchTest\Db\Sql\SelectTest;
 use Zend\Db\Adapter\Adapter;
-use SphinxSearch\Db\Sql\Predicate\Match;
+use Zend\Db\Adapter\Driver\Mysqli\Mysqli;
+use Zend\ServiceManager\Config;
+use Zend\ServiceManager\ServiceManager;
 
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
+     * @var Search
+     */
+    protected $search = null;
+    /**
+     * @var Sql
+     */
+    protected $sql = null;
+    protected $config = array();
+    /**
      * @var \Zend\ServiceManager\ServiceLocatorInterface
      */
     private $serviceManager;
-
     /**
      * @var \Zend\Db\Adapter\Adapter
      */
     private $adapter;
 
-    /**
-     * @var Search
-     */
-    protected $search = null;
-
-    /**
-     * @var Sql
-     */
-    protected $sql = null;
-
-    protected $config = array();
-
-
     public function setUp()
     {
-        $this->serviceManager = new ServiceManager(new Config(array(
-            'factories' => array(
-                'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
-            ),
-            'aliases' => array(
-                'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+        $this->serviceManager = new ServiceManager(
+            new Config(
+                array(
+                    'factories' => array(
+                        'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+                    ),
+                    'aliases' => array(
+                        'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+                    )
+                )
             )
-        )));
-        $this->serviceManager->setService('Config', array(
-            'sphinxql' => $this->config
-        ));
+        );
+        $this->serviceManager->setService(
+            'Config',
+            array(
+                'sphinxql' => $this->config
+            )
+        );
 
         $this->adapter = $this->serviceManager->get('sphinxql');
 
@@ -126,7 +126,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-
 //             echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
@@ -138,8 +137,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
      */
     public function testTypeWithPreparedStatement()
     {
-
-        if ($this->adapter->getDriver() instanceof \Zend\Db\Adapter\Driver\Mysqli\Mysqli) {
+        if ($this->adapter->getDriver() instanceof Mysqli) {
             $this->markTestSkipped('Mysqli does not support prepared statement client side emulation');
         }
 
@@ -151,17 +149,19 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $search = clone $this->search;
         $search->setQueryMode($search::QUERY_MODE_PREPARED);
 
-        $affectedRow = $indexer->insert('foo', array(
-            'id' => 1,
-            'c1' => 10,
-            'c2' => true, //will be casted to int
-            'c3' => '5', //will be casted to int
-            'f1' => '3.333',
-        ), true); //replace
+        $affectedRow = $indexer->insert(
+            'foo',
+            array(
+                'id' => 1,
+                'c1' => 10,
+                'c2' => true, //will be casted to int
+                'c3' => '5', //will be casted to int
+                'f1' => '3.333',
+            ),
+            true
+        ); //replace
 
         $this->assertEquals(1, $affectedRow);
-
-
 
 
         //test int in where
@@ -200,7 +200,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
      */
     public function testTypeWithSql()
     {
-
         $this->adapter->query('DELETE FROM foo WHERE id = 1', Adapter::QUERY_MODE_EXECUTE);
 
         $search = new Search($this->adapter);
@@ -212,16 +211,17 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $sql = new Sql($this->adapter);
 
-
         //test Replace with sql query
         $insert = new Replace('foo');
-        $insert->values(array(
-            'id' => 1,
-            'c1' => 10,
-            'c2' => true, //will be casted to int
-            'c3' => '5', //will be casted to int
-            'f1' => 3.333,
-        ));
+        $insert->values(
+            array(
+                'id' => 1,
+                'c1' => 10,
+                'c2' => true, //will be casted to int
+                'c3' => '5', //will be casted to int
+                'f1' => 3.333,
+            )
+        );
 
         $affectedRow = $indexer->insertWith($insert);
         $this->assertEquals(1, $affectedRow);
@@ -254,7 +254,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             Adapter::QUERY_MODE_EXECUTE
         );
 
-
         foreach ($results as $result) {
             $this->assertEquals(1, $result['id']);
             $this->assertEquals(10, $result['c1']);
@@ -285,20 +284,26 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $search = new Search($adapter);
 
         //test TRUE
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id', 'c1'))
-            ->where(array('c1' => true));
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id', 'c1'))
+                    ->where(array('c1' => true));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
         $this->assertEquals(array('id' => 1, 'c1' => true), $rowset->current()->getArrayCopy());
 
         //test FALSE
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id', 'c1'))
-            ->where(array('c1' => false));
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id', 'c1'))
+                    ->where(array('c1' => false));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
@@ -329,28 +334,31 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $search = new Search($adapter);
 
 
-
         //1: simple int
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id', 'c1'))
-            ->where(array('c1' => 1000));
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id', 'c1'))
+                    ->where(array('c1' => 1000));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
         $this->assertEquals(array('id' => 1, 'c1' => 1000), $rowset->current()->getArrayCopy());
 
         //1: overflow with unsigned
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id', 'c1'))
-            ->where(array('c1' => pow(2, 32) - 1000)); //sphinx has 32-bit unsigned integer
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id', 'c1'))
+                    ->where(array('c1' => pow(2, 32) - 1000)); //sphinx has 32-bit unsigned integer
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
         $this->assertEquals(array('id' => 2, 'c1' => pow(2, 32) - 1000), $rowset->current()->getArrayCopy());
-
-
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
@@ -364,7 +372,8 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $dataset = array(
             array('id' => 1, 'short' => 'hello world', 'c1' => 11, 'f1' => 55.55),
-            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10), //integers for float column are working in insert
+            array('id' => 2, 'short' => 'hello world', 'c1' => 11, 'f1' => 10),
+            //integers for float column are working in insert
             array('id' => 3, 'short' => 'hello world', 'c1' => 11, 'f1' => pi()),
         );
 
@@ -373,9 +382,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         }
 
         $search = new Search($adapter);
-
-
-
 
         /*
           floating point values (32-bit, IEEE 754 single precision)
@@ -404,36 +410,44 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
          */
 
-
         //1: float with few decimals
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id'))
-            ->where(array('f1' => 55.55));
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id'))
+                    ->where(array('f1' => 55.55));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
-        $this->assertEquals(array('id' => 1), $rowset->current()->getArrayCopy()); //Due to precision issue we can't assert against f1 value in result
+        $this->assertEquals(
+            array('id' => 1),
+            $rowset->current()->getArrayCopy()
+        ); // Due to precision issue we can't assert against f1 value in result
 
 
         //2: special case (no decimals)
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id', 'f1'))
-                   ->where(array('f1' => 10.00));
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id', 'f1'))
+                    ->where(array('f1' => 10.00));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
-        $this->assertEquals(array('id' => 2,'f1' => 10), $rowset->current()->getArrayCopy());
-
-
+        $this->assertEquals(array('id' => 2, 'f1' => 10), $rowset->current()->getArrayCopy());
 
         //3: precision of irrational number
-        $rowset = $search->search('foo', function(Select $select) {
-            $select->columns(array('id'))
-                ->where(array('f1' => pi()));
-        });
-
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->columns(array('id'))
+                    ->where(array('f1' => pi()));
+            }
+        );
 
         $this->assertCount(1, $rowset);
         //Assume not identical but equal (result values are strings)
@@ -450,15 +464,19 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $indexer = new Indexer($adapter);
 
-        $indexer->insert('foo', array(
-            'id'    => 11,
-            'short' => 'hello world',
-            'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'c1'    => 10,
-            'c2'    => 100,
-            'c3'    => 1000,
-            'f1'    => pi(),
-        ), true);
+        $indexer->insert(
+            'foo',
+            array(
+                'id' => 11,
+                'short' => 'hello world',
+                'text' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1' => 10,
+                'c2' => 100,
+                'c3' => 1000,
+                'f1' => pi(),
+            ),
+            true
+        );
 
         $search = new Search($adapter);
         $rowset = $search->search('foo', new Match('ipsum dolor'));
@@ -466,11 +484,14 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(11, $current['id']);
 
         $search = new Search($adapter);
-        $rowset = $search->search('foo', function(Select $select){
-            $select->where(new Match('ipsum dolor'))
-                   ->where(array('c1 > ?' => 5))
-                   ->limit(1);
-        });
+        $rowset = $search->search(
+            'foo',
+            function (Select $select) {
+                $select->where(new Match('ipsum dolor'))
+                    ->where(array('c1 > ?' => 5))
+                    ->limit(1);
+            }
+        );
         $this->assertEquals(1, $rowset->count());
         $current = $rowset->current();
         $this->assertEquals(11, $current['id']);
@@ -500,26 +521,26 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $indexer->insert(
             'foo',
             array(
-                'id'    => 11,
+                'id' => 11,
                 'short' => 'hello world',
-                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                'c1'    => 10,
-                'c2'    => 100,
-                'c3'    => 1000,
-                'f1'    => pi(),
+                'text' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1' => 10,
+                'c2' => 100,
+                'c3' => 1000,
+                'f1' => pi(),
             ),
             true
         );
         $indexer->insert(
             'foo',
             array(
-                'id'    => 12,
+                'id' => 12,
                 'short' => 'hello world 2',
-                'text'  => 'Lorem ipsum dolor sit amet ...',
-                'c1'    => 10,
-                'c2'    => 100,
-                'c3'    => 2000,
-                'f1'    => pi(),
+                'text' => 'Lorem ipsum dolor sit amet ...',
+                'c1' => 10,
+                'c2' => 100,
+                'c3' => 2000,
+                'f1' => pi(),
             ),
             true
         );
@@ -527,7 +548,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $select29 = new Select;
         $select29->from('foo')->order('c1.c2');
         $search = new Search($adapter);
-        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $this->setExpectedException('\Zend\Db\Adapter\Exception\InvalidQueryException');
         $search->searchWith($select29);
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
@@ -542,26 +563,26 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $indexer->insert(
             'foo',
             array(
-                'id'    => 11,
+                'id' => 11,
                 'short' => 'hello world',
-                'text'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                'c1'    => 10,
-                'c2'    => 100,
-                'c3'    => 1000,
-                'f1'    => pi(),
+                'text' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                'c1' => 10,
+                'c2' => 100,
+                'c3' => 1000,
+                'f1' => pi(),
             ),
             true
         );
         $indexer->insert(
             'foo',
             array(
-                'id'    => 12,
+                'id' => 12,
                 'short' => 'hello world 2',
-                'text'  => 'Lorem ipsum dolor sit amet ...',
-                'c1'    => 10,
-                'c2'    => 100,
-                'c3'    => 2000,
-                'f1'    => pi(),
+                'text' => 'Lorem ipsum dolor sit amet ...',
+                'c1' => 10,
+                'c2' => 100,
+                'c3' => 2000,
+                'f1' => pi(),
             ),
             true
         );
@@ -569,7 +590,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $select30 = new Select;
         $select30->from('foo')->group('c1.d2');
         $search = new Search($adapter);
-        $this->setExpectedException('Zend\Db\Adapter\Exception\InvalidQueryException');
+        $this->setExpectedException('\Zend\Db\Adapter\Exception\InvalidQueryException');
         $search->searchWith($select30);
 
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
