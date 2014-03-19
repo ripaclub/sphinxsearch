@@ -58,6 +58,7 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $this->platform->quoteTrustedValue(3));
         $this->assertSame('NULL', $this->platform->quoteTrustedValue(null));
         $this->assertEquals(1.11, $this->platform->quoteTrustedValue(1.11));
+        $this->assertSame('\'ciao\'', $this->platform->quoteTrustedValue('ciao'));
     }
 
     public function testFloatConversion()
@@ -85,7 +86,6 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
 
         $this->platform->enableFloatConversion(true);
         $this->assertSame($singlePrecisionPi, $this->platform->quoteTrustedValue(pi()));
-
     }
 
 }
