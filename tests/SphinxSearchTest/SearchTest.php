@@ -226,26 +226,26 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('0', $result['total']);
     }
 
-    public function testShowWarnings()
-    {
-        $mockShow = $this->mockSql->show();
-        $mockShow->expects($this->once())
-            ->method('show')
-            ->with($this->equalTo(Show::SHOW_WARNINGS));
-
-        // Assumes prepared statement
-        $expected = array('Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold');
-        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
-        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
-        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue($expected));
-        $this->mockResult->expects($this->at(3))->method('next');
-        $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
-
-        $result = $this->search->showWarnings();
-        $this->assertInternalType('array', $result);
-        $this->assertCount(1, $result);
-        $this->assertEquals(array($expected), $result);
-    }
+//    public function testShowWarnings()
+//    {
+//        $mockShow = $this->mockSql->show();
+//        $mockShow->expects($this->once())
+//            ->method('show')
+//            ->with($this->equalTo(Show::SHOW_WARNINGS));
+//
+//        // Assumes prepared statement
+//        $expected = array('Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold');
+//        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
+//        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
+//        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue($expected));
+//        $this->mockResult->expects($this->at(3))->method('next');
+//        $this->mockResult->expects($this->at(4))->method('valid')->will($this->returnValue(false));
+//
+//        $result = $this->search->showWarnings();
+//        $this->assertInternalType('array', $result);
+//        $this->assertCount(1, $result);
+//        $this->assertEquals(array($expected), $result);
+//    }
 
     /**
      * @covers SphinxSearch\Search::showStatus

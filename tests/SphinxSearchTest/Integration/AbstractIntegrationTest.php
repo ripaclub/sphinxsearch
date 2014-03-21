@@ -596,18 +596,107 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $adapter->query('TRUNCATE RTINDEX foo', $adapter::QUERY_MODE_EXECUTE);
     }
 
-    public function testShowMeta()
+    public function testEmptyShowMeta()
     {
         $search = $this->search;
 
-        $search->search('foo');
+        // test with execute
         $resultSet = $search->execute('SHOW META');
-        $result = $resultSet->toArray();
-
-        $this->assertInternalType('array', $result);
+        $this->assertTrue($resultSet->valid());
+        $this->assertEquals(3, $resultSet->count());
+        $result = array();
+        foreach ($resultSet as $res) {
+            $result[] = $res;
+        }
         $this->assertArrayHasKey('Variable_name', $result[0]);
         $this->assertArrayHasKey('Value', $result[0]);
+
+        // test with dedicated method
+        $result = $search->showMeta();
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('total_found', $result);
+        $this->assertArrayHasKey('time', $result);
+        $this->assertEquals('0', $result['total']);
+        $this->assertEquals('0', $result['total_found']);
+        $this->assertEquals('0.000', $result['time']);
     }
 
+    public function testShowMeta()
+    {
+        $search = $this->search;
+        $search->search('foo');
+
+        // test with execute
+        $resultSet = $search->execute('SHOW META');
+        $this->assertTrue($resultSet->valid());
+        $this->assertEquals(3, $resultSet->count());
+        $result = array();
+        foreach ($resultSet as $res) {
+            $result[] = $res;
+        }
+        $this->assertArrayHasKey('Variable_name', $result[0]);
+        $this->assertArrayHasKey('Value', $result[0]);
+
+        // test with dedicated method
+        $result = $search->showMeta();
+        $this->assertInternalType('array', $result);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('total_found', $result);
+        $this->assertArrayHasKey('time', $result);
+
+        // test LIKE
+        $result = $search->showMeta('tot%');
+        $this->assertInternalType('array', $result);
+        $this->assertCount(2, $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('total_found', $result);
+    }
+
+    public function testShowStatus()
+    {
+        $search = $this->search;
+
+        // test with execute
+        $resultSet = $search->execute('SHOW STATUS');
+        $this->assertTrue($resultSet->valid());
+        $this->assertEquals(30, $resultSet->count());
+        $result = array();
+        foreach ($resultSet as $res) {
+            $result[] = $res;
+        }
+        $this->assertArrayHasKey('Counter', $result[0]);
+        $this->assertArrayHasKey('Value', $result[0]);
+
+        $resultSet = $search->execute('SHOW STATUS LIKE \'dist%\'');
+        $this->assertTrue($resultSet->valid());
+        $this->assertEquals(4, $resultSet->count());
+        $result = array();
+        foreach ($resultSet as $res) {
+            $result[] = $res;
+        }
+        $this->assertArrayHasKey('Counter', $result[0]);
+        $this->assertArrayHasKey('Value', $result[0]);
+        $this->assertArrayHasKey('Counter', $result[0]);
+        $this->assertArrayHasKey('Value', $result[0]);
+
+        // test with dedicated method
+        $result = $search->showStatus();
+        $this->assertInternalType('array', $result);
+        $this->assertCount(30, $result);
+        $this->assertArrayHasKey('uptime', $result);
+        $this->assertArrayHasKey('connections', $result);
+        $this->assertArrayHasKey('maxed_out', $result);
+
+        $result = $search->showStatus('dist%');
+        $this->assertInternalType('array', $result);
+        $this->assertCount(4, $result);
+        $this->assertArrayHasKey('dist_queries', $result);
+        $this->assertArrayHasKey('dist_wall', $result);
+        $this->assertArrayHasKey('dist_local', $result);
+        $this->assertArrayHasKey('dist_wait', $result);
+    }
 
 }

@@ -204,10 +204,9 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute()
     {
-        $this->mockAdapter->expects($this->at(0))->method('query')->with($this->equalTo('SHOW META'));
+        $this->mockConnection->expects($this->at(0))->method('execute')->with($this->equalTo('SHOW META'));
         $result = $this->component->execute('SHOW META');
-        $this->assertInstanceOf('\Zend\Db\ResultSet\ResultSet', $result);
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
     }
-
 
 }

@@ -10,13 +10,12 @@
  */
 namespace SphinxSearch;
 
-use Zend\Db\Sql\AbstractSql;
+use SphinxSearch\Exception;
 use Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Adapter\Driver\ResultInterface;
+use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
-use SphinxSearch\Exception;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\Sql\Predicate\Like;
 
 abstract class AbstractComponent
 {
@@ -40,23 +39,7 @@ abstract class AbstractComponent
     protected $executeMode = self::QUERY_MODE_AUTO;
 
     /**
-     * @return \Zend\Db\Adapter\Adapter
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @return \SphinxSearch\Db\Sql\Sql
-     */
-    public function getSql()
-    {
-        return $this->sql;
-    }
-
-    /**
-     * @param  string                          $flag
+     * @param  string $flag
      * @throws \InvalidArgumentException
      * @return AbstractComponent
      */
@@ -78,6 +61,33 @@ abstract class AbstractComponent
     public function getQueryMode()
     {
         return $this->executeMode;
+    }
+
+    /**
+     * @param AbstractSql $sqlObject
+     * @param null $usePreparedStatement
+     * @return \Zend\Db\Adapter\Driver\ResultInterface
+     * @throws Exception\InvalidArgumentException
+     */
+    public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
+    {
+        if ($usePreparedStatement === null) {
+            $usePreparedStatement = $this->isPreparedStatementUsed();
+        }
+
+        if ($usePreparedStatement && $sqlObject instanceof PreparableSqlInterface) {
+            $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
+            return $statement->execute();
+        }
+
+        if ($sqlObject instanceof SqlInterface) {
+            $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+            return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
+        }
+
+        throw new Exception\InvalidArgumentException(
+            '$sqlObject must be an instance of SqlInterface or PreparableSqlInterface'
+        );
     }
 
     /**
@@ -105,37 +115,28 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param AbstractSql $sqlObject
-     * @param null $usePreparedStatement
-     * @return \Zend\Db\Adapter\Driver\ResultInterface
-     * @throws Exception\InvalidArgumentException
+     * @return \Zend\Db\Adapter\Adapter
      */
-    public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
+    public function getAdapter()
     {
-        if ($usePreparedStatement === null) {
-            $usePreparedStatement = $this->isPreparedStatementUsed();
-        }
+        return $this->adapter;
+    }
 
-        if ($usePreparedStatement && $sqlObject instanceof PreparableSqlInterface) {
-            $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
-            return $statement->execute();
-        }
-
-        if ($sqlObject instanceof SqlInterface) {
-            $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
-            return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
-        }
-
-        throw new Exception\InvalidArgumentException('$sqlObject must be an instance of SqlInterface or PreparableSqlInterface');
+    /**
+     * @return \SphinxSearch\Db\Sql\Sql
+     */
+    public function getSql()
+    {
+        return $this->sql;
     }
 
     /**
      * @param string $sql
-     * @return \Zend\Db\ResultSet\ResultSet
+     * @return ResultInterface
      */
     public function execute($sql)
     {
-        return $this->getAdapter()->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
 
 }
