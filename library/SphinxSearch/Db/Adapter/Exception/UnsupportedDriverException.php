@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Db\Adapter\Exception;
 
+/**
+ * Class UnsupportedDriverException
+ */
 class UnsupportedDriverException extends \Exception
 {
 }

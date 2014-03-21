@@ -247,6 +247,7 @@ As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.htm
 * `SphinxSearch\Db\Sql\Replace` same as insert, but overwrites duplicate IDs
 * `SphinxSearch\Db\Sql\Update` with the ability to handle `OPTION` clause
 * `SphinxSearch\Db\Sql\Delete`
+* `SphinxSearch\Db\Sql\Show`
 
 Each of them can be retrivied by `SphinxSearch\Db\Sql\Sql` class methods:
 
@@ -254,11 +255,12 @@ Each of them can be retrivied by `SphinxSearch\Db\Sql\Sql` class methods:
 use SphinxSearch\Db\Sql\Sql;
 
 $sql = new Sql($adapter);
-$select = $sql->select();  // @return SphinxSearch\Db\Sql\Select
-$insert = $sql->insert();  // @return SphinxSearch\Db\Sql\Insert
-$insert = $sql->replace(); // @return SphinxSearch\Db\Sql\Replace
-$update = $sql->update();  // @return SphinxSearch\Db\Sql\Update
-$delete = $sql->delete();  // @return SphinxSearch\Db\Sql\Delete
+$select = $sql->select();  	// @return SphinxSearch\Db\Sql\Select
+$insert = $sql->insert();   // @return SphinxSearch\Db\Sql\Insert
+$insert = $sql->replace();	// @return SphinxSearch\Db\Sql\Replace
+$update = $sql->update(); 	// @return SphinxSearch\Db\Sql\Update
+$delete = $sql->delete();  	// @return SphinxSearch\Db\Sql\Delete
+$show   = $sql->show(); 	// @return SphinxSearch\Db\Sql\Show
 ```
 
 Or can be instanziated directly like in the following example:
@@ -367,7 +369,7 @@ Run [pdepend](https://github.com/pdepend/pdepend).
 vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
 ```
 
-Run [php-cs-fixer](https://github.com/fabpot/PHP-CS-Fixer)
+Run [php-cs-fixer](https://github.com/fabpot/PHP-CS-Fixer).
 
 ```
 vendor/bin/php-cs-fixer fix library/ --level=psr2

@@ -17,11 +17,17 @@ use Zend\Db\Sql\AbstractSql;
 use Zend\Db\Sql\PreparableSqlInterface;
 use Zend\Db\Sql\SqlInterface;
 
+/**
+ * Class AbstractComponent
+ *
+ * It represents every component capable that can execute SphinxQL queries.
+ *
+ */
 abstract class AbstractComponent
 {
-    const QUERY_MODE_PREPARED   = 'prepared'; //use prepared statement
-    const QUERY_MODE_EXECUTE    = 'execute';  //do not use prepared statement
-    const QUERY_MODE_AUTO       = 'auto';     //auto detect best available options (prepared mode preferred)
+    const QUERY_MODE_PREPARED = 'prepared'; //use prepared statement
+    const QUERY_MODE_EXECUTE = 'execute'; //do not use prepared statement
+    const QUERY_MODE_AUTO = 'auto'; //auto detect best available options (prepared mode preferred)
 
     /**
      * @var \Zend\Db\Adapter\Adapter

@@ -13,6 +13,9 @@ namespace SphinxSearch\Db\Sql;
 use Zend\Db\Sql\Insert as ZendInsert;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class Insert
+ */
 class Insert extends ZendInsert
 {
 

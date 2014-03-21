@@ -14,11 +14,13 @@ use SphinxSearch\Db\Sql\Select;
 use SphinxSearch\Db\Sql\Show;
 use SphinxSearch\Db\Sql\Sql;
 use Zend\Db\Adapter\Adapter as ZendDBAdapter;
-use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\Sql\Where;
 
+/**
+ * Class Search
+ */
 class Search extends AbstractComponent
 {
     /**
@@ -66,7 +68,7 @@ class Search extends AbstractComponent
 
     /**
      * @param  Select $select
-     * @return ResultInterface
+     * @return ResultSetInterface
      */
     public function searchWith(Select $select)
     {

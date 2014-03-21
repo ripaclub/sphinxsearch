@@ -10,10 +10,13 @@
  */
 namespace SphinxSearch\Db\Sql\Platform;
 
-use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Sql\Expression;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\ExpressionInterface;
 
+/**
+ * Class ExpressionDecorator
+ */
 class ExpressionDecorator implements ExpressionInterface
 {
     /**
@@ -28,12 +31,20 @@ class ExpressionDecorator implements ExpressionInterface
 
     /**
      * @param ExpressionInterface $subject
-     * @param SphinxQL            $platform
+     * @param SphinxQL $platform
      */
     public function __construct(ExpressionInterface $subject, SphinxQL $platform)
     {
         $this->setSubject($subject);
         $this->platform = $platform;
+    }
+
+    /**
+     * @return ExpressionInterface
+     */
+    public function getSubject()
+    {
+        return $this->subject;
     }
 
     /**
@@ -45,14 +56,6 @@ class ExpressionDecorator implements ExpressionInterface
         $this->subject = $expression;
 
         return $this;
-    }
-
-    /**
-     * @return ExpressionInterface
-     */
-    public function getSubject()
-    {
-        return $this->subject;
     }
 
     /**
@@ -83,12 +86,13 @@ class ExpressionDecorator implements ExpressionInterface
             for ($i = 0; $i < $parametersCount; $i++) {
                 if ($this->platform->isFloatConversionEnabled() &&
                     is_float($expressionPart[1][$i]) &&
-                    $expressionPart[2][$i] == Expression::TYPE_VALUE) {
+                    $expressionPart[2][$i] == Expression::TYPE_VALUE
+                ) {
                     $expressionPart[1][$i] = $this->platform->toFloatSinglePrecision($expressionPart[1][$i]);
                     $expressionPart[2][$i] = Expression::TYPE_LITERAL;
                 }
                 if (is_bool($expressionPart[1][$i]) && $expressionPart[2][$i] == Expression::TYPE_VALUE) {
-                    $expressionPart[1][$i] = (int) $expressionPart[1][$i];
+                    $expressionPart[1][$i] = (int)$expressionPart[1][$i];
                 }
             }
         }

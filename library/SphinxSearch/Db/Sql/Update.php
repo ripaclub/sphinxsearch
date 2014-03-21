@@ -10,23 +10,25 @@
  */
 namespace SphinxSearch\Db\Sql;
 
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Platform\Sql92;
 use Zend\Db\Adapter\StatementContainerInterface;
-use Zend\Db\Sql\Update as ZendUpdate;
-use Zend\Db\Sql\SqlInterface;
-use Zend\Db\Sql\PreparableSqlInterface;
-use Zend\Db\Sql\Where;
-use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Sql\Predicate;
-use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
-use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use Zend\Db\Sql\Predicate;
+use Zend\Db\Sql\PreparableSqlInterface;
+use Zend\Db\Sql\SqlInterface;
+use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Update as ZendUpdate;
+use Zend\Db\Sql\Where;
 
 /**
+ * Class Update
+ *
  * @property Where $where
  */
 class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
@@ -34,13 +36,13 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
     /**@#++
      * @const
-    */
+     */
     const SPECIFICATION_UPDATE = 'update';
     const SPECIFICATION_WHERE = 'where';
     const SPECIFICATION_OPTION = 'option';
 
     const VALUES_MERGE = 'merge';
-    const VALUES_SET   = 'set';
+    const VALUES_SET = 'set';
     const OPTIONS_MERGE = 'merge';
     const OPTIONS_SET = 'set';
     /**@#-**/
@@ -80,8 +82,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * Set key/value pairs to option
      *
-     * @param  array                              $values Associative array of key values
-     * @param  string                             $flag   One of the OPTIONS_* constants
+     * @param  array $values Associative array of key values
+     * @param  string $flag One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
      * @return Update
      */
@@ -121,13 +123,13 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * Prepare statement
      *
-     * @param  AdapterInterface            $adapter
+     * @param  AdapterInterface $adapter
      * @param  StatementContainerInterface $statementContainer
      * @return void
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
-        $driver   = $adapter->getDriver();
+        $driver = $adapter->getDriver();
         $platform = $adapter->getPlatform();
         $parameterContainer = $statementContainer->getParameterContainer();
 
@@ -168,57 +170,12 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $optionParts = $this->processOption($platform, $driver, $parameterContainer);
         if (is_array($optionParts)) {
             $sql .= ' ' . $this->createSqlFromSpecificationAndParameters(
-                $this->specifications[self::SPECIFICATION_OPTION],
-                $optionParts
-            );
+                    $this->specifications[self::SPECIFICATION_OPTION],
+                    $optionParts
+                );
         }
 
         $statementContainer->setSql($sql);
-    }
-
-    /**
-     * Get SQL string for statement
-     *
-     * @param  null|PlatformInterface $adapterPlatform If null, defaults to Sql92
-     * @return string
-     */
-    public function getSqlString(PlatformInterface $adapterPlatform = null)
-    {
-        $adapterPlatform = ($adapterPlatform) ? : new Sql92;
-        $table = $this->table;
-        $table = $adapterPlatform->quoteIdentifier($table);
-
-        $set = $this->set;
-        if (is_array($set)) {
-            $setSql = array();
-            foreach ($set as $col => $val) {
-                if ($val instanceof Predicate\Expression) {
-                    $exprData = $this->processExpression($val, $adapterPlatform);
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData->getSql();
-                } elseif ($val === null) {
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = NULL';
-                } else {
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $adapterPlatform->quoteValue($val);
-                }
-            }
-            $set = implode(', ', $setSql);
-        }
-
-        $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
-        if ($this->where->count() > 0) {
-            $whereParts = $this->processExpression($this->where, $adapterPlatform, null, 'where');
-            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
-        }
-
-        $optionParts = $this->processOption($adapterPlatform, null, null);
-        if (is_array($optionParts)) {
-            $sql .= ' ' . $this->createSqlFromSpecificationAndParameters(
-                $this->specifications[self::SPECIFICATION_OPTION],
-                $optionParts
-            );
-        }
-
-        return $sql;
     }
 
     /**
@@ -264,8 +221,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
                 $optionSql .= $optionParts->getSql();
             } else {
                 if ($driver && $parameterContainer) {
-                    $parameterContainer->offsetSet('option_' .  $optName, $optValue);
-                    $optionSql .= $driver->formatParameterName('option_' .  $optName);
+                    $parameterContainer->offsetSet('option_' . $optName, $optValue);
+                    $optionSql .= $driver->formatParameterName('option_' . $optName);
                 } else {
                     $optionSql .= $platform->quoteValue($optValue);
                 }
@@ -274,5 +231,50 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         return array($options);
+    }
+
+    /**
+     * Get SQL string for statement
+     *
+     * @param  null|PlatformInterface $adapterPlatform If null, defaults to Sql92
+     * @return string
+     */
+    public function getSqlString(PlatformInterface $adapterPlatform = null)
+    {
+        $adapterPlatform = ($adapterPlatform) ? : new Sql92;
+        $table = $this->table;
+        $table = $adapterPlatform->quoteIdentifier($table);
+
+        $set = $this->set;
+        if (is_array($set)) {
+            $setSql = array();
+            foreach ($set as $col => $val) {
+                if ($val instanceof Predicate\Expression) {
+                    $exprData = $this->processExpression($val, $adapterPlatform);
+                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData->getSql();
+                } elseif ($val === null) {
+                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = NULL';
+                } else {
+                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $adapterPlatform->quoteValue($val);
+                }
+            }
+            $set = implode(', ', $setSql);
+        }
+
+        $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
+        if ($this->where->count() > 0) {
+            $whereParts = $this->processExpression($this->where, $adapterPlatform, null, 'where');
+            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
+        }
+
+        $optionParts = $this->processOption($adapterPlatform, null, null);
+        if (is_array($optionParts)) {
+            $sql .= ' ' . $this->createSqlFromSpecificationAndParameters(
+                    $this->specifications[self::SPECIFICATION_OPTION],
+                    $optionParts
+                );
+        }
+
+        return $sql;
     }
 }

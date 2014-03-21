@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Exception;
 
+/**
+ * Class InvalidArgumentException
+ */
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

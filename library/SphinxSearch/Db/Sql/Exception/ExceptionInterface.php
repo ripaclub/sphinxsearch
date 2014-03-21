@@ -12,6 +12,9 @@ namespace SphinxSearch\Db\Sql\Exception;
 
 use SphinxSearch\Exception;
 
+/**
+ * Interface ExceptionInterface
+ */
 interface ExceptionInterface extends Exception\ExceptionInterface
 {
 }

@@ -10,23 +10,26 @@
  */
 namespace SphinxSearch\Db\Sql;
 
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Adapter\StatementContainerInterface;
 use Zend\Db\Sql\AbstractSql;
-use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\PreparableSqlInterface;
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use Zend\Db\Sql\SqlInterface;
 
+/**
+ * Class Show
+ */
 class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
 {
     const SHOW = 'show';
     const LIKE = 'like';
-    const SHOW_META     = 'META';
+    const SHOW_META = 'META';
     const SHOW_WARNINGS = 'WARNINGS';
-    const SHOW_STATUS   = 'STATUS';
+    const SHOW_STATUS = 'STATUS';
 
     /**
      * @var array Specification array
@@ -88,36 +91,6 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * @param  PlatformInterface  $platform
-     * @param  DriverInterface    $driver
-     * @param  ParameterContainer $pContainer
-     * @return array|null
-     */
-    protected function processLike(
-        PlatformInterface $platform,
-        DriverInterface $driver = null,
-        ParameterContainer $pContainer = null
-    ) {
-        if (!$this->like) {
-            return null;
-        }
-
-        $like = (string) $this->like;
-
-        if ($driver && $pContainer) {
-            $pContainer->offsetSet('like', $like, ParameterContainer::TYPE_STRING);
-
-            return array(
-                $driver->formatParameterName('like'),
-            );
-        }
-
-        return array(
-            $platform->quoteValue($like)
-        );
-    }
-
-    /**
      * Prepare statement
      *
      * @param AdapterInterface $adapter
@@ -152,6 +125,36 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     }
 
     /**
+     * @param  PlatformInterface $platform
+     * @param  DriverInterface $driver
+     * @param  ParameterContainer $pContainer
+     * @return array|null
+     */
+    protected function processLike(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $pContainer = null
+    ) {
+        if (!$this->like) {
+            return null;
+        }
+
+        $like = (string)$this->like;
+
+        if ($driver && $pContainer) {
+            $pContainer->offsetSet('like', $like, ParameterContainer::TYPE_STRING);
+
+            return array(
+                $driver->formatParameterName('like'),
+            );
+        }
+
+        return array(
+            $platform->quoteValue($like)
+        );
+    }
+
+    /**
      * Get SQL string for statement
      *
      * @param  null|PlatformInterface $adapterPlatform If null, defaults to SphinxQL
@@ -160,7 +163,7 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     public function getSqlString(PlatformInterface $adapterPlatform = null)
     {
         // get platform, or create default
-        $adapterPlatform = ($adapterPlatform) ?: new SphinxQL();
+        $adapterPlatform = ($adapterPlatform) ? : new SphinxQL();
 
         $sqls = array();
 

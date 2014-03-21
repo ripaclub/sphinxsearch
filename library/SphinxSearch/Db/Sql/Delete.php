@@ -10,14 +10,17 @@
  */
 namespace SphinxSearch\Db\Sql;
 
-use Zend\Db\Sql\Delete as ZendDelete;
-use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Sql\ExpressionInterface;
-use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\Driver\DriverInterface;
-use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use Zend\Db\Adapter\Driver\DriverInterface;
+use Zend\Db\Adapter\Platform\PlatformInterface;
+use Zend\Db\Sql\Delete as ZendDelete;
+use Zend\Db\Sql\ExpressionInterface;
+use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class Delete
+ */
 class Delete extends ZendDelete
 {
     /**
