@@ -5,9 +5,9 @@ php:
   - 5.4
   - 5.5
 
-# branches:
-#  only:
-#    - master
+branches:
+  only:
+    - master
 
 install:
   - composer self-update && composer --version
