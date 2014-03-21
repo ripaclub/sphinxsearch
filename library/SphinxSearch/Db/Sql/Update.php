@@ -170,9 +170,9 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $optionParts = $this->processOption($platform, $driver, $parameterContainer);
         if (is_array($optionParts)) {
             $sql .= ' ' . $this->createSqlFromSpecificationAndParameters(
-                    $this->specifications[self::SPECIFICATION_OPTION],
-                    $optionParts
-                );
+                $this->specifications[self::SPECIFICATION_OPTION],
+                $optionParts
+            );
         }
 
         $statementContainer->setSql($sql);
@@ -270,9 +270,9 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $optionParts = $this->processOption($adapterPlatform, null, null);
         if (is_array($optionParts)) {
             $sql .= ' ' . $this->createSqlFromSpecificationAndParameters(
-                    $this->specifications[self::SPECIFICATION_OPTION],
-                    $optionParts
-                );
+                $this->specifications[self::SPECIFICATION_OPTION],
+                $optionParts
+            );
         }
 
         return $sql;
