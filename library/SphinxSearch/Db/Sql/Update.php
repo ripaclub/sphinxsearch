@@ -58,6 +58,11 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     );
 
     /**
+     * @var string
+     */
+    protected $table = '';
+
+    /**
      * @var array
      */
     protected $option = array();
