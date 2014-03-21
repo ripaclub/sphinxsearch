@@ -283,8 +283,12 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @param string $namedParameterPrefix
      * @return \Zend\Db\Adapter\StatementContainer
      */
-    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
-    {
+    protected function processExpression(
+        ExpressionInterface $expression,
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        $namedParameterPrefix = null
+    ) {
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
         } else {
@@ -302,8 +306,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @param  ParameterContainer $parameterContainer
      * @return null|array
      */
-    protected function processSelect(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processSelect(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         $expr = 1;
 
         // process table columns
@@ -370,8 +377,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return array($columns);
     }
 
-    protected function processWithinGroupOrder(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processWithinGroupOrder(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if (empty($this->withinGroupOrder)) {
             return null;
         }
@@ -410,8 +420,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      * @param  ParameterContainer $parameterContainer
      * @return array|null
      */
-    protected function processLimitOffset(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processLimitOffset(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if ($this->limit === null && $this->offset === null) {
             return null;
         }
@@ -432,8 +445,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return array($offset, $limit);
     }
 
-    protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processOption(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if (empty($this->option)) {
             return null;
         }

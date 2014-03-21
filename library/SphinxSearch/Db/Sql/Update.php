@@ -228,8 +228,12 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
      * @param string $namedParameterPrefix
      * @return \Zend\Db\Adapter\StatementContainer
      */
-    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
-    {
+    protected function processExpression(
+        ExpressionInterface $expression,
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        $namedParameterPrefix = null
+    ) {
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
         } else {
@@ -239,8 +243,11 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
 
-    protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processOption(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
         if (empty($this->option)) {
             return null;
         }

@@ -138,5 +138,4 @@ abstract class AbstractComponent
     {
         return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
-
 }

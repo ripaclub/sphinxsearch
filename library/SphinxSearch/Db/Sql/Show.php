@@ -90,19 +90,22 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     /**
      * @param  PlatformInterface  $platform
      * @param  DriverInterface    $driver
-     * @param  ParameterContainer $parameterContainer
+     * @param  ParameterContainer $pContainer
      * @return array|null
      */
-    protected function processLike(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
+    protected function processLike(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $pContainer = null
+    ) {
         if (!$this->like) {
             return null;
         }
 
         $like = (string) $this->like;
 
-        if ($driver && $parameterContainer) {
-            $parameterContainer->offsetSet('like', $like, ParameterContainer::TYPE_STRING);
+        if ($driver && $pContainer) {
+            $pContainer->offsetSet('like', $like, ParameterContainer::TYPE_STRING);
 
             return array(
                 $driver->formatParameterName('like'),
@@ -136,7 +139,10 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
 
         $likePart = $this->processLike($adapter->getPlatform(), $adapter->getDriver(), $parameterContainer);
         if (is_array($likePart)) {
-            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters($this->specifications[static::LIKE], $likePart);
+            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters(
+                $this->specifications[static::LIKE],
+                $likePart
+            );
         }
 
         $sql = implode(' ', $sqls);
@@ -162,7 +168,10 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
 
         $likePart = $this->processLike($adapterPlatform);
         if (is_array($likePart)) {
-            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters($this->specifications[static::LIKE], $likePart);
+            $sqls[self::LIKE] = $this->createSqlFromSpecificationAndParameters(
+                $this->specifications[static::LIKE],
+                $likePart
+            );
         }
 
         $sql = implode(' ', $sqls);

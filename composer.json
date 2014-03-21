@@ -14,6 +14,7 @@
         "phpmd/phpmd": "1.5.*",
         "pdepend/pdepend": "1.1.*",
         "squizlabs/php_codesniffer": "1.5.*",
+        "fabpot/php-cs-fixer": "*",
         "satooshi/php-coveralls": "dev-master"
     },
     "authors": [

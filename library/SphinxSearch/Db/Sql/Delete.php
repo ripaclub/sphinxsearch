@@ -37,8 +37,12 @@ class Delete extends ZendDelete
         return $this;
     }
 
-    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
-    {
+    protected function processExpression(
+        ExpressionInterface $expression,
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        $namedParameterPrefix = null
+    ) {
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
         } elseif ($platform instanceof SphinxQL) {
