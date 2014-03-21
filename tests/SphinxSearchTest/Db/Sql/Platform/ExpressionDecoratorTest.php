@@ -11,6 +11,7 @@ namespace SphinxSearchTest\Db\Sql\Platform;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
+use Zend\Db\Adapter\Platform\Mysql;
 use Zend\Db\Sql\Expression;
 
 class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
@@ -33,6 +34,15 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $decorator = new ExpressionDecorator($expr, new SphinxQL());
 
         $this->assertSame($expr, $decorator->getSubject());
+    }
+
+    public function test__constructShouldThrowExceptionWhenIsNotASphinxQLPlatform()
+    {
+        $this->setExpectedException(
+            '\SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            '$platform must be an instance of \SphinxSearch\Db\Adapter\Platform\SphinxQL'
+        );
+        new ExpressionDecorator(new Expression(), new Mysql());
     }
 
     public function testSetGetSubject()

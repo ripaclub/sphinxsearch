@@ -10,7 +10,6 @@
  */
 namespace SphinxSearch\Db\Sql;
 
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\Platform\PlatformInterface;
@@ -40,6 +39,13 @@ class Delete extends ZendDelete
         return $this;
     }
 
+    /**
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param null $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
+     */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
@@ -48,7 +54,7 @@ class Delete extends ZendDelete
     ) {
         if ($expression instanceof ExpressionDecorator) {
             $expressionDecorator = $expression;
-        } elseif ($platform instanceof SphinxQL) {
+        } else {
             $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 

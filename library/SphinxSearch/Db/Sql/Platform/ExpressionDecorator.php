@@ -11,6 +11,8 @@
 namespace SphinxSearch\Db\Sql\Platform;
 
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Sql\Exception\InvalidArgumentException;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
 
@@ -30,11 +32,17 @@ class ExpressionDecorator implements ExpressionInterface
     protected $platform;
 
     /**
-     * @param ExpressionInterface $subject
-     * @param SphinxQL $platform
+     * @param  ExpressionInterface $subject
+     * @param  PlatformInterface $platform
+     * @throws \SphinxSearch\Db\Sql\Exception\InvalidArgumentException
      */
-    public function __construct(ExpressionInterface $subject, SphinxQL $platform)
+    public function __construct(ExpressionInterface $subject, PlatformInterface $platform)
     {
+        if (!$platform instanceof SphinxQL) {
+            throw new InvalidArgumentException(
+                '$platform must be an instance of \SphinxSearch\Db\Adapter\Platform\SphinxQL'
+            );
+        }
         $this->setSubject($subject);
         $this->platform = $platform;
     }
