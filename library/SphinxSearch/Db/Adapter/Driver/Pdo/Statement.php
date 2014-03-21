@@ -13,9 +13,11 @@ namespace SphinxSearch\Db\Adapter\Driver\Pdo;
 use Zend\Db\Adapter\Driver\Pdo\Statement as ZendPdoStatement;
 use Zend\Db\Adapter\ParameterContainer;
 
+/**
+ * Class Statement
+ */
 class Statement extends ZendPdoStatement
 {
-
     /**
      * Bind parameters from container
      */
@@ -38,9 +40,8 @@ class Statement extends ZendPdoStatement
                         $type = \PDO::PARAM_NULL;
                         break;
                     case ParameterContainer::TYPE_DOUBLE:
-                        $value = (float) $value;
+                        $value = (float)$value;
                         break;
-                    // TODO: check Sphinx compatibility
                     case ParameterContainer::TYPE_LOB:
                         $type = \PDO::PARAM_LOB;
                         break;

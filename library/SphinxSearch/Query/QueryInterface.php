@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Query;
 
+/**
+ * Interface QueryInterface
+ */
 interface QueryInterface
 {
     /**

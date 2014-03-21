@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Exception;
 
+/**
+ * Interface ExceptionInterface
+ */
 interface ExceptionInterface
 {
 }

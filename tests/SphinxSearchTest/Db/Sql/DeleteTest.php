@@ -8,37 +8,21 @@
  */
 namespace SphinxSearchTest\Db\Sql;
 
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Sql\Delete;
-use Zend\Db\Sql\TableIdentifier;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
-use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
-use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use Zend\Db\Sql\TableIdentifier;
 
-class DeleteTest extends \PHPUnit_Framework_TestCase {
+class DeleteTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var Delete
      */
     protected $delete;
-
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->delete = new Delete();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
 
     /**
      * @covers SphinxSearch\Db\Sql\Delete::from
@@ -60,7 +44,7 @@ class DeleteTest extends \PHPUnit_Framework_TestCase {
     public function testProcessExpression()
     {
         $delete = new Delete();
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
         $parameterContainer = new ParameterContainer();
 
@@ -69,15 +53,43 @@ class DeleteTest extends \PHPUnit_Framework_TestCase {
         $mr->setAccessible(true);
 
         //Test with an Expression
-        $return = $mr->invokeArgs($delete, array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
-        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $return = $mr->invokeArgs(
+            $delete,
+            array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer)
+        );
+        $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
 
         //Test with an ExpressionDecorator
-        $return2 = $mr->invokeArgs($delete, array(new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()), new TrustedSphinxQL(), $mockDriver, $parameterContainer));
-        $this->assertInstanceOf('Zend\Db\Adapter\StatementContainerInterface', $return);
+        $return2 = $mr->invokeArgs(
+            $delete,
+            array(
+                new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()),
+                new TrustedSphinxQL(),
+                $mockDriver,
+                $parameterContainer
+            )
+        );
+        $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
 
         $this->assertSame($return->getSql(), $return2->getSql());
         $this->assertEquals('10.1', $return->getSql());
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->delete = new Delete();
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     */
+    protected function tearDown()
+    {
     }
 
 }

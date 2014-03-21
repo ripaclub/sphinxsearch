@@ -10,14 +10,17 @@
  */
 namespace SphinxSearch;
 
-use Zend\Db\Adapter\Adapter as ZendDBAdapter;
-use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Select;
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\ResultSetInterface;
+use SphinxSearch\Db\Sql\Show;
+use SphinxSearch\Db\Sql\Sql;
+use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\ResultSet\ResultSetInterface;
 use Zend\Db\Sql\Where;
 
+/**
+ * Class Search
+ */
 class Search extends AbstractComponent
 {
     /**
@@ -26,19 +29,19 @@ class Search extends AbstractComponent
     protected $resultSetPrototype;
 
     /**
-     * @param ZendDBAdapter      $adapter
+     * @param ZendDBAdapter $adapter
      * @param ResultSetInterface $resultSetPrototype
-     * @param Sql                $sql
+     * @param Sql $sql
      */
     public function __construct(ZendDBAdapter $adapter, ResultSetInterface $resultSetPrototype = null, Sql $sql = null)
     {
         $this->adapter = $adapter;
         $this->resultSetPrototype = ($resultSetPrototype) ? : new ResultSet();
-        $this->sql     = $sql ? $sql : new Sql($adapter);
+        $this->sql = $sql ? $sql : new Sql($adapter);
     }
 
     /**
-     * @return \Zend\Db\ResultSet\ResultSetInterface
+     * @return ResultSetInterface
      */
     public function getResultSetPrototype()
     {
@@ -46,13 +49,13 @@ class Search extends AbstractComponent
     }
 
     /**
-     * @param  string|array                $index
+     * @param  string|array $index
      * @param  Where|\Closure|string|array $where
      * @return ResultSet
      */
     public function search($index, $where = null)
     {
-        $select = $this->sql->select($index);
+        $select = $this->getSql()->select($index);
 
         if ($where instanceof \Closure) {
             $where($select);
@@ -64,8 +67,8 @@ class Search extends AbstractComponent
     }
 
     /**
-     * @param  Select                                  $select
-     * @return ResultInterface
+     * @param  Select $select
+     * @return ResultSetInterface
      */
     public function searchWith(Select $select)
     {
@@ -75,5 +78,36 @@ class Search extends AbstractComponent
         $resultSet->initialize($result);
 
         return $resultSet;
+    }
+
+    public function showMeta($like = null)
+    {
+        $result = $this->show(Show::SHOW_META, $like);
+        $return = array();
+
+        foreach ($result as $row) {
+            $return[$row['Variable_name']] = $row['Value'];
+        }
+
+        return $return;
+    }
+
+    protected function show($show, $like)
+    {
+        $show = $this->getSql()->show()->show($show)
+            ->like($like);
+
+        return $this->executeSqlObject($show);
+    }
+
+    public function showStatus($like = null)
+    {
+        $result = $this->show(Show::SHOW_STATUS, $like);
+        $return = array();
+        foreach ($result as $row) {
+            $return[$row['Counter']] = $row['Value'];
+        }
+
+        return $return;
     }
 }

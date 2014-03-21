@@ -19,22 +19,12 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
     protected $platform;
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->platform = new SphinxQL;
-    }
-
-    /**
      * @covers SphinxSearch\Db\Adapter\Platform\SphinxQL::getName
      */
     public function testGetName()
     {
         $this->assertEquals('SphinxQL', $this->platform->getName());
     }
-
 
     public function testQuoteValue()
     {
@@ -49,7 +39,7 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
      */
     public function testQuoteWrongValue()
     {
-        $this->setExpectedException('PHPUnit_Framework_Error_Notice');
+        $this->setExpectedException('\PHPUnit_Framework_Error_Notice');
         $this->platform->quoteValue('ciao');
     }
 
@@ -58,6 +48,7 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $this->platform->quoteTrustedValue(3));
         $this->assertSame('NULL', $this->platform->quoteTrustedValue(null));
         $this->assertEquals(1.11, $this->platform->quoteTrustedValue(1.11));
+        $this->assertSame('\'ciao\'', $this->platform->quoteTrustedValue('ciao'));
     }
 
     public function testFloatConversion()
@@ -65,7 +56,10 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
         //assume default enabled
         $this->assertTrue($this->platform->isFloatConversionEnabled());
 
-        $this->assertInstanceOf('SphinxSearch\Db\Adapter\Platform\SphinxQL', $this->platform->enableFloatConversion(false));
+        $this->assertInstanceOf(
+            '\SphinxSearch\Db\Adapter\Platform\SphinxQL',
+            $this->platform->enableFloatConversion(false)
+        );
         $this->assertFalse($this->platform->isFloatConversionEnabled());
 
         $this->platform->enableFloatConversion(true);
@@ -85,7 +79,15 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
 
         $this->platform->enableFloatConversion(true);
         $this->assertSame($singlePrecisionPi, $this->platform->quoteTrustedValue(pi()));
+    }
 
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->platform = new SphinxQL;
     }
 
 }

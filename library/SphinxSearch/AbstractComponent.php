@@ -10,14 +10,24 @@
  */
 namespace SphinxSearch;
 
+use SphinxSearch\Exception;
+use Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\Sql\AbstractSql;
-use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Sql\PreparableSqlInterface;
+use Zend\Db\Sql\SqlInterface;
 
+/**
+ * Class AbstractComponent
+ *
+ * It represents every component capable that can execute SphinxQL queries.
+ *
+ */
 abstract class AbstractComponent
 {
-    const QUERY_MODE_PREPARED   = 'prepared'; //use prepared statement
-    const QUERY_MODE_EXECUTE    = 'execute';  //do not use prepared statement
-    const QUERY_MODE_AUTO       = 'auto';     //auto detect best available options (prepared mode preferred)
+    const QUERY_MODE_PREPARED = 'prepared'; //use prepared statement
+    const QUERY_MODE_EXECUTE = 'execute'; //do not use prepared statement
+    const QUERY_MODE_AUTO = 'auto'; //auto detect best available options (prepared mode preferred)
 
     /**
      * @var \Zend\Db\Adapter\Adapter
@@ -35,25 +45,9 @@ abstract class AbstractComponent
     protected $executeMode = self::QUERY_MODE_AUTO;
 
     /**
-     * @return \Zend\Db\Adapter\Adapter
-     */
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    /**
-     * @return \SphinxSearch\Db\Sql\Sql
-     */
-    public function getSql()
-    {
-        return $this->sql;
-    }
-
-    /**
-     * @param  string                          $flag
+     * @param  string $flag
      * @throws \InvalidArgumentException
-     * @return \SphinxSearch\AbstractComponent
+     * @return AbstractComponent
      */
     public function setQueryMode($flag)
     {
@@ -73,6 +67,33 @@ abstract class AbstractComponent
     public function getQueryMode()
     {
         return $this->executeMode;
+    }
+
+    /**
+     * @param AbstractSql $sqlObject
+     * @param null $usePreparedStatement
+     * @return \Zend\Db\Adapter\Driver\ResultInterface
+     * @throws Exception\InvalidArgumentException
+     */
+    public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
+    {
+        if ($usePreparedStatement === null) {
+            $usePreparedStatement = $this->isPreparedStatementUsed();
+        }
+
+        if ($usePreparedStatement && $sqlObject instanceof PreparableSqlInterface) {
+            $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
+            return $statement->execute();
+        }
+
+        if ($sqlObject instanceof SqlInterface) {
+            $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+            return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
+        }
+
+        throw new Exception\InvalidArgumentException(
+            '$sqlObject must be an instance of SqlInterface or PreparableSqlInterface'
+        );
     }
 
     /**
@@ -100,24 +121,27 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param  AbstractSql                             $sqlObject
-     * @param  bool                                    $usePreparedStatement
-     * @return \Zend\Db\Adapter\Driver\ResultInterface
+     * @return \Zend\Db\Adapter\Adapter
      */
-    public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
+    public function getAdapter()
     {
-        if ($usePreparedStatement === null) {
-            $usePreparedStatement = $this->isPreparedStatementUsed();
-        }
+        return $this->adapter;
+    }
 
-        if ($usePreparedStatement) {
-            $statement = $this->getSql()->prepareStatementForSqlObject($sqlObject);
+    /**
+     * @return \SphinxSearch\Db\Sql\Sql
+     */
+    public function getSql()
+    {
+        return $this->sql;
+    }
 
-            return $statement->execute();
-        }
-
-        $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
-
+    /**
+     * @param string $sql
+     * @return ResultInterface
+     */
+    public function execute($sql)
+    {
         return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
 }

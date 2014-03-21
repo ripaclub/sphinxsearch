@@ -10,9 +10,12 @@
  */
 namespace SphinxSearch\Db\Adapter\Platform;
 
-use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Platform\Mysql;
+use Zend\Db\Adapter\Platform\PlatformInterface;
 
+/**
+ * Class SphinxQL
+ */
 class SphinxQL extends Mysql implements PlatformInterface
 {
     protected $floatConversion = true;
@@ -34,35 +37,14 @@ class SphinxQL extends Mysql implements PlatformInterface
     public function quoteValue($value)
     {
         if (is_int($value)) {
-            return (string) $value;
+            return (string)$value;
         } elseif (is_float($value)) {
-            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string) $value;
+            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string)$value;
         } elseif (is_null($value)) {
             return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
         }
 
         return parent::quoteValue($value);
-    }
-
-    /**
-     * Quotes trusted value
-     *
-     * The ability to quote values without notices
-     *
-     * @param $value
-     * @return string
-     */
-    public function quoteTrustedValue($value)
-    {
-        if (is_int($value)) {
-            return (string) $value;
-        } elseif (is_float($value)) {
-            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string) $value;
-        } elseif (is_null($value)) {
-            return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
-        }
-
-        return parent::quoteTrustedValue($value);
     }
 
     /**
@@ -91,16 +73,37 @@ class SphinxQL extends Mysql implements PlatformInterface
      */
     public function toFloatSinglePrecision($value)
     {
-        return rtrim(sprintf('%.9F', (float) $value), '0');
+        return rtrim(sprintf('%.9F', (float)$value), '0');
     }
 
     /**
-     * @param  bool     $flag
+     * Quotes trusted value
+     *
+     * The ability to quote values without notices
+     *
+     * @param $value
+     * @return string
+     */
+    public function quoteTrustedValue($value)
+    {
+        if (is_int($value)) {
+            return (string)$value;
+        } elseif (is_float($value)) {
+            return $this->floatConversion ? $this->toFloatSinglePrecision($value) : (string)$value;
+        } elseif (is_null($value)) {
+            return 'NULL'; // Not supported by SphinxQL, but included for consistency with prepared statement behavior
+        }
+
+        return parent::quoteTrustedValue($value);
+    }
+
+    /**
+     * @param  bool $flag
      * @return SphinxQL
      */
     public function enableFloatConversion($flag = true)
     {
-        $this->floatConversion = (bool) $flag;
+        $this->floatConversion = (bool)$flag;
 
         return $this;
     }

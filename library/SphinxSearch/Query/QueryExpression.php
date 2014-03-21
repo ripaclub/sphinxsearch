@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Query;
 
+/**
+ * Class QueryExpression
+ */
 class QueryExpression implements QueryInterface
 {
     /**
@@ -28,7 +31,7 @@ class QueryExpression implements QueryInterface
     protected $parameters = array();
 
     /**
-     * @param string       $expression
+     * @param string $expression
      * @param string|array $parameters
      */
     public function __construct($expression = '', $parameters = null)
@@ -39,6 +42,14 @@ class QueryExpression implements QueryInterface
         if ($parameters) {
             $this->setParameters($parameters);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpression()
+    {
+        return $this->expression;
     }
 
     /**
@@ -57,11 +68,11 @@ class QueryExpression implements QueryInterface
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getExpression()
+    public function getParameters()
     {
-        return $this->expression;
+        return $this->parameters;
     }
 
     /**
@@ -77,32 +88,6 @@ class QueryExpression implements QueryInterface
         $this->parameters = $parameters;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getParameters()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * Escape a string value for Sphinx Query Syntax
-     *
-     * @link http://sphinxsearch.com/docs/2.2.2/api-func-escapestring.html
-     * @link https://github.com/php/pecl-search_engine-sphinx/blob/master/sphinx.c#L1531
-     *
-     * @param  string $value
-     * @return string
-     */
-    public static function escapeString($value)
-    {
-        return str_replace(
-            array(  '\\',   '(',   ')',   '|',   '-',   '!',   '@',   '~',   '"',   '&',   '/'),
-            array('\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'),
-            $value
-        );
     }
 
     /**
@@ -138,5 +123,23 @@ class QueryExpression implements QueryInterface
         }
 
         return vsprintf($expression, $parameters);
+    }
+
+    /**
+     * Escape a string value for Sphinx Query Syntax
+     *
+     * @link http://sphinxsearch.com/docs/2.2.2/api-func-escapestring.html
+     * @link https://github.com/php/pecl-search_engine-sphinx/blob/master/sphinx.c#L1531
+     *
+     * @param  string $value
+     * @return string
+     */
+    public static function escapeString($value)
+    {
+        return str_replace(
+            array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/'),
+            array('\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'),
+            $value
+        );
     }
 }

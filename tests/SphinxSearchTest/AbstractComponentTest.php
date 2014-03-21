@@ -8,17 +8,15 @@
  */
 namespace SphinxSearchTest;
 
-
+use SphinxSearch\AbstractComponent;
 use SphinxSearch\Db\Sql\Select;
-use SphinxSearch\Search;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
-use Zend\Db\ResultSet\ResultSet;
 use SphinxSearchTest\TestAsset\ConcreteComponentAsset;
-use SphinxSearch\AbstractComponent;
+use SphinxSearchTest\TestAsset\ConcreteSqlObjectAsset;
+
 class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 {
-
     protected $mockAdapter = null;
 
     /**
@@ -38,24 +36,38 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // mock the adapter, driver, and parts
-        $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockResult = $this->getMock('\Zend\Db\Adapter\Driver\ResultInterface');
+        $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
         $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
         $this->mockStatement = $mockStatement;
-        $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
+        $mockConnection = $this->getMock('\Zend\Db\Adapter\Driver\ConnectionInterface');
         $mockConnection->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
         $this->mockConnection = $mockConnection;
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
+        $mockResultSet = $this->getMock('\Zend\Db\ResultSet\ResultSet');
 
         // setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', array('getDriver'), array($mockDriver, new TrustedSphinxQL()));
+        $this->mockAdapter = $this->getMock(
+            '\Zend\Db\Adapter\Adapter',
+            array('getDriver', 'query'),
+            array($mockDriver, new TrustedSphinxQL())
+        );
         $this->mockAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
+        $this->mockAdapter->expects($this->any())->method('query')->will($this->returnValue($mockResultSet));
 
-        $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('prepareStatementForSqlObject', 'getSqlStringForSqlObject'), array($this->mockAdapter, 'foo'));
-        $this->mockSql->expects($this->any())->method('prepareStatementForSqlObject')->will($this->returnValue($this->mockStatement));
-        $this->mockSql->expects($this->any())->method('getSqlStringForSqlObject')->will($this->returnValue('SQL STRING'));
+        $this->mockSql = $this->getMock(
+            '\SphinxSearch\Db\Sql\Sql',
+            array('prepareStatementForSqlObject', 'getSqlStringForSqlObject'),
+            array($this->mockAdapter, 'foo')
+        );
+        $this->mockSql->expects($this->any())->method('prepareStatementForSqlObject')->will(
+            $this->returnValue($this->mockStatement)
+        );
+        $this->mockSql->expects($this->any())->method('getSqlStringForSqlObject')->will(
+            $this->returnValue('SQL STRING')
+        );
 
         // setup the object
         $this->component = new ConcreteComponentAsset($this->mockAdapter, $this->mockSql);
@@ -75,7 +87,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSql()
     {
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $this->component->getSql());
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Sql', $this->component->getSql());
     }
 
     /**
@@ -87,7 +99,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SphinxSearch\AbstractComponent::setQueryMode
+     * @covers  SphinxSearch\AbstractComponent::setQueryMode
      * @depends testDefaultQueryMode
      */
     public function testSetQueryMode()
@@ -107,7 +119,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SphinxSearch\AbstractComponent::isPreparedStatementUsed
+     * @covers  SphinxSearch\AbstractComponent::isPreparedStatementUsed
      * @depends testSetQueryMode
      */
     public function testGetUsePreparedStatement()
@@ -124,10 +136,10 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 
 
         // testing Mysqli driver
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\Mysqli\Mysqli', array(), array(), '', false);
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\Mysqli\Mysqli', array(), array(), '', false);
 
         // setup mock adapter
-        $mysqliMockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver));
+        $mysqliMockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver));
 
         // setup the object
         $component = new ConcreteComponentAsset($mysqliMockAdapter);
@@ -137,31 +149,34 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SphinxSearch\AbstractComponent::executeSqlObject
+     * @covers  SphinxSearch\AbstractComponent::executeSqlObject
      * @depends testGetUsePreparedStatement
      */
     public function testExecuteSqlObject()
     {
-         $sqlObj = new Select('foo');
+        $sqlObj = new Select('foo');
 
-         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_PREPARED);
-         $this->mockSql->expects($this->at(0))->method('prepareStatementForSqlObject')->with($this->equalTo($sqlObj));
+        $this->component->setQueryMode(AbstractComponent::QUERY_MODE_PREPARED);
+        $this->mockSql->expects($this->at(0))->method('prepareStatementForSqlObject')->with($this->equalTo($sqlObj));
 
-         $result = $this->component->executeSqlObject($sqlObj);
-         $this->assertInstanceOf('Zend\Db\Adapter\Driver\ResultInterface', $result);
+        $result = $this->component->executeSqlObject($sqlObj);
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
 
 
-         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_EXECUTE);
-         $this->mockSql->expects($this->at(0))->method('getSqlStringForSqlObject')->with($this->equalTo($sqlObj));
+        $this->component->setQueryMode(AbstractComponent::QUERY_MODE_EXECUTE);
+        $this->mockSql->expects($this->at(0))->method('getSqlStringForSqlObject')->with($this->equalTo($sqlObj));
 
-         $this->mockConnection->expects($this->at(0))->method('execute')->with($this->equalTo('SQL STRING'));
+        $this->mockConnection->expects($this->at(0))->method('execute')->with($this->equalTo('SQL STRING'));
 
-         $result = $this->component->executeSqlObject($sqlObj);
-         $this->assertInstanceOf('Zend\Db\Adapter\Driver\ResultInterface', $result);
+        $result = $this->component->executeSqlObject($sqlObj);
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
+
+        $this->setExpectedException('\SphinxSearch\Exception\InvalidArgumentException');
+        $this->component->executeSqlObject(new ConcreteSqlObjectAsset());
     }
 
     /**
-     * @covers SphinxSearch\AbstractComponent::executeSqlObject
+     * @covers  SphinxSearch\AbstractComponent::executeSqlObject
      * @depends testExecuteSqlObject
      */
     public function testExecuteSqlObjectWithSecondArg()
@@ -172,7 +187,7 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $this->mockSql->expects($this->at(0))->method('prepareStatementForSqlObject')->with($this->equalTo($sqlObj));
 
         $result = $this->component->executeSqlObject($sqlObj, true); //force prepared, ignoring query mode
-        $this->assertInstanceOf('Zend\Db\Adapter\Driver\ResultInterface', $result);
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
 
 
         $this->component->setQueryMode(AbstractComponent::QUERY_MODE_PREPARED);
@@ -181,8 +196,17 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $this->mockConnection->expects($this->at(0))->method('execute')->with($this->equalTo('SQL STRING'));
 
         $result = $this->component->executeSqlObject($sqlObj, false); //force execute, ignoring query mode
-        $this->assertInstanceOf('Zend\Db\Adapter\Driver\ResultInterface', $result);
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
     }
 
+    /**
+     * @covers SphinxSearch\AbstractComponent::execute
+     */
+    public function testExecute()
+    {
+        $this->mockConnection->expects($this->at(0))->method('execute')->with($this->equalTo('SHOW META'));
+        $result = $this->component->execute('SHOW META');
+        $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
+    }
 
 }

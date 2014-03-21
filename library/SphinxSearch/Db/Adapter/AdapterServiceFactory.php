@@ -10,21 +10,29 @@
  */
 namespace SphinxSearch\Db\Adapter;
 
-use Zend\Db\Adapter\Driver\Pdo\Pdo as ZendPdoDriver;
-use \Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
-use Zend\Db\Adapter\Adapter as ZendDBAdapter;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement as PdoStatement;
 use SphinxSearch\Db\Adapter\Exception\UnsupportedDriverException;
+use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use Zend\Db\Adapter\Adapter as ZendDBAdapter;
+use Zend\Db\Adapter\Driver\Mysqli\Mysqli as ZendMysqliDriver;
+use Zend\Db\Adapter\Driver\Pdo\Pdo as ZendPdoDriver;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
+/**
+ * Class AdapterServiceFactory
+ *
+ * Database adapter service factory.
+ *
+ * Allows configuring a single database instance.
+ *
+ */
 class AdapterServiceFactory implements FactoryInterface
 {
     /**
      * Create db adapter service
      *
-     * @param  ServiceLocatorInterface              $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @throws Exception\UnsupportedDriverException
      * @return \Zend\Db\Adapter\Adapter
      */
@@ -32,12 +40,13 @@ class AdapterServiceFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('Config');
         $platform = new SphinxQL();
-        $adapter  = new ZendDBAdapter($config['sphinxql'], $platform);
-        $driver   = $adapter->getDriver();
+        $adapter = new ZendDBAdapter($config['sphinxql'], $platform);
+        $driver = $adapter->getDriver();
         // Check driver
         if ($driver instanceof ZendPdoDriver &&
-            $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql') {
-            $adapter->getDriver()->registerStatementPrototype(new PdoStatement());
+            $driver->getDatabasePlatformName(ZendPdoDriver::NAME_FORMAT_CAMELCASE) == 'Mysql'
+        ) {
+            $driver->registerStatementPrototype(new PdoStatement());
         } elseif (!$driver instanceof ZendMysqliDriver) {
             $class = get_class($driver);
             throw new UnsupportedDriverException(

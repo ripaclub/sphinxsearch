@@ -20,15 +20,6 @@ class MatchTest extends \PHPUnit_Framework_TestCase
     protected $match;
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->match = new Match();
-    }
-
-    /**
      * @testdox Constructor
      */
     public function test__constuctor()
@@ -37,7 +28,7 @@ class MatchTest extends \PHPUnit_Framework_TestCase
         $match = new Match('?', array('param'));
 
         $queryExpression = $match->getQuery();
-        $this->assertInstanceOf('SphinxSearch\Query\QueryExpression', $queryExpression);
+        $this->assertInstanceOf('\SphinxSearch\Query\QueryExpression', $queryExpression);
 
         $this->assertEquals(array('param'), $queryExpression->getParameters());
         $this->assertEquals('?', $queryExpression->getExpression());
@@ -49,7 +40,7 @@ class MatchTest extends \PHPUnit_Framework_TestCase
 
 
         // Test invalid argument
-        $this->setExpectedException('SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
+        $this->setExpectedException('\SphinxSearch\Db\Sql\Exception\InvalidArgumentException');
         new Match(new \stdClass());
 
     }
@@ -63,12 +54,15 @@ class MatchTest extends \PHPUnit_Framework_TestCase
 
         $queryExpression = new QueryExpression('test');
 
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $match->setQuery($queryExpression));
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Predicate\Match', $match->setQuery($queryExpression));
         $this->assertSame($queryExpression, $match->getQuery());
 
-        $this->assertEquals(array(
-            array('MATCH(%1$s)', array('test'), array(Match::TYPE_VALUE))
-        ), $match->getExpressionData());
+        $this->assertEquals(
+            array(
+                array('MATCH(%1$s)', array('test'), array(Match::TYPE_VALUE))
+            ),
+            $match->getExpressionData()
+        );
     }
 
     /**
@@ -81,12 +75,15 @@ class MatchTest extends \PHPUnit_Framework_TestCase
         // Test default specification
         $this->assertEquals('MATCH(%1$s)', $match->getSpecification());
 
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Predicate\Match', $match->setSpecification('TEST_SPECIFICATION'));
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Predicate\Match', $match->setSpecification('TEST_SPECIFICATION'));
         $this->assertEquals('TEST_SPECIFICATION', $match->getSpecification());
 
-        $this->assertEquals(array(
-            array('TEST_SPECIFICATION', array(''), array(Match::TYPE_VALUE))
-        ), $match->getExpressionData());
+        $this->assertEquals(
+            array(
+                array('TEST_SPECIFICATION', array(''), array(Match::TYPE_VALUE))
+            ),
+            $match->getExpressionData()
+        );
     }
 
     /**
@@ -95,7 +92,19 @@ class MatchTest extends \PHPUnit_Framework_TestCase
     public function testGetExpressionData()
     {
         $match = new Match('foo');
-        $this->assertEquals(array(array($match->getSpecification(), array('foo'), array(Match::TYPE_VALUE))), $match->getExpressionData());
+        $this->assertEquals(
+            array(array($match->getSpecification(), array('foo'), array(Match::TYPE_VALUE))),
+            $match->getExpressionData()
+        );
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->match = new Match();
     }
 
 

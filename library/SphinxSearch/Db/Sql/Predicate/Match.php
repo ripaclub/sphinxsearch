@@ -11,10 +11,13 @@
 namespace SphinxSearch\Db\Sql\Predicate;
 
 use SphinxSearch\Db\Sql\Exception;
-use Zend\Db\Sql\Predicate\PredicateInterface;
 use SphinxSearch\Query\QueryExpression;
 use SphinxSearch\Query\QueryInterface;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 
+/**
+ * Class Match
+ */
 class Match implements PredicateInterface
 {
     /**
@@ -28,8 +31,8 @@ class Match implements PredicateInterface
     protected $query = null;
 
     /**
-     * @param  string                             $expression
-     * @param  string                             $parameters
+     * @param  string $expression
+     * @param  string $parameters
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($expression = '', $parameters = null)
@@ -52,6 +55,14 @@ class Match implements PredicateInterface
     }
 
     /**
+     * @return QueryExpression
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
      * @param  QueryInterface $query
      * @return Match
      */
@@ -63,11 +74,11 @@ class Match implements PredicateInterface
     }
 
     /**
-     * @return QueryExpression
+     * @return string
      */
-    public function getQuery()
+    public function getSpecification()
     {
-        return $this->query;
+        return $this->specification;
     }
 
     /**
@@ -79,14 +90,6 @@ class Match implements PredicateInterface
         $this->specification = $specification;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
     }
 
     /**

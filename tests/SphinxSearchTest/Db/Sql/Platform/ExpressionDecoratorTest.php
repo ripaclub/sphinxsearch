@@ -8,10 +8,11 @@
  */
 namespace SphinxSearchTest\Db\Sql\Platform;
 
-use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
-use Zend\Db\Sql\Expression;
-use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
+use Zend\Db\Adapter\Platform\Mysql;
+use Zend\Db\Sql\Expression;
 
 class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,16 +27,6 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     protected $platform;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->platform = new SphinxQL();
-        $this->expr = new ExpressionDecorator(new Expression, $this->platform);
-    }
-
     public function test__construct()
     {
         $expr = new Expression();
@@ -45,13 +36,20 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expr, $decorator->getSubject());
     }
 
-
+    public function test__constructShouldThrowExceptionWhenIsNotASphinxQLPlatform()
+    {
+        $this->setExpectedException(
+            '\SphinxSearch\Db\Sql\Exception\InvalidArgumentException',
+            '$platform must be an instance of \SphinxSearch\Db\Adapter\Platform\SphinxQL'
+        );
+        new ExpressionDecorator(new Expression(), new Mysql());
+    }
 
     public function testSetGetSubject()
     {
         $subject = new Expression();
 
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Platform\ExpressionDecorator', $this->expr->setSubject($subject));
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Platform\ExpressionDecorator', $this->expr->setSubject($subject));
         $this->assertSame($subject, $this->expr->getSubject());
     }
 
@@ -61,12 +59,34 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->expr->setSubject($subject);
 
         $this->platform->enableFloatConversion(false);
-        $this->assertSame(array(array('%s = %s', array(33.0, 1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))), $this->expr->getExpressionData());
+        $this->assertSame(
+            array(array('%s = %s', array(33.0, 1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))),
+            $this->expr->getExpressionData()
+        );
 
-        $platform = new TrustedSphinxQL(); //use platform to ensure same float point precision
+        $platform = new TrustedSphinxQL(); // Use platform to ensure same float point precision
         $platform->enableFloatConversion(true);
         $this->platform->enableFloatConversion(true);
-        $this->assertSame(array(array('%s = %s', array($platform->quoteTrustedValue(33.0), 1), array(Expression::TYPE_LITERAL, Expression::TYPE_VALUE))), $this->expr->getExpressionData());
+        $this->assertSame(
+            array(
+                array(
+                    '%s = %s',
+                    array($platform->quoteTrustedValue(33.0), 1),
+                    array(Expression::TYPE_LITERAL, Expression::TYPE_VALUE)
+                )
+            ),
+            $this->expr->getExpressionData()
+        );
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->platform = new SphinxQL();
+        $this->expr = new ExpressionDecorator(new Expression, $this->platform);
     }
 
 }

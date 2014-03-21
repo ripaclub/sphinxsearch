@@ -8,13 +8,11 @@
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-namespace SphinxSearch\Db\Sql\Exception;
-
-use SphinxSearch\Exception;
+namespace SphinxSearch\Exception;
 
 /**
- * Interface ExceptionInterface
+ * Class InvalidArgumentException
  */
-interface ExceptionInterface extends Exception\ExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

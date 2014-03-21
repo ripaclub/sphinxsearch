@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Db\Sql;
 
+/**
+ * Class Replace
+ */
 class Replace extends Insert
 {
     /**

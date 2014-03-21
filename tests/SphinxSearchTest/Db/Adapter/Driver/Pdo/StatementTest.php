@@ -9,10 +9,10 @@
 namespace SphinxSearchTest\Db\Adapter\Driver\Pdo;
 
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
-use Zend\Db\Adapter\ParameterContainer;
 use SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset\ParametersBoundedAlreadyStatement;
+use Zend\Db\Adapter\ParameterContainer;
 
-class StatementTest  extends \PHPUnit_Framework_TestCase
+class StatementTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -24,29 +24,6 @@ class StatementTest  extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $pdoStatementMock = null;
-
-    /**
-     * Sets up.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->statement = new Statement;
-        $this->statement->setDriver(
-            $this->getMock('Zend\Db\Adapter\Driver\Pdo\Pdo', array('createResult'), array(), '', false)
-        );
-        $this->statement->initialize(new TestAsset\CtorlessPdo(
-                $this->pdoStatementMock = $this->getMock('PDOStatement', array('execute', 'bindParam')))
-        );
-    }
-
-    /**
-     * Tears down.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-    }
 
     /**
      * @testdox Statemement execution will always convert PHP null to Pdo null (i.e., internal auto casting) when binding
@@ -185,25 +162,52 @@ class StatementTest  extends \PHPUnit_Framework_TestCase
         $this->statement->execute(array('lob' => $fp));
     }
 
-   /**
-    * This test is required to assure future compatibility with parent statement class provided by zend.
-    *
-    * We're testing the not used property $this->parametersBound simulating it was true.
-    *
-    */
-   public function testParametersBoundedAlready()
-   {
-       $statement = new ParametersBoundedAlreadyStatement();
-       $statement->setDriver(
-           $this->getMock('Zend\Db\Adapter\Driver\Pdo\Pdo', array(), array(), '', false)
-       );
-       $statement->initialize(new TestAsset\CtorlessPdo(
-           $pdoStatementMock = $this->getMock('PDOStatement', array('bindParam')))
-       );
+    /**
+     * This test is required to assure future compatibility with parent statement class provided by zend.
+     *
+     * We're testing the not used property $this->parametersBound simulating it was true.
+     *
+     */
+    public function testParametersBoundedAlready()
+    {
+        $statement = new ParametersBoundedAlreadyStatement();
+        $statement->setDriver(
+            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', array(), array(), '', false)
+        );
+        $statement->initialize(
+            new TestAsset\CtorlessPdo(
+                $pdoStatementMock = $this->getMock('\PDOStatement', array('bindParam'))
+            )
+        );
 
-       //bind param should be never called becaouse we set parametersBound = true in ParametersBounededAlteradStatement test asset
-       $pdoStatementMock->expects($this->never())->method('bindParam');
-       $statement->execute(array('dummy' => 'dummy'));
-   }
+        //bind param should be never called becaouse we set parametersBound = true in ParametersBounededAlteradStatement test asset
+        $pdoStatementMock->expects($this->never())->method('bindParam');
+        $statement->execute(array('dummy' => 'dummy'));
+    }
+
+    /**
+     * Sets up.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->statement = new Statement;
+        $this->statement->setDriver(
+            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', array('createResult'), array(), '', false)
+        );
+        $this->statement->initialize(
+            new TestAsset\CtorlessPdo(
+                $this->pdoStatementMock = $this->getMock('\PDOStatement', array('execute', 'bindParam'))
+            )
+        );
+    }
+
+    /**
+     * Tears down.
+     * This method is called after a test is executed.
+     */
+    protected function tearDown()
+    {
+    }
 
 }

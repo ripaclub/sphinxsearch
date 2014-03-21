@@ -10,28 +10,31 @@
  */
 namespace SphinxSearch;
 
-use Zend\Db\Adapter\Adapter as ZendDBAdapter;
-use Zend\Db\Sql\Insert;
 use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Db\Sql\Update;
+use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use Zend\Db\Sql\Delete;
-use Zend\Db\Sql\Where;
+use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Where;
 
+/**
+ * Class Indexer
+ */
 class Indexer extends AbstractComponent
 {
     /**
      * @param ZendDBAdapter $adapter
-     * @param Sql           $sql
+     * @param Sql $sql
      */
     public function __construct(ZendDBAdapter $adapter, Sql $sql = null)
     {
         $this->adapter = $adapter;
-        $this->sql     = $sql ? $sql : new Sql($adapter);
+        $this->sql = $sql ? $sql : new Sql($adapter);
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function beginTransaction()
     {
@@ -41,7 +44,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function commit()
     {
@@ -51,7 +54,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @return \SphinxSearch\Indexer
+     * @return Indexer
      */
     public function rollback()
     {
@@ -62,8 +65,8 @@ class Indexer extends AbstractComponent
 
     /**
      * @param  string|TableIdentifier $index
-     * @param  array                  $values
-     * @param  bool                   $replace
+     * @param  array $values
+     * @param  bool $replace
      * @return integer
      */
     public function insert($index, array $values, $replace = false)
@@ -86,8 +89,8 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param  string|TableIdentifier      $index
-     * @param  array                       $values
+     * @param  string|TableIdentifier $index
+     * @param  array $values
      * @param  Where|\Closure|string|array $where
      * @return integer
      */
@@ -117,7 +120,7 @@ class Indexer extends AbstractComponent
     }
 
     /**
-     * @param  string|TableIdentifier      $index
+     * @param  string|TableIdentifier $index
      * @param  Where|\Closure|string|array $where
      * @return integer
      */

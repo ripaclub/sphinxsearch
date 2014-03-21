@@ -10,23 +10,25 @@
  */
 namespace SphinxSearch\Db\Sql;
 
+use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use Zend\Db\Adapter\AdapterInterface;
+use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Adapter\Platform\Sql92;
 use Zend\Db\Adapter\StatementContainerInterface;
-use Zend\Db\Sql\Update as ZendUpdate;
-use Zend\Db\Sql\SqlInterface;
-use Zend\Db\Sql\PreparableSqlInterface;
-use Zend\Db\Sql\Where;
-use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Sql\Predicate;
-use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
-use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
+use Zend\Db\Sql\Predicate;
+use Zend\Db\Sql\PreparableSqlInterface;
+use Zend\Db\Sql\SqlInterface;
+use Zend\Db\Sql\TableIdentifier;
+use Zend\Db\Sql\Update as ZendUpdate;
+use Zend\Db\Sql\Where;
 
 /**
+ * Class Update
+ *
  * @property Where $where
  */
 class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
@@ -34,13 +36,13 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
     /**@#++
      * @const
-    */
+     */
     const SPECIFICATION_UPDATE = 'update';
     const SPECIFICATION_WHERE = 'where';
     const SPECIFICATION_OPTION = 'option';
 
     const VALUES_MERGE = 'merge';
-    const VALUES_SET   = 'set';
+    const VALUES_SET = 'set';
     const OPTIONS_MERGE = 'merge';
     const OPTIONS_SET = 'set';
     /**@#-**/
@@ -56,6 +58,11 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     );
 
     /**
+     * @var string
+     */
+    protected $table = '';
+
+    /**
      * @var array
      */
     protected $option = array();
@@ -69,7 +76,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     public function table($table)
     {
         if ($table instanceof TableIdentifier) {
-            list($table, ) = $table->getTableAndSchema(); // Ignore schema because it is not supported by SphinxQL
+            $table = $table->getTable(); // Ignore schema because it is not supported by SphinxQL
         }
 
         $this->table = $table;
@@ -80,8 +87,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * Set key/value pairs to option
      *
-     * @param  array                              $values Associative array of key values
-     * @param  string                             $flag   One of the OPTIONS_* constants
+     * @param  array $values Associative array of key values
+     * @param  string $flag One of the OPTIONS_* constants
      * @throws Exception\InvalidArgumentException
      * @return Update
      */
@@ -121,13 +128,13 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * Prepare statement
      *
-     * @param  AdapterInterface            $adapter
+     * @param  AdapterInterface $adapter
      * @param  StatementContainerInterface $statementContainer
      * @return void
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
-        $driver   = $adapter->getDriver();
+        $driver = $adapter->getDriver();
         $platform = $adapter->getPlatform();
         $parameterContainer = $statementContainer->getParameterContainer();
 
@@ -177,6 +184,61 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     }
 
     /**
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param string $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
+     */
+    protected function processExpression(
+        ExpressionInterface $expression,
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        $namedParameterPrefix = null
+    ) {
+        if ($expression instanceof ExpressionDecorator) {
+            $expressionDecorator = $expression;
+        } else {
+            $expressionDecorator = new ExpressionDecorator($expression, $platform);
+        }
+
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
+    }
+
+    protected function processOption(
+        PlatformInterface $platform,
+        DriverInterface $driver = null,
+        ParameterContainer $parameterContainer = null
+    ) {
+        if (empty($this->option)) {
+            return null;
+        }
+        // process options
+        $options = array();
+        foreach ($this->option as $optName => $optValue) {
+            $optionSql = '';
+            if ($optValue instanceof Expression) {
+                $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
+                if ($parameterContainer) {
+                    $parameterContainer->merge($optionParts->getParameterContainer());
+                }
+                $optionSql .= $optionParts->getSql();
+            } else {
+                if ($driver && $parameterContainer) {
+                    $parameterContainer->offsetSet('option_' . $optName, $optValue);
+                    $optionSql .= $driver->formatParameterName('option_' . $optName);
+                } else {
+                    $optionSql .= $platform->quoteValue($optValue);
+                }
+            }
+            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
+        }
+
+        return array($options);
+    }
+
+    /**
      * Get SQL string for statement
      *
      * @param  null|PlatformInterface $adapterPlatform If null, defaults to Sql92
@@ -219,53 +281,5 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         return $sql;
-    }
-
-    /**
-     * @param ExpressionInterface $expression
-     * @param PlatformInterface $platform
-     * @param DriverInterface $driver
-     * @param string $namedParameterPrefix
-     * @return \Zend\Db\Adapter\StatementContainer
-     */
-    protected function processExpression(ExpressionInterface $expression, PlatformInterface $platform, DriverInterface $driver = null, $namedParameterPrefix = null)
-    {
-        if ($expression instanceof ExpressionDecorator) {
-            $expressionDecorator = $expression;
-        } else {
-            $expressionDecorator = new ExpressionDecorator($expression, $platform);
-        }
-
-        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
-    }
-
-    protected function processOption(PlatformInterface $platform, DriverInterface $driver = null, ParameterContainer $parameterContainer = null)
-    {
-        if (empty($this->option)) {
-            return null;
-        }
-        // process options
-        $options = array();
-        foreach ($this->option as $optName => $optValue) {
-            $optionSql = '';
-            if ($optValue instanceof Expression) {
-                $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
-                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
-                if ($parameterContainer) {
-                    $parameterContainer->merge($optionParts->getParameterContainer());
-                }
-                $optionSql .= $optionParts->getSql();
-            } else {
-                if ($driver) {
-                    $parameterContainer->offsetSet('option_' .  $optName, $optValue);
-                    $optionSql .= $driver->formatParameterName('option_' .  $optName);
-                } else {
-                    $optionSql .= $platform->quoteValue($optValue);
-                }
-            }
-            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
-        }
-
-        return array($options);
     }
 }

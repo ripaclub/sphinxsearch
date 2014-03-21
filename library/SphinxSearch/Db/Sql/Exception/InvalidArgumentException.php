@@ -10,6 +10,9 @@
  */
 namespace SphinxSearch\Db\Sql\Exception;
 
+/**
+ * Class InvalidArgumentException
+ */
 class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

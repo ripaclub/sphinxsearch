@@ -30,31 +30,46 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Mock the adapter, driver, and parts
-        $mockResult = $this->getMock('Zend\Db\Adapter\Driver\ResultInterface');
+        $mockResult = $this->getMock('\Zend\Db\Adapter\Driver\ResultInterface');
         $mockResult->expects($this->any())->method('getAffectedRows')->will($this->returnValue(5));
 
-        $mockStatement = $this->getMock('Zend\Db\Adapter\Driver\StatementInterface');
+        $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
         $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
 
-        $mockConnection = $this->getMock('Zend\Db\Adapter\Driver\ConnectionInterface');
+        $mockConnection = $this->getMock('\Zend\Db\Adapter\Driver\ConnectionInterface');
         $mockConnection->expects($this->any())->method('beginTransaction');
         $mockConnection->expects($this->any())->method('commit');
         $mockConnection->expects($this->any())->method('rollback');
 
-        $mockDriver = $this->getMock('Zend\Db\Adapter\Driver\DriverInterface');
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
         $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // Setup mock adapter
-        $this->mockAdapter = $this->getMock('Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $this->mockAdapter = $this->getMock(
+            '\Zend\Db\Adapter\Adapter',
+            null,
+            array($mockDriver, new TrustedSphinxQL())
+        );
 
-        $this->mockSql = $this->getMock('SphinxSearch\Db\Sql\Sql', array('insert', 'replace', 'update', 'delete'), array($this->mockAdapter));
+        $this->mockSql = $this->getMock(
+            '\SphinxSearch\Db\Sql\Sql',
+            array('insert', 'replace', 'update', 'delete'),
+            array($this->mockAdapter)
+        );
 
-        $this->mockSql->expects($this->any())->method('insert')->will($this->returnValue($this->getMock('Zend\Db\Sql\Insert', array('prepareStatement', 'values'))))->with($this->equalTo('foo'));
-        $this->mockSql->expects($this->any())->method('replace')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values'))))->with($this->equalTo('foo'));
-        $this->mockSql->expects($this->any())->method('update')->will($this->returnValue($this->getMock('SphinxSearch\Db\Sql\Update', array('where'))))->with($this->equalTo('foo'));
-        $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue($this->getMock('Zend\Db\Sql\Delete', array('where'))))->with($this->equalTo('foo'));
-
+        $this->mockSql->expects($this->any())->method('insert')->will(
+            $this->returnValue($this->getMock('\Zend\Db\Sql\Insert', array('prepareStatement', 'values')))
+        )->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('replace')->will(
+            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values')))
+        )->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('update')->will(
+            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Update', array('where')))
+        )->with($this->equalTo('foo'));
+        $this->mockSql->expects($this->any())->method('delete')->will(
+            $this->returnValue($this->getMock('\Zend\Db\Sql\Delete', array('where')))
+        )->with($this->equalTo('foo'));
 
         // Setup the indexer object
         $this->indexer = new Indexer($this->mockAdapter, $this->mockSql);
@@ -70,7 +85,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
             $this->mockAdapter
         );
         $this->assertSame($this->mockAdapter, $indexer->getAdapter());
-        $this->assertInstanceOf('SphinxSearch\Db\Sql\Sql', $indexer->getSql());
+        $this->assertInstanceOf('\SphinxSearch\Db\Sql\Sql', $indexer->getSql());
         // Injecting all args
         $indexer = new Indexer(
             $this->mockAdapter,
@@ -93,7 +108,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSql()
     {
-        $this->assertInstanceOf('Zend\Db\Sql\Sql', $this->indexer->getSql());
+        $this->assertInstanceOf('\Zend\Db\Sql\Sql', $this->indexer->getSql());
     }
 
     /**
@@ -103,7 +118,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('beginTransaction');
         $indexer = $this->indexer->beginTransaction();
-        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
+        $this->assertInstanceOf('\SphinxSearch\Indexer', $indexer);
     }
 
     /**
@@ -113,7 +128,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('commit');
         $indexer = $this->indexer->commit();
-        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
+        $this->assertInstanceOf('\SphinxSearch\Indexer', $indexer);
     }
 
     /**
@@ -123,7 +138,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockAdapter->getDriver()->getConnection()->expects($this->once())->method('rollback');
         $indexer = $this->indexer->rollback();
-        $this->assertInstanceOf('SphinxSearch\Indexer', $indexer);
+        $this->assertInstanceOf('\SphinxSearch\Indexer', $indexer);
     }
 
     /**
@@ -135,12 +150,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $mockInsert = $this->mockSql->insert('foo');
 
         $mockInsert->expects($this->once())
-        ->method('prepareStatement')
-        ->with($this->mockAdapter);
+            ->method('prepareStatement')
+            ->with($this->mockAdapter);
 
         $mockInsert->expects($this->once())
-        ->method('values')
-        ->with($this->equalTo(array('foo' => 'bar')));
+            ->method('values')
+            ->with($this->equalTo(array('foo' => 'bar')));
 
         $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'));
         $this->assertEquals(5, $affectedRows);
@@ -149,12 +164,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $mockReplace = $this->mockSql->replace('foo');
 
         $mockReplace->expects($this->once())
-        ->method('prepareStatement')
-        ->with($this->mockAdapter);
+            ->method('prepareStatement')
+            ->with($this->mockAdapter);
 
         $mockReplace->expects($this->once())
-        ->method('values')
-        ->with($this->equalTo(array('foo' => 'bar')));
+            ->method('values')
+            ->with($this->equalTo(array('foo' => 'bar')));
 
         $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'), true);
         $this->assertEquals(5, $affectedRows);
@@ -177,9 +192,13 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
         // Where with closure
         $mockUpdate = $this->mockSql->update('foo');
-        $this->indexer->update('foo', array('foo' => 'bar'), function($update) use ($mockUpdate) {
-            IndexerTest::assertSame($mockUpdate, $update);
-        });
+        $this->indexer->update(
+            'foo',
+            array('foo' => 'bar'),
+            function ($update) use ($mockUpdate) {
+                IndexerTest::assertSame($mockUpdate, $update);
+            }
+        );
         $this->assertEquals(5, $affectedRows);
     }
 
@@ -210,9 +229,12 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
         // Where with closure
         $mockDelete = $this->mockSql->delete('foo');
-        $this->indexer->delete('foo', function($delete) use ($mockDelete) {
-            IndexerTest::assertSame($mockDelete, $delete);
-        });
+        $this->indexer->delete(
+            'foo',
+            function ($delete) use ($mockDelete) {
+                IndexerTest::assertSame($mockDelete, $delete);
+            }
+        );
     }
 
 }

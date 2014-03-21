@@ -13,6 +13,9 @@ namespace SphinxSearch\Db\Sql;
 use Zend\Db\Sql\Insert as ZendInsert;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class Insert
+ */
 class Insert extends ZendInsert
 {
 
@@ -25,7 +28,7 @@ class Insert extends ZendInsert
     public function into($table)
     {
         if ($table instanceof TableIdentifier) {
-            list($table,) = $table->getTableAndSchema(); // Ignore schema because it is not supported by SphinxQL
+            $table = $table->getTable(); // Ignore schema because it is not supported by SphinxQL
         }
 
         $this->table = $table;
