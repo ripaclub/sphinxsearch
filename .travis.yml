@@ -17,12 +17,12 @@ before_script:
   - tests/travis/sphinx-setup.sh
 
 script:
- - vendor/bin/phpunit -c tests/
+ - vendor/bin/phpunit
 
 after_script:
  - vendor/bin/coveralls -v
  - wget https://scrutinizer-ci.com/ocular.phar
- - php ocular.phar code-coverage:upload --format=php-clover tests/build/logs/clover.xml
+ - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
 
 notifications:
   email: false

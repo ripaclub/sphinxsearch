@@ -11,3 +11,5 @@ vendor/
 composer.lock
 composer.phar
 *.log
+phpunit.xml
+build/
