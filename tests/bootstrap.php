@@ -10,6 +10,8 @@
  */
 
 chdir(__DIR__);
+
+// Set the decimal separator to "C" (i.e. minimal "C" locale)
 setlocale(LC_NUMERIC, 'C');
 
 if (!file_exists('../vendor/autoload.php')) {
