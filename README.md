@@ -1,4 +1,4 @@
-Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Coverage Status](https://coveralls.io/repos/ripaclub/sphinxsearch/badge.png?branch=master)](https://coveralls.io/r/ripaclub/sphinxsearch?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)&nbsp;[![Analytics](https://ga-beacon.appspot.com/UA-49655829-1/ripaclub/sphinxsearch)](https://github.com/igrigorik/ga-beacon)
+Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)
 =============
 
 Sphinx Search library provides SphinxQL indexing and searching features.
@@ -16,6 +16,7 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 	- [SQL Objects](#sql-objects)
 	- [Query expression](#query-expression)
 - [Testing](#testing)
+- [Code quality](#code-quality)
 
 ## Introduction
 
@@ -334,18 +335,12 @@ echo $select->getSqlString(new SphinxQL());
 Testing
 -------
 
-The library source code (on master) is 100% covered by unit tests.
+The library source code (**on master**) is 100% covered by unit tests.
 
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
-vendor/bin/phpunit -c tests/
-```
-
-After this you can inspect stats about code coverage.
-
-```
-vendor/bin/converalls -v
+./vendor/bin/phpunit -c tests/
 ```
 
 Code quality
@@ -354,23 +349,21 @@ Code quality
 Run [phpmd](https://github.com/phpmd/phpmd).
 
 ```
-vendor/bin/phpmd library/ text phpmd.xml
+./vendor/bin/phpmd library/ text phpmd.xml.dist
 ```
 
 Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
 
 ```
-vendor/bin/phpcs --standard=PSR2 library/
+./vendor/bin/phpcs --standard=PSR2 library/
 ```
 
 Run [pdepend](https://github.com/pdepend/pdepend).
 
 ```
-vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
+./vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
 ```
 
-Run [php-cs-fixer](https://github.com/fabpot/PHP-CS-Fixer).
+---
 
-```
-vendor/bin/php-cs-fixer fix library/ --level=psr2
-```
+[![Analytics](https://ga-beacon.appspot.com/UA-49655829-1/ripaclub/sphinxsearch)](https://github.com/igrigorik/ga-beacon)
