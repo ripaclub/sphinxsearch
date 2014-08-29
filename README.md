@@ -16,6 +16,7 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 	- [SQL Objects](#sql-objects)
 	- [Query expression](#query-expression)
 - [Testing](#testing)
+- [Code quality](#code-quality)
 
 ## Introduction
 
@@ -339,13 +340,7 @@ The library source code (on master) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
-vendor/bin/phpunit -c tests/
-```
-
-After this you can inspect stats about code coverage.
-
-```
-vendor/bin/converalls -v
+./vendor/bin/phpunit -c tests/
 ```
 
 Code quality
@@ -354,23 +349,23 @@ Code quality
 Run [phpmd](https://github.com/phpmd/phpmd).
 
 ```
-vendor/bin/phpmd library/ text phpmd.xml
+./vendor/bin/phpmd library/ text phpmd.xml.dist
 ```
 
 Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
 
 ```
-vendor/bin/phpcs --standard=PSR2 library/
+./vendor/bin/phpcs --standard=PSR2 library/
 ```
 
 Run [pdepend](https://github.com/pdepend/pdepend).
 
 ```
-vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
+./vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
 ```
 
 Run [php-cs-fixer](https://github.com/fabpot/PHP-CS-Fixer).
 
 ```
-vendor/bin/php-cs-fixer fix library/ --level=psr2
+./vendor/bin/php-cs-fixer fix . --level=psr2
 ```
