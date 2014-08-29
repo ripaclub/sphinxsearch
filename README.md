@@ -363,9 +363,3 @@ Run [pdepend](https://github.com/pdepend/pdepend).
 ```
 ./vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
 ```
-
-Run [php-cs-fixer](https://github.com/fabpot/PHP-CS-Fixer).
-
-```
-./vendor/bin/php-cs-fixer fix . --level=psr2
-```

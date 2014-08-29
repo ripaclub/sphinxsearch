@@ -12,7 +12,7 @@ branches:
 
 install:
   - composer self-update && composer --version
-  - composer install --dev --prefer-source
+  - composer install --dev
 
 before_script:
   - tests/travis/sphinx-setup.sh
