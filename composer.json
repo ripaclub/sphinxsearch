@@ -18,11 +18,13 @@
     "authors": [
         {
             "name": "Leo Di Donato",
-            "email": "leodidonato@gmail.com"
+            "email": "leodidonato@gmail.com",
+            "homepage": "http://github.com/leodido"
         },
         {
             "name": "Leonardo Grasso",
-            "email": "me@leonardograsso.com"
+            "email": "me@leonardograsso.com",
+            "homepage": "http://github.com/leogr"
         }
     ],
     "autoload": {
