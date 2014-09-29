@@ -36,7 +36,8 @@
         ]
     },
     "suggest": {
-        "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library"
+        "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library",
+        "ripaclub/zf2-sphinxsearch-tool": "ZF2 module/tool that provides a set of tools to configure and handle SphinxSearch engine"
     },
     "keywords": [
         "sphinx",
