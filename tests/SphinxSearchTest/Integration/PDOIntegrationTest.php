@@ -20,4 +20,3 @@ class PDOIntegrationTest extends AbstractIntegrationTest
         'charset'   => 'UTF8'
     );
 }
-

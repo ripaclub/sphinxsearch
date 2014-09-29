@@ -20,7 +20,3 @@ class MysqliIntegrationTest extends AbstractIntegrationTest
         'charset'   => 'UTF8'
     );
 }
-
-
-
-

@@ -98,4 +98,3 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
     }
 
 }
- 

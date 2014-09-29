@@ -10,11 +10,11 @@ namespace SphinxSearchTest\Db\TestAsset;
 
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
-class TrustedSphinxQL extends SphinxQL {
-
+class TrustedSphinxQL extends SphinxQL
+{
     public function quoteValue($value)
     {
         return $this->quoteTrustedValue($value);
     }
 
-} 
+}
