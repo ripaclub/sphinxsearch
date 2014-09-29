@@ -23,4 +23,4 @@ sudo mkdir /var/run/sphinx
 sudo chmod 777 /var/run/sphinx # ugly (for travis)
 
 # run searchd:
-searchd --config $CWD/../sphinx/sphinx.conf
+searchd --config ${CWD}/../sphinx/sphinx.conf
