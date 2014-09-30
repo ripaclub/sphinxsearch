@@ -15,6 +15,9 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use SphinxSearchTest\TestAsset\ConcreteComponentAsset;
 use SphinxSearchTest\TestAsset\ConcreteSqlObjectAsset;
 
+/**
+ * Class AbstractComponentTest
+ */
 class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 {
     protected $mockAdapter = null;

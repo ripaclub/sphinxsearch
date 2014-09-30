@@ -112,9 +112,9 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             }
 
             // Buggy
-            if (strpos($sqlPrep, 'HAVING')) {
-                continue;
-            }
+//            if (strpos($sqlPrep, 'HAVING')) {
+//                continue;
+//            }
 
             // Not fully supported
             if (strpos($sqlPrep, 'IS NULL') || strpos($sqlPrep, 'ORDER BY isnull(`name`)')) {
@@ -126,10 +126,9 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-//             echo $sqlStr . PHP_EOL;
+//            echo $sqlStr . PHP_EOL;
             $this->search->searchWith($select);
         }
-
     }
 
     /**
