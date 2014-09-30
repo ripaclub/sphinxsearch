@@ -19,5 +19,12 @@ class PDOIntegrationTest extends AbstractIntegrationTest
         'port'      => 9306,
         'charset'   => 'UTF8'
     );
-}
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getSphinxVersion()
+    {
+        return $this->getResource()->getAttribute(\PDO::ATTR_SERVER_VERSION);
+    }
+}

@@ -12,9 +12,11 @@ use SphinxSearch\Db\Sql\Sql;
 use SphinxSearch\Indexer;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 
+/**
+ * Class IndexerTest
+ */
 class IndexerTest extends \PHPUnit_Framework_TestCase
 {
-
     protected $mockAdapter = null;
 
     /**
@@ -236,5 +238,4 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
             }
         );
     }
-
 }

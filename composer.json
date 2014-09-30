@@ -5,8 +5,9 @@
     "license": "BSD-2-Clause",
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-db": "2.2.*",
-        "zendframework/zend-servicemanager": "2.2.*"
+        "zendframework/zend-db": "~2.2",
+        "zendframework/zend-servicemanager": "~2.2",
+        "zendframework/zend-stdlib": "~2.2"
     },
     "require-dev": {
         "phpunit/phpunit": "4.2.*",
@@ -36,7 +37,8 @@
         ]
     },
     "suggest": {
-        "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library"
+        "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library",
+        "ripaclub/zf2-sphinxsearch-tool": "ZF2 module/tool that provides a set of tools to configure and handle SphinxSearch engine"
     },
     "keywords": [
         "sphinx",

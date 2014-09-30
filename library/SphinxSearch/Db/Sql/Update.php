@@ -114,14 +114,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
     public function getRawState($key = null)
     {
-        $rawState = array(
-            'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table' => $this->table,
-            'set' => $this->set,
-            'where' => $this->where,
-            'option' => $this->option,
-        );
-
+        $rawState = parent::getRawState();
+        $rawState['option'] = $this->option;
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
@@ -147,20 +141,19 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $table = $platform->quoteIdentifier($table);
 
         $set = $this->set;
-        if (is_array($set)) {
-            $setSql = array();
-            foreach ($set as $column => $value) {
-                if ($value instanceof Predicate\Expression) {
-                    $exprData = $this->processExpression($value, $platform, $driver);
-                    $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $exprData->getSql();
-                    $parameterContainer->merge($exprData->getParameterContainer());
-                } else {
-                    $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $driver->formatParameterName($column);
-                    $parameterContainer->offsetSet($column, $value);
-                }
+
+        $setSql = array();
+        foreach ($set as $column => $value) {
+            if ($value instanceof Predicate\Expression) {
+                $exprData = $this->processExpression($value, $platform, $driver);
+                $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $exprData->getSql();
+                $parameterContainer->merge($exprData->getParameterContainer());
+            } else {
+                $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $driver->formatParameterName($column);
+                $parameterContainer->offsetSet($column, $value);
             }
-            $set = implode(', ', $setSql);
         }
+        $set = implode(', ', $setSql);
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
 
@@ -251,20 +244,19 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $table = $adapterPlatform->quoteIdentifier($table);
 
         $set = $this->set;
-        if (is_array($set)) {
-            $setSql = array();
-            foreach ($set as $col => $val) {
-                if ($val instanceof Predicate\Expression) {
-                    $exprData = $this->processExpression($val, $adapterPlatform);
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData->getSql();
-                } elseif ($val === null) {
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = NULL';
-                } else {
-                    $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $adapterPlatform->quoteValue($val);
-                }
+
+        $setSql = array();
+        foreach ($set as $col => $val) {
+            if ($val instanceof Predicate\Expression) {
+                $exprData = $this->processExpression($val, $adapterPlatform);
+                $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData->getSql();
+            } elseif ($val === null) {
+                $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = NULL';
+            } else {
+                $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $adapterPlatform->quoteValue($val);
             }
-            $set = implode(', ', $setSql);
         }
+        $set = implode(', ', $setSql);
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
         if ($this->where->count() > 0) {

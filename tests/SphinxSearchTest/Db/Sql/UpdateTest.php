@@ -17,9 +17,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Predicate\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class UpdateTest
+ */
 class UpdateTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Update
      */
@@ -312,5 +314,4 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     }
-
 }

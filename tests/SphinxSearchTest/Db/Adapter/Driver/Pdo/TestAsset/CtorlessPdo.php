@@ -8,18 +8,29 @@
  */
 namespace SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset;
 
+/**
+ * Class CtorlessPdo
+ */
 class CtorlessPdo extends \Pdo
 {
     protected $mockStatement;
 
+    /**
+     * Ctor
+     * @param $mockStatement
+     */
     public function __construct($mockStatement)
     {
         $this->mockStatement = $mockStatement;
     }
 
+    /**
+     * @param string $sql
+     * @param null $options
+     * @return \PDOStatement
+     */
     public function prepare($sql, $options = null)
     {
         return $this->mockStatement;
     }
-
 }

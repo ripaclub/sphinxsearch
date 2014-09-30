@@ -12,9 +12,11 @@ use SphinxSearch\Db\Sql\Show;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 
+/**
+ * Class ShowTest
+ */
 class ShowTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Show
      */
@@ -142,5 +144,4 @@ class ShowTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     }
-
 }

@@ -14,9 +14,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class ReplaceTest
+ */
 class ReplaceTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Replace
      */
@@ -58,7 +60,7 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
             ->method('setSql')
             ->with($this->equalTo('REPLACE INTO `foo` (`bar`, `boo`) VALUES (?, NOW())'));
 
-        $this->replace->into(new TableIdentifier('foo')) // FIXME: SphinxQL does not support schema
+        $this->replace->into(new TableIdentifier('foo'))// FIXME: SphinxQL does not support schema
         ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()')));
 
         $this->replace->prepareStatement($mockAdapter, $mockStatement);
@@ -79,7 +81,7 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
 
         // with TableIdentifier
         $this->replace = new Replace;
-        $this->replace->into(new TableIdentifier('foo')) // FIXME: SphinxQL does not support schema
+        $this->replace->into(new TableIdentifier('foo'))// FIXME: SphinxQL does not support schema
         ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null));
 
         $this->assertEquals(
@@ -96,6 +98,4 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
     {
         $this->replace = new Replace;
     }
-
 }
- 

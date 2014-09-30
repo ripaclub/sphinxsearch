@@ -14,9 +14,11 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\Platform\Mysql;
 use Zend\Db\Sql\Expression;
 
+/**
+ * Class ExpressionDecoratorTest
+ */
 class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var ExpressionDecorator
      */
@@ -88,5 +90,4 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->platform = new SphinxQL();
         $this->expr = new ExpressionDecorator(new Expression, $this->platform);
     }
-
 }

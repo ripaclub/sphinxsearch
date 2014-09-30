@@ -16,9 +16,11 @@ use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\ResultSet;
 
+/**
+ * Class SearchTest
+ */
 class SearchTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Adapter
      */
@@ -277,5 +279,4 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('uptime', $result);
         $this->assertEquals('1392', $result['uptime']);
     }
-
 }

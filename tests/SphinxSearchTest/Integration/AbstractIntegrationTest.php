@@ -21,9 +21,11 @@ use Zend\Db\Adapter\Driver\Mysqli\Mysqli;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class AbstractIntegrationTest
+ */
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Search
      */
@@ -41,6 +43,19 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
      * @var \Zend\Db\Adapter\Adapter
      */
     private $adapter;
+
+    /**
+     * @return mixed
+     */
+    protected function getResource()
+    {
+        return $this->adapter->getDriver()->getConnection()->getResource();
+    }
+
+    /**
+     * @return string|int
+     */
+    abstract public function getSphinxVersion();
 
     public function setUp()
     {
@@ -76,6 +91,9 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $connection = $this->adapter->getDriver()->getConnection();
 
+//        NOTE: retrieves sphinxsearch version
+//        echo PHP_EOL . PHP_EOL . $this->getSphinxVersion() . PHP_EOL . PHP_EOL;
+
         $connection->connect();
 
         $this->assertTrue($connection->isConnected());
@@ -86,50 +104,51 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(2 == $result['1+1']);
     }
 
-    /**
-     * @depends testConnection
-     */
-    public function testSearchQueries()
+    public function selectProvider()
     {
         $selectTest = new SelectTest();
+        return $selectTest->providerData();
+    }
 
-        $data = $selectTest->providerData();
-
-//         echo PHP_EOL . 'Testing SphinxQL queries ...' . PHP_EOL;
-
-        foreach ($data as $namedParam) {
-            // $select    $sqlPrep    $params     $sqlStr    $internalTests // use named param
-            list($select, $sqlPrep, $params, $sqlStr, $internalTests) = $namedParam;
-
-            if (!$select->getRawState('table')) {
-                $select = clone $select;
-                $select->from('foo');
-            }
-
-            // Expr in group by NOT SUPPORTED
-            if ($sqlPrep == 'SELECT * FROM `foo` GROUP BY DAY(`c1`)') {
-                continue;
-            }
-
-            // Buggy
-            if (strpos($sqlPrep, 'HAVING')) {
-                continue;
-            }
-
-            // Not fully supported
-            if (strpos($sqlPrep, 'IS NULL') || strpos($sqlPrep, 'ORDER BY isnull(`name`)')) {
-                continue;
-            }
-
-            // Mixing order col and expr not fully supported
-            if (strpos($sqlPrep, 'DESC, RAND()')) {
-                continue;
-            }
-
-//             echo $sqlStr . PHP_EOL;
-            $this->search->searchWith($select);
+    /**
+     * @depends testConnection
+     * @dataProvider selectProvider
+     * @param $select
+     * @param $sqlPrep
+     * @param $params
+     * @param $sqlStr
+     * @param $internalTests
+     */
+    public function testSearchQueries($select, $sqlPrep, $params, $sqlStr, $internalTests)
+    {
+        if (!$select->getRawState('table')) {
+            $select = clone $select;
+            $select->from('foo');
+        }
+        
+        if (strpos($sqlPrep, 'HAVING') && version_compare($this->getSphinxVersion(), '2.2.1-id64-beta (r4330)') < 0) {
+            $this->markTestSkipped('HAVING clause not supported until version "2.2.1-id64-beta (r4330)".');
         }
 
+        // Expr in group by not supported
+        if ($sqlPrep == 'SELECT * FROM `foo` GROUP BY DAY(`c1`)') {
+            $this->markTestSkipped('Expressions inside GROUP BY clause not supported.');
+        }
+
+        // Not fully supported
+        if (strpos($sqlPrep, 'IS NULL')) {
+            $this->markTestSkipped('IS NULL not supported.');
+        }
+        if (strpos($sqlPrep, 'ORDER BY isnull(`name`)')) {
+            $this->markTestSkipped('ORDER BY isnull(`field`) not fully supported.');
+        }
+
+        // Mixing col order and expr not fully supported
+        if (strpos($sqlPrep, 'DESC, RAND()')) {
+            $this->markTestSkipped('Mixing column order and expression not fully supported.');
+        }
+
+        $this->search->searchWith($select);
     }
 
     /**
@@ -662,7 +681,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         // test with execute
         $resultSet = $search->execute('SHOW STATUS');
         $this->assertTrue($resultSet->valid());
-        $this->assertEquals(30, $resultSet->count());
         $result = array();
         foreach ($resultSet as $res) {
             $result[] = $res;
@@ -672,7 +690,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $resultSet = $search->execute('SHOW STATUS LIKE \'dist%\'');
         $this->assertTrue($resultSet->valid());
-        $this->assertEquals(4, $resultSet->count());
+
         $result = array();
         foreach ($resultSet as $res) {
             $result[] = $res;
@@ -685,14 +703,14 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         // test with dedicated method
         $result = $search->showStatus();
         $this->assertInternalType('array', $result);
-        $this->assertCount(30, $result);
+
         $this->assertArrayHasKey('uptime', $result);
         $this->assertArrayHasKey('connections', $result);
         $this->assertArrayHasKey('maxed_out', $result);
 
         $result = $search->showStatus('dist%');
         $this->assertInternalType('array', $result);
-        $this->assertCount(4, $result);
+
         $this->assertArrayHasKey('dist_queries', $result);
         $this->assertArrayHasKey('dist_wall', $result);
         $this->assertArrayHasKey('dist_local', $result);

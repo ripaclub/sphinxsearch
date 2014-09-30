@@ -16,5 +16,4 @@ use Zend\Db\Sql\AbstractSql;
  */
 class ConcreteSqlObjectAsset extends AbstractSql
 {
-
 }

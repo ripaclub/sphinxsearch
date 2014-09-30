@@ -1,17 +1,20 @@
 <?php
 /**
- * User: leodido
- * Date: 13/02/14
- * Time: 11.46
+ * Sphinx Search
+ *
+ * @link        https://github.com/ripaclub/sphinxsearch
+ * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
-
 namespace SphinxSearchTest\Query;
 
 use SphinxSearch\Query\QueryExpression;
 
+/**
+ * Class QueryExpressionTest
+ */
 class QueryExpressionTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var QueryExpression
      */
@@ -69,5 +72,4 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
     {
         $this->queryExpression = new QueryExpression();
     }
-
 }

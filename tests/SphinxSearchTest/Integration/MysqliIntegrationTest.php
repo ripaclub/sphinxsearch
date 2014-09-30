@@ -19,8 +19,12 @@ class MysqliIntegrationTest extends AbstractIntegrationTest
         'port'      => 9306,
         'charset'   => 'UTF8'
     );
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSphinxVersion()
+    {
+        return $this->getResource()->server_info;
+    }
 }
-
-
-
-

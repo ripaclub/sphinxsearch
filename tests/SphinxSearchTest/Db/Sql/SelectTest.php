@@ -17,9 +17,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class SelectTest
+ */
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @covers SphinxSearch\Db\Sql\Select::__construct
      * @testdox Instantiation
@@ -285,7 +287,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @testdox Method reset() resets internal stat of Select object, based on input
+     * @testdox Method reset() resets internal state of Select object, based on input
      * @covers SphinxSearch\Db\Sql\Select::reset
      */
     public function testReset()
@@ -688,23 +690,25 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
         // having (simple string)
         $select20 = new Select;
-        $select20->from('foo')->having('x = 5');
+        $select20->from('foo')->group('c1')->having('baz = 0');
         $sqlPrep20 = // same
-        $sqlStr20 = 'SELECT * FROM `foo` HAVING x = 5';
+        $sqlStr20 = 'SELECT * FROM `foo` GROUP BY `c1` HAVING baz = 0';
         $internalTests20 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processHaving' => array('x = 5')
+            'processGroup' => array(array('`c1`')),
+            'processHaving' => array('baz = 0')
         );
 
         // having (returning parameters)
         $select21 = new Select;
-        $select21->from('foo')->having(array('x = ?' => 5));
-        $sqlPrep21 = 'SELECT * FROM `foo` HAVING x = ?';
-        $sqlStr21 = 'SELECT * FROM `foo` HAVING x = 5';
+        $select21->from('foo')->group('c1')->having(array('baz = ?' => 5));
+        $sqlPrep21 = 'SELECT * FROM `foo` GROUP BY `c1` HAVING baz = ?';
+        $sqlStr21 = 'SELECT * FROM `foo` GROUP BY `c1` HAVING baz = 5';
         $params21 = array('having1' => 5);
         $internalTests21 = array(
             'processSelect' => array(array(array('*')), '`foo`'),
-            'processHaving' => array('x = ?')
+            'processGroup' => array(array('`c1`')),
+            'processHaving' => array('baz = ?')
         );
 
         // order
@@ -963,7 +967,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
         //test table alias (silent ignore)
         $select43 = new Select();
-        $select43->from(array('x' => 'foo')) //table alias will be ignored
+        $select43->from(array('x' => 'foo'))//table alias will be ignored
         ->columns(array('bar'), false);
         $sqlPrep43 = //same
         $sqlStr43 = 'SELECT `bar` FROM `foo`';
@@ -1188,6 +1192,4 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         );
         $select->reset(Select::TABLE);
     }
-
-
 }
