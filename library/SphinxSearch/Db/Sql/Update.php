@@ -114,23 +114,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
     public function getRawState($key = null)
     {
-        /**
-         * @see https://github.com/ripaclub/sphinxsearch/issues/28
-         */
-        if (is_object($this->set) && method_exists($this->set, 'toArray')) {
-            $set = $this->set->toArray();
-        } else {
-            $set = $this->set;
-        }
-
-        $rawState = array(
-            'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table' => $this->table,
-            'set' => $set,
-            'where' => $this->where,
-            'option' => $this->option,
-        );
-
+        $rawState = parent::getRawState();
+        $rawState['option'] = $this->option;
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
