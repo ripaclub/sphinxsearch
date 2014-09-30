@@ -662,7 +662,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         // test with execute
         $resultSet = $search->execute('SHOW STATUS');
         $this->assertTrue($resultSet->valid());
-        $this->assertEquals(30, $resultSet->count());
         $result = array();
         foreach ($resultSet as $res) {
             $result[] = $res;
@@ -672,7 +671,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $resultSet = $search->execute('SHOW STATUS LIKE \'dist%\'');
         $this->assertTrue($resultSet->valid());
-        $this->assertEquals(4, $resultSet->count());
+
         $result = array();
         foreach ($resultSet as $res) {
             $result[] = $res;
@@ -685,14 +684,14 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
         // test with dedicated method
         $result = $search->showStatus();
         $this->assertInternalType('array', $result);
-        $this->assertCount(30, $result);
+
         $this->assertArrayHasKey('uptime', $result);
         $this->assertArrayHasKey('connections', $result);
         $this->assertArrayHasKey('maxed_out', $result);
 
         $result = $search->showStatus('dist%');
         $this->assertInternalType('array', $result);
-        $this->assertCount(4, $result);
+
         $this->assertArrayHasKey('dist_queries', $result);
         $this->assertArrayHasKey('dist_wall', $result);
         $this->assertArrayHasKey('dist_local', $result);
