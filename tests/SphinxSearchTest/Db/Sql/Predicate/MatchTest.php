@@ -11,9 +11,11 @@ namespace SphinxSearchTest\Db\Sql;
 use SphinxSearch\Db\Sql\Predicate\Match;
 use SphinxSearch\Query\QueryExpression;
 
+/**
+ * Class MatchTest
+ */
 class MatchTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Match
      */
@@ -106,6 +108,4 @@ class MatchTest extends \PHPUnit_Framework_TestCase
     {
         $this->match = new Match();
     }
-
-
 }

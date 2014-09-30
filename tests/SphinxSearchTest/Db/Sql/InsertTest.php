@@ -11,6 +11,9 @@ namespace SphinxSearchTest\Db\Sql;
 use SphinxSearch\Db\Sql\Insert;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class InsertTest
+ */
 class InsertTest extends \PHPUnit_Framework_TestCase
 {
     /**

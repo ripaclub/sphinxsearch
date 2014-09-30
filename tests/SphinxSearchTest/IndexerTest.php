@@ -17,7 +17,6 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
  */
 class IndexerTest extends \PHPUnit_Framework_TestCase
 {
-
     protected $mockAdapter = null;
 
     /**
@@ -239,5 +238,4 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
             }
         );
     }
-
 }

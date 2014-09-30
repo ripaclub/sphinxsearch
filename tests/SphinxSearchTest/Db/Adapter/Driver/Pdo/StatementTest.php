@@ -12,9 +12,11 @@ use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
 use SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset\ParametersBoundedAlreadyStatement;
 use Zend\Db\Adapter\ParameterContainer;
 
+/**
+ * Class StatementTest
+ */
 class StatementTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Statement
      */
@@ -209,5 +211,4 @@ class StatementTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     }
-
 }

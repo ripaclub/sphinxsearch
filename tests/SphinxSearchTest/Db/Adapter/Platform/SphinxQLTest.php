@@ -10,9 +10,11 @@ namespace SphinxSearchTest\Db\Adapter\Platform;
 
 use SphinxSearch\Db\Adapter\Platform\SphinxQL;
 
+/**
+ * Class SphinxQLTest
+ */
 class SphinxQLTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var SphinxQL
      */
@@ -89,5 +91,4 @@ class SphinxQLTest extends \PHPUnit_Framework_TestCase
     {
         $this->platform = new SphinxQL;
     }
-
 }

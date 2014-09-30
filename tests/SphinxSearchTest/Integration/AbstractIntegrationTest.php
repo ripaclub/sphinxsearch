@@ -111,11 +111,6 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
                 continue;
             }
 
-            // Buggy
-//            if (strpos($sqlPrep, 'HAVING')) {
-//                continue;
-//            }
-
             // Not fully supported
             if (strpos($sqlPrep, 'IS NULL') || strpos($sqlPrep, 'ORDER BY isnull(`name`)')) {
                 continue;

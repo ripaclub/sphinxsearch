@@ -10,12 +10,13 @@ namespace SphinxSearchTest\Db\Adapter\Driver\Pdo\TestAsset;
 
 use SphinxSearch\Db\Adapter\Driver\Pdo\Statement;
 
+/**
+ * Class ParametersBoundedAlreadyStatement
+ */
 class ParametersBoundedAlreadyStatement extends Statement
 {
-
     /**
      * @var bool
      */
     protected $parametersBound = true;
-
 }

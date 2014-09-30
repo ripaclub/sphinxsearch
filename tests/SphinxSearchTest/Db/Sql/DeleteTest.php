@@ -16,9 +16,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class DeleteTest
+ */
 class DeleteTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Delete
      */
@@ -91,5 +93,4 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
     }
-
 }

@@ -211,5 +211,4 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         $result = $this->component->execute('SHOW META');
         $this->assertInstanceOf('\Zend\Db\Adapter\Driver\ResultInterface', $result);
     }
-
 }

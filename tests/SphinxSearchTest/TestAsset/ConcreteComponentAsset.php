@@ -9,12 +9,14 @@
 namespace SphinxSearchTest\TestAsset;
 
 use SphinxSearch\AbstractComponent;
-use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 use SphinxSearch\Db\Sql\Sql;
+use Zend\Db\Adapter\Adapter as ZendDBAdapter;
 
+/**
+ * Class ConcreteComponentAsset
+ */
 class ConcreteComponentAsset extends AbstractComponent
 {
-
     /**
      * @param ZendDBAdapter $adapter
      * @param Sql $sql
@@ -24,6 +26,4 @@ class ConcreteComponentAsset extends AbstractComponent
         $this->adapter = $adapter;
         $this->sql     = $sql ? $sql : new Sql($adapter);
     }
-
-
 }

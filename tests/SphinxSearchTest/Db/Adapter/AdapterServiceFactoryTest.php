@@ -12,6 +12,9 @@ use SphinxSearch\Db\Adapter\AdapterServiceFactory;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 
+/**
+ * Class AdapterServiceFactoryTest
+ */
 class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
 

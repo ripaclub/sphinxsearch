@@ -12,9 +12,11 @@ use SphinxSearch\Db\Sql\Sql;
 use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\Adapter;
 
+/**
+ * Class SqlTest
+ */
 class SqlTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Adapter
      */
@@ -22,6 +24,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Sql object
+     *
      * @var Sql
      */
     protected $sql = null;
@@ -134,5 +137,4 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $show = $this->sql->show();
         $this->assertInstanceOf('\SphinxSearch\Db\Sql\Show', $show);
     }
-
 }

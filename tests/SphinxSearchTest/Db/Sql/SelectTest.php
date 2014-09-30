@@ -17,9 +17,11 @@ use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
 
+/**
+ * Class SelectTest
+ */
 class SelectTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @covers SphinxSearch\Db\Sql\Select::__construct
      * @testdox Instantiation
@@ -965,7 +967,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
         //test table alias (silent ignore)
         $select43 = new Select();
-        $select43->from(array('x' => 'foo')) //table alias will be ignored
+        $select43->from(array('x' => 'foo'))//table alias will be ignored
         ->columns(array('bar'), false);
         $sqlPrep43 = //same
         $sqlStr43 = 'SELECT `bar` FROM `foo`';
@@ -1190,6 +1192,4 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         );
         $select->reset(Select::TABLE);
     }
-
-
 }
