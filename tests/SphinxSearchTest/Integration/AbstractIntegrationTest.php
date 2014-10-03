@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leonardo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\IntegrationTest;
@@ -125,7 +125,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
             $select = clone $select;
             $select->from('foo');
         }
-        
+
         if (strpos($sqlPrep, 'HAVING') && version_compare($this->getSphinxVersion(), '2.2.1-id64-beta (r4330)') < 0) {
             $this->markTestSkipped('HAVING clause not supported until version "2.2.1-id64-beta (r4330)".');
         }
