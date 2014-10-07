@@ -1,5 +1,9 @@
-Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)
+Sphinx Search
 =============
+
+[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)&nbsp;[![Dependency Status](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5/badge.svg)](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5)&nbsp;[![Total Downloads](https://poser.pugx.org/ripaclub/sphinxsearch/downloads.svg)](https://packagist.org/packages/ripaclub/sphinxsearch)
+
+---
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
@@ -40,7 +44,7 @@ Add the following to your `composer.json` file:
 ```json
 "require": {
 	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.6",
+	"ripaclub/sphinxsearch": "~0.7.0",
 }
 ```
 
@@ -340,7 +344,7 @@ The library source code (**on master**) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
-./vendor/bin/phpunit -c tests/
+./vendor/bin/phpunit
 ```
 
 Code quality

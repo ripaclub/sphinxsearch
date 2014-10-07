@@ -10,8 +10,8 @@
         "zendframework/zend-stdlib": "~2.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.2.*",
-        "phpmd/phpmd": "2.0.*",
+        "phpunit/phpunit": "~4.2",
+        "phpmd/phpmd": "~2.0",
         "pdepend/pdepend": "2.0.*",
         "squizlabs/php_codesniffer": "1.5.*"
     },
@@ -38,7 +38,7 @@
     },
     "suggest": {
         "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library",
-        "ripaclub/zf2-sphinxsearch-tool": "ZF2 module/tool that provides a set of tools to configure and handle SphinxSearch engine"
+        "ripaclub/zf2-sphinxsearch-tool": "Utility that provides a set of tools to create and handle Sphinx Search configs and sources"
     },
     "keywords": [
         "sphinx",
