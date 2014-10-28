@@ -28,13 +28,10 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "SphinxSearch": "library/",
-            "SphinxSearchTest": "tests/"
-        },
-        "classmap": [
-            "./"
-        ]
+        "psr-4": {
+            "SphinxSearch\\": "library",
+            "SphinxSearchTest\\": "tests"
+        }
     },
     "suggest": {
         "ripaclub/zf2-sphinxsearch": "ZF2 integration module for SphinxSearch library",
@@ -47,6 +44,7 @@
         "indexing",
         "search engine",
         "query builder",
-        "zf2"
+        "zf2",
+        "pdo"
     ]
 }
