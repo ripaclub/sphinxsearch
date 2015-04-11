@@ -1,5 +1,8 @@
-Sphinx Search [![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)
+Sphinx Search
 =============
+
+[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)&nbsp;[![Dependency Status](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5/badge.svg)](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5)&nbsp;[![Total Downloads](https://poser.pugx.org/ripaclub/sphinxsearch/downloads.svg)](https://packagist.org/packages/ripaclub/sphinxsearch)
+
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
@@ -22,10 +25,10 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 This Library aims to provide:
 
- - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html)
+ - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
  - A simple `Search` class
  - An `Indexer` class to work with RT indices
- - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
+ - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.4/en/modules/zend.db.adapter.html)
 
 ###### Note
 
@@ -40,7 +43,7 @@ Add the following to your `composer.json` file:
 ```json
 "require": {
 	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.6",
+	"ripaclub/sphinxsearch": "~0.7.1",
 }
 ```
 
@@ -116,7 +119,7 @@ $rowset = $search->search('foo', function(Select $select) {
 });
 ```
 
-The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
+The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
 
 ```php
 $select->from($table)
@@ -182,7 +185,7 @@ Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#config
 )
 ```
 
-For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
+For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.4/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
 
 Only two drivers are supported:
 
@@ -241,7 +244,7 @@ Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#
 
 ### SQL Objects
 
-As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
+As [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
 
 * `SphinxSearch\Db\Sql\Select` explained in [Search](#search) paragraph
 * `SphinxSearch\Db\Sql\Insert`
@@ -340,7 +343,7 @@ The library source code (**on master**) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
-./vendor/bin/phpunit -c tests/
+./vendor/bin/phpunit
 ```
 
 Code quality

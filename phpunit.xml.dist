@@ -1,12 +1,15 @@
 <phpunit bootstrap="tests/bootstrap.php" colors="true" verbose="true">
     <testsuites>
-        <testsuite name="sphinxsearch Test Suite">
-            <directory>tests/SphinxSearchTest</directory>
+        <testsuite name="SphinxSearch Test Suite">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">library/</directory>
+            <directory suffix=".php">library</directory>
+            <exclude>
+            	<directory suffix=".php">library/Db/Sql/compatibility</directory>
+            </exclude>
         </whitelist>
     </filter>
     <logging>
