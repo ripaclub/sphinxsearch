@@ -25,10 +25,10 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 This Library aims to provide:
 
- - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html)
+ - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
  - A simple `Search` class
  - An `Indexer` class to work with RT indices
- - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html)
+ - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.4/en/modules/zend.db.adapter.html)
 
 ###### Note
 
@@ -43,7 +43,7 @@ Add the following to your `composer.json` file:
 ```json
 "require": {
 	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.7.0",
+	"ripaclub/sphinxsearch": "~0.7.1",
 }
 ```
 
@@ -119,7 +119,7 @@ $rowset = $search->search('foo', function(Select $select) {
 });
 ```
 
-The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
+The `SphinxSearch\Db\Sql\Select` class (like [`Zend\Db\Sql\Select`](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html#zend-db-sql-select) which we extend from) supports the following methods related to SQL standard clauses:
 
 ```php
 $select->from($table)
@@ -185,7 +185,7 @@ Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#config
 )
 ```
 
-For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.2/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
+For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.4/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
 
 Only two drivers are supported:
 
@@ -244,7 +244,7 @@ Useful link: [Sphinx Attributes Docs](http://sphinxsearch.com/docs/current.html#
 
 ### SQL Objects
 
-As [Zend\Db\Sql](http://framework.zend.com/manual/2.2/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
+As [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html) this library provides a set of SQL objects:
 
 * `SphinxSearch\Db\Sql\Select` explained in [Search](#search) paragraph
 * `SphinxSearch\Db\Sql\Insert`
