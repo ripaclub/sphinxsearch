@@ -70,7 +70,8 @@ abstract class AbstractComponent
     }
 
     /**
-     * @param AbstractSql $sqlObject
+     * @todo Use
+     * @param AbstractSql $sqlObject // TODO (for 0.8.x) use Zend\Db\Sql\SqlInterface
      * @param null $usePreparedStatement
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      * @throws Exception\InvalidArgumentException
@@ -91,9 +92,12 @@ abstract class AbstractComponent
             return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
         }
 
+        // TODO (for 0.8.x) remove
+        // @codeCoverageIgnoreStart
         throw new Exception\InvalidArgumentException(
             '$sqlObject must be an instance of SqlInterface or PreparableSqlInterface'
         );
+        // @codeCoverageIgnoreEnd
     }
 
     /**

@@ -26,6 +26,7 @@ use Zend\Db\Sql\Where;
 use Zend\Version\Version;
 
 // Polyfill for ZF from 2.1.x to 2.3.x
+// @codeCoverageIgnoreStart
 if (Version::compareVersion('2.4.0') > 0) {
     if (!class_exists('SphinxSearch\Db\Sql\Select', true)) {
         require_once realpath(
@@ -37,6 +38,7 @@ if (Version::compareVersion('2.4.0') > 0) {
     }
     return;
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Class Select
