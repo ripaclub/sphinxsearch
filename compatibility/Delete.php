@@ -16,21 +16,6 @@ use Zend\Db\Adapter\Platform\PlatformInterface;
 use Zend\Db\Sql\Delete as ZendDelete;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\TableIdentifier;
-use Zend\Db\Adapter\ParameterContainer;
-use Zend\Version\Version;
-
-// Polyfill for ZF from 2.1.x to 2.3.x
-if (Version::compareVersion('2.4.0') > 0) {
-    if (!class_exists('SphinxSearch\Db\Sql\Delete', true)) {
-        require_once realpath(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            'compatibility' . DIRECTORY_SEPARATOR . 'Delete.php'
-        );
-    }
-    return;
-}
 
 /**
  * Class Delete
@@ -55,13 +40,16 @@ class Delete extends ZendDelete
     }
 
     /**
-     * {@inheritdoc}
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param null $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
      */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
         DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
         if ($expression instanceof ExpressionDecorator) {
@@ -70,6 +58,6 @@ class Delete extends ZendDelete
             $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 
-        return parent::processExpression($expressionDecorator, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
 }

@@ -16,6 +16,7 @@ use SphinxSearchTest\Db\TestAsset\TrustedSphinxQL;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\TableIdentifier;
+use Zend\Version\Version;
 
 /**
  * Class SelectTest
@@ -431,7 +432,13 @@ class SelectTest extends \PHPUnit_Framework_TestCase
             $select,
             array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer)
         );
-        $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
+
+        if (Version::compareVersion('2.4.0') > 0) {
+            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
+            $return = $return->getSql();
+        } else {
+            $this->assertInternalType('string', $return);
+        }
 
         //Test with an ExpressionDecorator
         $return2 = $mr->invokeArgs(
@@ -443,10 +450,16 @@ class SelectTest extends \PHPUnit_Framework_TestCase
                 $parameterContainer
             )
         );
-        $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
 
-        $this->assertSame($return->getSql(), $return2->getSql());
-        $this->assertEquals('10.1', $return->getSql());
+        if (Version::compareVersion('2.4.0') > 0) {
+            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return2);
+            $return2 = $return2->getSql();
+        } else {
+            $this->assertInternalType('string', $return2);
+        }
+
+        $this->assertSame($return, $return2);
+        $this->assertEquals('10.1', $return);
     }
 
     /**

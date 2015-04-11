@@ -25,20 +25,6 @@ use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Update as ZendUpdate;
 use Zend\Db\Sql\Where;
-use Zend\Version\Version;
-
-// Polyfill for ZF from 2.1.x to 2.3.x
-if (Version::compareVersion('2.4.0') > 0) {
-    if (!class_exists('SphinxSearch\Db\Sql\Update', true)) {
-        require_once realpath(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            'compatibility' . DIRECTORY_SEPARATOR . 'Update.php'
-        );
-    }
-    return;
-}
 
 /**
  * Class Update
@@ -159,8 +145,9 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         $setSql = array();
         foreach ($set as $column => $value) {
             if ($value instanceof Predicate\Expression) {
-                $exprData = $this->processExpression($value, $platform, $driver, $parameterContainer);
-                $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $exprData;
+                $exprData = $this->processExpression($value, $platform, $driver);
+                $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $exprData->getSql();
+                $parameterContainer->merge($exprData->getParameterContainer());
             } else {
                 $setSql[] = $platform->quoteIdentifier($column) . ' = ' . $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
@@ -172,8 +159,9 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         // Process where
         if ($this->where->count() > 0) {
-            $whereParts = $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where');
-            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts);
+            $whereParts = $this->processExpression($this->where, $platform, $driver, 'where');
+            $parameterContainer->merge($whereParts->getParameterContainer());
+            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
         }
 
         // Process option
@@ -189,13 +177,16 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param string $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
      */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
         DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
         if ($expression instanceof ExpressionDecorator) {
@@ -204,7 +195,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 
-        return parent::processExpression($expressionDecorator, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
 
     protected function processOption(
@@ -221,8 +212,11 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             $optionSql = '';
             if ($optValue instanceof Expression) {
                 $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
-                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterContainer, $parameterPrefix);
-                $optionSql .= $optionParts;
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
+                if ($parameterContainer) {
+                    $parameterContainer->merge($optionParts->getParameterContainer());
+                }
+                $optionSql .= $optionParts->getSql();
             } else {
                 if ($driver && $parameterContainer) {
                     $parameterContainer->offsetSet('option_' . $optName, $optValue);
@@ -255,7 +249,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         foreach ($set as $col => $val) {
             if ($val instanceof Predicate\Expression) {
                 $exprData = $this->processExpression($val, $adapterPlatform);
-                $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData;
+                $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = ' . $exprData->getSql();
             } elseif ($val === null) {
                 $setSql[] = $adapterPlatform->quoteIdentifier($col) . ' = NULL';
             } else {
@@ -266,8 +260,8 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_UPDATE], $table, $set);
         if ($this->where->count() > 0) {
-            $whereParts = $this->processExpression($this->where, $adapterPlatform, null, null, 'where');
-            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts);
+            $whereParts = $this->processExpression($this->where, $adapterPlatform, null, 'where');
+            $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
         }
 
         $optionParts = $this->processOption($adapterPlatform, null, null);

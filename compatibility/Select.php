@@ -4,7 +4,7 @@
  *
  * @link        https://github.com/ripaclub/sphinxsearch
  * @copyright   Copyright (c) 2014,
- *              Leonardo Di Donato <leodidonato at gmail dot com>,
+ *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
@@ -14,7 +14,6 @@ use SphinxSearch\Db\Sql\Platform\ExpressionDecorator;
 use Zend\Db\Adapter\Driver\DriverInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Platform\PlatformInterface;
-use Zend\Db\Adapter\StatementContainer;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\Having;
@@ -23,20 +22,6 @@ use Zend\Db\Sql\Select as ZendSelect;
 use Zend\Db\Sql\SqlInterface;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Sql\Where;
-use Zend\Version\Version;
-
-// Polyfill for ZF from 2.1.x to 2.3.x
-if (Version::compareVersion('2.4.0') > 0) {
-    if (!class_exists('SphinxSearch\Db\Sql\Select', true)) {
-        require_once realpath(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            'compatibility' . DIRECTORY_SEPARATOR . 'Select.php'
-        );
-    }
-    return;
-}
 
 /**
  * Class Select
@@ -323,10 +308,12 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                     $column,
                     $platform,
                     $driver,
-                    $parameterContainer,
                     $this->processInfo['paramPrefix'] . ((is_string($columnIndexOrAs)) ? $columnIndexOrAs : 'column')
                 );
-                $colName .= $columnParts;
+                if ($parameterContainer) {
+                    $parameterContainer->merge($columnParts->getParameterContainer());
+                }
+                $colName .= $columnParts->getSql();
             } else {
                 // Sphinx doesn't not support prefix column with table, yet
                 $colName .= $platform->quoteIdentifier($column);
@@ -370,15 +357,17 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         return array($columns);
     }
 
-
     /**
-     * {@inheritdoc}
+     * @param ExpressionInterface $expression
+     * @param PlatformInterface $platform
+     * @param DriverInterface $driver
+     * @param string $namedParameterPrefix
+     * @return \Zend\Db\Adapter\StatementContainer
      */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
         DriverInterface $driver = null,
-        ParameterContainer $parameterContainer = null,
         $namedParameterPrefix = null
     ) {
         if ($expression instanceof ExpressionDecorator) {
@@ -387,7 +376,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             $expressionDecorator = new ExpressionDecorator($expression, $platform);
         }
 
-        return parent::processExpression($expressionDecorator, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+        return parent::processExpression($expressionDecorator, $platform, $driver, $namedParameterPrefix);
     }
 
     protected function processWithinGroupOrder(
@@ -402,8 +391,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         foreach ($this->withinGroupOrder as $k => $v) {
             if ($v instanceof Expression) {
                 /** @var $parts \Zend\Db\Adapter\StatementContainer */
-                $orderParts = $this->processExpression($v, $platform, $driver, $parameterContainer);
-                $withinGroupOrders[] = array($orderParts);
+                $orderParts = $this->processExpression($v, $platform, $driver);
+                if ($parameterContainer) {
+                    $parameterContainer->merge($orderParts->getParameterContainer());
+                }
+                $withinGroupOrders[] = array($orderParts->getSql());
                 continue;
             }
             if (is_int($k)) {
@@ -469,8 +461,11 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             $optionSql = '';
             if ($optValue instanceof Expression) {
                 $parameterPrefix = $this->processInfo['paramPrefix'] . 'option';
-                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterContainer, $parameterPrefix);
-                $optionSql .= $optionParts;
+                $optionParts = $this->processExpression($optValue, $platform, $driver, $parameterPrefix);
+                if ($parameterContainer) {
+                    $parameterContainer->merge($optionParts->getParameterContainer());
+                }
+                $optionSql .= $optionParts->getSql();
             } else {
                 if ($driver && $parameterContainer) {
                     $parameterContainer->offsetSet('option_' . $optName, $optValue);
