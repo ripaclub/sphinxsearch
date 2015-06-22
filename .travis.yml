@@ -13,7 +13,7 @@ branches:
 
 install:
   - composer self-update
-  - composer install --dev
+  - composer install --prefer-source
 
 before_script:
   - mkdir -p build/coverage

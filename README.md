@@ -1,7 +1,7 @@
 Sphinx Search
 =============
 
-[![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
+[![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Coveralls branch](https://img.shields.io/coveralls/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://coveralls.io/r/ripaclub/sphinxsearch) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
@@ -24,10 +24,17 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 This Library aims to provide:
 
- - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
- - A simple `Search` class
- - An `Indexer` class to work with RT indices
+ - A **SphinxQL query builder** based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
+ - A simple **Search** class
+ - An **Indexer** class to work with RT indices
  - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.4/en/modules/zend.db.adapter.html)
+
+We have also prepared a set of **related useful tools**. You can use them in conjuction with this library.
+
+- [ripaclub/zf2-sphinxsearch-tool](https://github.com/ripaclub/zf2-sphinxsearch-tool) - a set of **tools** for SphinxSearch's **config files** creation and automation
+- [ripaclub/zf2-sphinxsearch](https://github.com/ripaclub/zf2-sphinxsearch) - a module for fast bootstrapping and integration of SphinxSearch library with **Zend Framework**
+- [ripaclub/sphinxsearch-bundle](https://github.com/ripaclub/sphinxsearch-bundle) - a bundle for fast bootstrapping and integration of SphinxSearch library with **Symfony**
+- [leodido/sphinxsearch](https://registry.hub.docker.com/u/leodido/sphinxsearch/) - SphinxSearch **docker images**
 
 ###### Note
 
@@ -46,11 +53,11 @@ Add the following to your `composer.json` file:
 }
 ```
 
-Alternately with git submodules:
+###### Note
 
-```
-git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
-```
+Starting from **0.8.x** series the minimum requirements are upgraded to PHP >= 5.5 and to the few Zend Framework dependencies >= 2.4.
+
+When forced to use a PHP version less (or equal) than 5.4 and/or a Zend Framework dependencies less (or equal) then 2.3 you can use **0.7.1** version.
 
 ## Configuration (simple)
 
