@@ -1,7 +1,7 @@
 Sphinx Search
 =============
 
-[![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/ripaclub/sphinxsearch.svg?style=flat-square)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master) [![Quality Score](https://img.shields.io/scrutinizer/g/ripaclub/sphinxsearch.svg?style=flat-square)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
+[![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
 
 Sphinx Search library provides SphinxQL indexing and searching features.
 
