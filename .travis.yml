@@ -33,4 +33,3 @@ notifications:
   allow_failures:
     - php: 7
     - php: hhvm
-    - php: hhvm-nightly
