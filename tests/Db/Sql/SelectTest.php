@@ -659,7 +659,7 @@ class SelectTest extends \PHPUnit_Framework_TestCase
 
 //         // join with alternate type
 //         $select12 = new Select;
-//         $select12->from('foo')->join('zac', 'm = n', array('bar', 'baz'), Select::JOIN_OUTER);
+//         $select12->from('foo')->join('zac', 'm = n', ['bar', 'baz'], Select::JOIN_OUTER);
 //         $sqlPrep12 = // same
 //         $sqlStr12 = 'SELECT `foo`.*, `zac`.`bar` AS `bar`, `zac`.`baz` AS `baz` FROM `foo` OUTER JOIN `zac` ON `m` = `n`';
 //         $internalTests12 = array(

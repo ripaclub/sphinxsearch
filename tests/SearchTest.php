@@ -236,7 +236,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 //            ->with($this->equalTo(Show::SHOW_WARNINGS));
 //
 //        // Assumes prepared statement
-//        $expected = array('Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold');
+//        $expected = ['Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold'];
 //        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
 //        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
 //        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue($expected));
@@ -246,7 +246,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 //        $result = $this->search->showWarnings();
 //        $this->assertInternalType('array', $result);
 //        $this->assertCount(1, $result);
-//        $this->assertEquals(array($expected), $result);
+//        $this->assertEquals([$expected], $result);
 //    }
 
     /**
