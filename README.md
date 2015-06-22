@@ -75,26 +75,26 @@ When forced to use a PHP version less (or equal) than 5.4 and/or a Zend Framewor
 Register in the `ServiceManager` the provided factories through the `service_manager` configuration node:
 
 ```php
-'service_manager' => array(
-	'factories' => array(
+'service_manager' => [
+	'factories' => [
   		'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
-	),
+	],
 	// Optionally
-	'aliases' => array(
+	'aliases' => [
 		'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-	),
-)
+	],
+]
 ```
 
 Then in your configuration add the `sphinxql` node and configure it with connection parameters as in example:
 
 ```php
-'sphinxql' => array(
+'sphinxql' => [
 	'driver'    => 'pdo_mysql',
 	'hostname'  => '127.0.0.1',
 	'port'      => 9306,
 	'charset'   => 'UTF8'
-)
+]
 ```
 
 For more details see the "Adapter Service Factory" section.
@@ -131,7 +131,7 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 $search = new Search($adapter);
 $rowset = $search->search('foo', function(Select $select) {
 	$select->where(new Match('?', 'ipsum dolor'))
-	       ->where(array('c1 > ?' => 5))
+	       ->where(['c1 > ?' => 5])
                ->limit(1);
 });
 ```
@@ -173,11 +173,11 @@ use SphinxSearch\Indexer;
 $indexer = new Indexer($adapter);
 $indexer->insert(
 	'foo',
-	array(
+	[
 		'id' => 1,
 		'short' => 'Lorem ipsum dolor sit amet',
 		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
-	),
+	],
 	true
 );
 ```
@@ -195,11 +195,11 @@ This library come with two factories in bundle in order to properly configure th
 Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection else if you need to use multiple connections use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
 
 ```php
-'service_manager' => array(
-	'abstract_factories' => array(
+'service_manager' => [
+	'abstract_factories' => [
   		'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
-	),
-)
+	],
+]
 ```
 
 For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.4/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
@@ -292,9 +292,9 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 
 $update = new Update;
 $update->from('myindex')
-       ->set(array('bigattr' => 1000, 'fattr' => 3465.23))
+       ->set(['bigattr' => 1000, 'fattr' => 3465.23])
        ->where(new Match('?', 'hehe'))
-       ->where(array('enabled' => 1))
+       ->where(['enabled' => 1])
        ->option('strict', 1);
 ```
 
