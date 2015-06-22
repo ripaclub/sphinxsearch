@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest;
@@ -59,17 +59,17 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
             null,
-            array($mockDriver, new TrustedSphinxQL())
+            [$mockDriver, new TrustedSphinxQL()]
         );
 
         $this->mockSql = $this->getMock(
             '\SphinxSearch\Db\Sql\Sql',
-            array('select', 'show'),
-            array($this->mockAdapter, 'foo')
+            ['select', 'show'],
+            [$this->mockAdapter, 'foo']
         );
         $this->mockSql->expects($this->any())->method('select')->will(
             $this->returnValue(
-                $this->getMock('\SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))
+                $this->getMock('\SphinxSearch\Db\Sql\Select', ['where', 'getRawSate'], ['foo'])
             )
         );
 
@@ -157,9 +157,9 @@ class SearchTest extends \PHPUnit_Framework_TestCase
             ->method('getRawState')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'table' => 'foo',
-                    )
+                    ]
                 )
             );
 
@@ -183,9 +183,9 @@ class SearchTest extends \PHPUnit_Framework_TestCase
             ->method('getRawState')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'table' => 'foo',
-                    )
+                    ]
                 )
             );
 
@@ -215,7 +215,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(2))->method('current')->will(
             $this->returnValue(
-                array('Variable_name' => 'total', 'Value' => '0')
+                ['Variable_name' => 'total', 'Value' => '0']
             )
         );
         $this->mockResult->expects($this->at(3))->method('next');
@@ -236,7 +236,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 //            ->with($this->equalTo(Show::SHOW_WARNINGS));
 //
 //        // Assumes prepared statement
-//        $expected = array('Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold');
+//        $expected = ['Level' => 'warning', 'Code' => '1000', 'Message' => 'quorum threshold'];
 //        $this->mockResult->expects($this->at(0))->method('rewind')->will($this->returnValue(true));
 //        $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
 //        $this->mockResult->expects($this->at(2))->method('current')->will($this->returnValue($expected));
@@ -246,11 +246,12 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 //        $result = $this->search->showWarnings();
 //        $this->assertInternalType('array', $result);
 //        $this->assertCount(1, $result);
-//        $this->assertEquals(array($expected), $result);
+//        $this->assertEquals([$expected], $result);
 //    }
 
     /**
      * @covers SphinxSearch\Search::showStatus
+     * @covers SphinxSearch\Search::show
      */
     public function testShowStatus()
     {
@@ -267,7 +268,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(2))->method('current')->will(
             $this->returnValue(
-                array('Counter' => 'uptime', 'Value' => '1392')
+                ['Counter' => 'uptime', 'Value' => '1392']
             )
         );
         $this->mockResult->expects($this->at(3))->method('next');

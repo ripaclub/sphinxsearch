@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -28,7 +28,7 @@ class QueryExpression implements QueryInterface
     /**
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * @param string $expression
@@ -96,7 +96,7 @@ class QueryExpression implements QueryInterface
      */
     public function toString()
     {
-        $parameters = (is_scalar($this->parameters)) ? array($this->parameters) : $this->parameters;
+        $parameters = (is_scalar($this->parameters)) ? [$this->parameters] : $this->parameters;
 
         $parametersCount = count($parameters);
         if ($parametersCount == 0 && strpos($this->expression, self::PLACEHOLDER) !== false) {
@@ -137,8 +137,8 @@ class QueryExpression implements QueryInterface
     public static function escapeString($value)
     {
         return str_replace(
-            array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/'),
-            array('\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'),
+            ['\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/'],
+            ['\\\\', '\\(', '\\)', '\\|', '\\-', '\\!', '\\@', '\\~', '\\"', '\\&', '\\/'],
             $value
         );
     }

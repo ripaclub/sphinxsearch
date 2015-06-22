@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Adapter;
@@ -27,10 +27,10 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function providerValidService()
     {
-        return array(
-            array('SphinxSearch\Db\Adapter\One'),
-            array('SphinxSearch\Db\Adapter\Two'),
-        );
+        return [
+            ['SphinxSearch\Db\Adapter\One'],
+            ['SphinxSearch\Db\Adapter\Two'],
+        ];
     }
 
     /**
@@ -38,9 +38,9 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function providerInvalidService()
     {
-        return array(
-            array('SphinxSearch\Db\Adapter\Unknown'),
-        );
+        return [
+            ['SphinxSearch\Db\Adapter\Unknown'],
+        ];
     }
 
     /**
@@ -74,8 +74,8 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
         // testing Mysqli driver
         $mockDriver = $this->getMock(
             '\Zend\Db\Adapter\Driver\Pdo\Pdo',
-            array('getDatabasePlatformName'),
-            array(),
+            ['getDatabasePlatformName'],
+            [],
             '',
             false
         );
@@ -85,13 +85,13 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $sManager = new ServiceManager();
         $sManager->setService(
             'Config',
-            array(
-                'sphinxql' => array(
-                    'adapters' => array(
+            [
+                'sphinxql' => [
+                    'adapters' => [
                         'SphinxSearch\Db\Adapter\Unsupported' => $mockDriver
-                    )
-                )
-            )
+                    ]
+                ]
+            ]
         );
 
         //Test exception by factory
@@ -123,9 +123,9 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $sManager = new ServiceManager(
             new Config(
-                array(
-                    'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
-                )
+                [
+                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+                ]
             )
         );
         $sManager->get($service);
@@ -141,12 +141,12 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $sManager = new ServiceManager(
             new Config(
-                array(
-                    'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
-                )
+                [
+                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+                ]
             )
         );
-        $sManager->setService('Config', array());
+        $sManager->setService('Config', []);
         $sManager->get($service);
     }
 
@@ -160,16 +160,16 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $sManager = new ServiceManager(
             new Config(
-                array(
-                    'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
-                )
+                [
+                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+                ]
             )
         );
         $sManager->setService(
             'Config',
-            array(
-                'sphinxql' => array()
-            )
+            [
+                'sphinxql' => []
+            ]
         );
         $sManager->get($service);
     }
@@ -183,25 +183,25 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->serviceManager = new ServiceManager(
             new Config(
-                array(
-                    'abstract_factories' => array('SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'),
-                )
+                [
+                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+                ]
             )
         );
         $this->serviceManager->setService(
             'Config',
-            array(
-                'sphinxql' => array(
-                    'adapters' => array(
-                        'SphinxSearch\Db\Adapter\One' => array(
+            [
+                'sphinxql' => [
+                    'adapters' => [
+                        'SphinxSearch\Db\Adapter\One' => [
                             'driver' => 'pdo_mysql',
-                        ),
-                        'SphinxSearch\Db\Adapter\Two' => array(
+                        ],
+                        'SphinxSearch\Db\Adapter\Two' => [
                             'driver' => 'pdo_mysql',
-                        ),
-                    ),
-                ),
-            )
+                        ],
+                    ],
+                ],
+            ]
         );
     }
 }

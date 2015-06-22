@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Query;
@@ -29,7 +29,7 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->queryExpression->getExpression(), '?');
 
         $this->setExpectedException('\SphinxSearch\Query\Exception\InvalidArgumentException');
-        $this->queryExpression->setExpression(array('?'));
+        $this->queryExpression->setExpression(['?']);
     }
 
     /**
@@ -39,9 +39,9 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             '\SphinxSearch\Query\QueryExpression',
-            $this->queryExpression->setParameters(array('ipsum'))
+            $this->queryExpression->setParameters(['ipsum'])
         );
-        $this->assertSame($this->queryExpression->getParameters(), array('ipsum'));
+        $this->assertSame($this->queryExpression->getParameters(), ['ipsum']);
 
         $this->setExpectedException('\SphinxSearch\Query\Exception\InvalidArgumentException');
         $this->queryExpression->setParameters(new \stdClass);
@@ -63,7 +63,7 @@ class QueryExpressionTest extends \PHPUnit_Framework_TestCase
         $this->queryExpression->setParameters('ipsum');
         $this->assertEquals('ipsum', $this->queryExpression->toString());
 
-        $this->queryExpression->setParameters(array('ipsum', 'dolor'));
+        $this->queryExpression->setParameters(['ipsum', 'dolor']);
         $this->setExpectedException('\SphinxSearch\Query\Exception\RuntimeException');
         $this->queryExpression->toString();
     }

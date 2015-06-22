@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Sql;
@@ -43,7 +43,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
             null,
-            array($mockDriver, new TrustedSphinxQL())
+            [$mockDriver, new TrustedSphinxQL()]
         ); // FIXME: give here the platform?
 
         $this->sql = new Sql($this->mockAdapter, 'foo'); // FIXME: append SphinxQL platform as 3 parameter ?

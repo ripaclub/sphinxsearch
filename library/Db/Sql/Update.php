@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -27,21 +27,6 @@ use Zend\Db\Sql\Update as ZendUpdate;
 use Zend\Db\Sql\Where;
 use Zend\Version\Version;
 
-// Polyfill for ZF from 2.1.x to 2.3.x
-// @codeCoverageIgnoreStart
-if (Version::compareVersion('2.4.0') > 0) {
-    if (!class_exists('SphinxSearch\Db\Sql\Update', true)) {
-        require_once realpath(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            'compatibility' . DIRECTORY_SEPARATOR . 'Update.php'
-        );
-    }
-    return;
-}
-// @codeCoverageIgnoreEnd
-
 /**
  * Class Update
  *
@@ -63,15 +48,15 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     const OPTIONS_SET = 'set';
     /**@#-**/
 
-    protected $specifications = array(
+    protected $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s SET %2$s',
         self::SPECIFICATION_WHERE => 'WHERE %1$s',
-        self::SPECIFICATION_OPTION => array(
-            'OPTION %1$s' => array(
-                array(2 => '%1$s = %2$s', 'combinedby' => ', ')
-            )
-        ),
-    );
+        self::SPECIFICATION_OPTION => [
+            'OPTION %1$s' => [
+                [2 => '%1$s = %2$s', 'combinedby' => ', ']
+            ]
+        ],
+    ];
 
     /**
      * @var string
@@ -81,7 +66,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * @var array
      */
-    protected $option = array();
+    protected $option = [];
 
     /**
      * Specify table for statement
@@ -115,7 +100,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         if ($flag == self::OPTIONS_SET) {
-            $this->option = array();
+            $this->option = [];
         }
 
         foreach ($values as $k => $v) {
@@ -158,7 +143,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $set = $this->set;
 
-        $setSql = array();
+        $setSql = [];
         foreach ($set as $column => $value) {
             if ($value instanceof Predicate\Expression) {
                 $exprData = $this->processExpression($value, $platform, $driver, $parameterContainer);
@@ -218,7 +203,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             return null;
         }
         // process options
-        $options = array();
+        $options = [];
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
             if ($optValue instanceof Expression) {
@@ -233,10 +218,10 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
                     $optionSql .= $platform->quoteValue($optValue);
                 }
             }
-            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
+            $options[] = [$platform->quoteIdentifier($optName), $optionSql];
         }
 
-        return array($options);
+        return [$options];
     }
 
     /**
@@ -253,7 +238,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $set = $this->set;
 
-        $setSql = array();
+        $setSql = [];
         foreach ($set as $col => $val) {
             if ($val instanceof Predicate\Expression) {
                 $exprData = $this->processExpression($val, $adapterPlatform);

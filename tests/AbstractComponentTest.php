@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest;
@@ -53,16 +53,16 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
         // setup mock adapter
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
-            array('getDriver', 'query'),
-            array($mockDriver, new TrustedSphinxQL())
+            ['getDriver', 'query'],
+            [$mockDriver, new TrustedSphinxQL()]
         );
         $this->mockAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
         $this->mockAdapter->expects($this->any())->method('query')->will($this->returnValue($mockResultSet));
 
         $this->mockSql = $this->getMock(
             '\SphinxSearch\Db\Sql\Sql',
-            array('prepareStatementForSqlObject', 'getSqlStringForSqlObject'),
-            array($this->mockAdapter, 'foo')
+            ['prepareStatementForSqlObject', 'getSqlStringForSqlObject'],
+            [$this->mockAdapter, 'foo']
         );
         $this->mockSql->expects($this->any())->method('prepareStatementForSqlObject')->will(
             $this->returnValue($this->mockStatement)
@@ -138,10 +138,10 @@ class AbstractComponentTest extends \PHPUnit_Framework_TestCase
 
 
         // testing Mysqli driver
-        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\Mysqli\Mysqli', array(), array(), '', false);
+        $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\Mysqli\Mysqli', [], [], '', false);
 
         // setup mock adapter
-        $mysqliMockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver));
+        $mysqliMockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, [$mockDriver]);
 
         // setup the object
         $component = new ConcreteComponentAsset($mysqliMockAdapter);

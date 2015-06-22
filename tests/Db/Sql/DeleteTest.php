@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Sql;
@@ -58,33 +58,23 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         //Test with an Expression
         $return = $mr->invokeArgs(
             $delete,
-            array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer)
+            [new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer]
         );
 
-        if (Version::compareVersion('2.4.0') > 0) {
-            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
-            $return = $return->getSql();
-        } else {
-            $this->assertInternalType('string', $return);
-        }
+        $this->assertInternalType('string', $return);
 
         //Test with an ExpressionDecorator
         $return2 = $mr->invokeArgs(
             $delete,
-            array(
+            [
                 new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()),
                 new TrustedSphinxQL(),
                 $mockDriver,
                 $parameterContainer
-            )
+            ]
         );
 
-        if (Version::compareVersion('2.4.0') > 0) {
-            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return2);
-            $return2 = $return2->getSql();
-        } else {
-            $this->assertInternalType('string', $return2);
-        }
+        $this->assertInternalType('string', $return2);
 
         $this->assertSame($return, $return2);
         $this->assertEquals('10.1', $return);

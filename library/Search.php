@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -80,10 +80,25 @@ class Search extends AbstractComponent
         return $resultSet;
     }
 
+    /**
+     * @param string $show
+     * @param string $like
+     * @return ResultInterface
+     */
+    protected function show($show, $like)
+    {
+        $show = $this->getSql()->show()->show($show)->like($like);
+        return $this->executeSqlObject($show);
+    }
+
+    /**
+     * @param string $like
+     * @return array
+     */
     public function showMeta($like = null)
     {
         $result = $this->show(Show::SHOW_META, $like);
-        $return = array();
+        $return = [];
 
         foreach ($result as $row) {
             $return[$row['Variable_name']] = $row['Value'];
@@ -92,18 +107,14 @@ class Search extends AbstractComponent
         return $return;
     }
 
-    protected function show($show, $like)
-    {
-        $show = $this->getSql()->show()->show($show)
-            ->like($like);
-
-        return $this->executeSqlObject($show);
-    }
-
+    /**
+     * @param string $like
+     * @return array
+     */
     public function showStatus($like = null)
     {
         $result = $this->show(Show::SHOW_STATUS, $like);
-        $return = array();
+        $return = [];
         foreach ($result as $row) {
             $return[$row['Counter']] = $row['Value'];
         }

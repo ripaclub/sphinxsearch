@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest;
@@ -51,26 +51,26 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
             null,
-            array($mockDriver, new TrustedSphinxQL())
+            [$mockDriver, new TrustedSphinxQL()]
         );
 
         $this->mockSql = $this->getMock(
             '\SphinxSearch\Db\Sql\Sql',
-            array('insert', 'replace', 'update', 'delete'),
-            array($this->mockAdapter)
+            ['insert', 'replace', 'update', 'delete'],
+            [$this->mockAdapter]
         );
 
         $this->mockSql->expects($this->any())->method('insert')->will(
-            $this->returnValue($this->getMock('\Zend\Db\Sql\Insert', array('prepareStatement', 'values')))
+            $this->returnValue($this->getMock('\Zend\Db\Sql\Insert', ['prepareStatement', 'values']))
         )->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('replace')->will(
-            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Replace', array('prepareStatement', 'values')))
+            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Replace', ['prepareStatement', 'values']))
         )->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('update')->will(
-            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Update', array('where')))
+            $this->returnValue($this->getMock('\SphinxSearch\Db\Sql\Update', ['where']))
         )->with($this->equalTo('foo'));
         $this->mockSql->expects($this->any())->method('delete')->will(
-            $this->returnValue($this->getMock('\Zend\Db\Sql\Delete', array('where')))
+            $this->returnValue($this->getMock('\Zend\Db\Sql\Delete', ['where']))
         )->with($this->equalTo('foo'));
 
         // Setup the indexer object
@@ -157,9 +157,9 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
         $mockInsert->expects($this->once())
             ->method('values')
-            ->with($this->equalTo(array('foo' => 'bar')));
+            ->with($this->equalTo(['foo' => 'bar']));
 
-        $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'));
+        $affectedRows = $this->indexer->insert('foo', ['foo' => 'bar']);
         $this->assertEquals(5, $affectedRows);
 
         // Testing replace mode
@@ -171,9 +171,9 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
 
         $mockReplace->expects($this->once())
             ->method('values')
-            ->with($this->equalTo(array('foo' => 'bar')));
+            ->with($this->equalTo(['foo' => 'bar']));
 
-        $affectedRows = $this->indexer->insert('foo', array('foo' => 'bar'), true);
+        $affectedRows = $this->indexer->insert('foo', ['foo' => 'bar'], true);
         $this->assertEquals(5, $affectedRows);
     }
 
@@ -189,14 +189,14 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
             ->method('where')
             ->with($this->equalTo('id = 2'));
 
-        $affectedRows = $this->indexer->update('foo', array('foo' => 'bar'), 'id = 2');
+        $affectedRows = $this->indexer->update('foo', ['foo' => 'bar'], 'id = 2');
         $this->assertEquals(5, $affectedRows);
 
         // Where with closure
         $mockUpdate = $this->mockSql->update('foo');
         $this->indexer->update(
             'foo',
-            array('foo' => 'bar'),
+            ['foo' => 'bar'],
             function ($update) use ($mockUpdate) {
                 IndexerTest::assertSame($mockUpdate, $update);
             }
@@ -210,7 +210,7 @@ class IndexerTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateWithNoCriteria()
     {
-        $affectedRows = $this->indexer->update('foo', array('foo' => 'bar'));
+        $affectedRows = $this->indexer->update('foo', ['foo' => 'bar']);
         $this->assertEquals(5, $affectedRows);
     }
 

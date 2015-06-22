@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\IntegrationTest;
@@ -13,12 +13,12 @@ namespace SphinxSearchTest\IntegrationTest;
  */
 class PDOIntegrationTest extends AbstractIntegrationTest
 {
-    protected $config = array(
+    protected $config = [
         'driver'    => 'pdo_mysql',
         'hostname'  => '127.0.0.1',
         'port'      => 9306,
         'charset'   => 'UTF8'
-    );
+    ];
 
     /**
      * {@inheritdoc}

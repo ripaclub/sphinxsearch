@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -46,10 +46,6 @@ class Match implements PredicateInterface
 
             $expression = new QueryExpression($expression, $parameters);
         }
-        //TODO:
-//         elseif ($parameters && method_exists($expression, 'setParameters')) {
-//             $expression->setParameters($parameters);
-//         }
 
         $this->setQuery($expression);
     }
@@ -97,8 +93,8 @@ class Match implements PredicateInterface
      */
     public function getExpressionData()
     {
-        return array(
-            array($this->specification, array($this->query->toString()), array(self::TYPE_VALUE))
-        );
+        return [
+            [$this->specification, [$this->query->toString()], [self::TYPE_VALUE]]
+        ];
     }
 }

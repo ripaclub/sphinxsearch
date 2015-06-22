@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Sql;
@@ -30,7 +30,7 @@ class ShowTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(Show::SHOW_META, $this->show->getRawState(Show::SHOW));
         $this->assertEmpty($this->show->getRawState(Show::LIKE));
-        $this->assertEquals(array(Show::SHOW => Show::SHOW_META, Show::LIKE => null), $this->show->getRawState());
+        $this->assertEquals([Show::SHOW => Show::SHOW_META, Show::LIKE => null], $this->show->getRawState());
     }
 
     /**
@@ -71,7 +71,7 @@ class ShowTest extends \PHPUnit_Framework_TestCase
             ->like('bar');
 
         $expectedSqlString = 'SHOW META LIKE ?';
-        $expectedParameters = array('like' => 'bar');
+        $expectedParameters = ['like' => 'bar'];
 
         $useNamedParameters = false;
         $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
@@ -82,7 +82,7 @@ class ShowTest extends \PHPUnit_Framework_TestCase
                 }
             )
         );
-        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, [$mockDriver, new TrustedSphinxQL()]);
 
         $parameterContainer = new ParameterContainer();
 

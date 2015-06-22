@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -69,7 +69,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         }
 
         if (!$services->has('Config')) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }
@@ -78,7 +78,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         if (!isset($config['sphinxql'])
             || !is_array($config['sphinxql'])
         ) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }
@@ -87,7 +87,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         if (!isset($config['adapters'])
             || !is_array($config['adapters'])
         ) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }

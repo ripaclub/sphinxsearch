@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Sql;
@@ -32,17 +32,17 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
         $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, [$mockDriver, new TrustedSphinxQL()]);
 
         $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
-        $pContainer = new ParameterContainer(array());
+        $pContainer = new ParameterContainer([]);
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
             ->with($this->equalTo('REPLACE INTO `foo` (`bar`, `boo`) VALUES (?, NOW())'));
 
         $this->replace->into('foo')
-            ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()')));
+            ->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
 
         $this->replace->prepareStatement($mockAdapter, $mockStatement);
 
@@ -51,17 +51,17 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
         $mockDriver = $this->getMock('\Zend\Db\Adapter\Driver\DriverInterface');
         $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
         $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, array($mockDriver, new TrustedSphinxQL()));
+        $mockAdapter = $this->getMock('\Zend\Db\Adapter\Adapter', null, [$mockDriver, new TrustedSphinxQL()]);
 
         $mockStatement = $this->getMock('\Zend\Db\Adapter\Driver\StatementInterface');
-        $pContainer = new ParameterContainer(array());
+        $pContainer = new ParameterContainer([]);
         $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
         $mockStatement->expects($this->at(1))
             ->method('setSql')
             ->with($this->equalTo('REPLACE INTO `foo` (`bar`, `boo`) VALUES (?, NOW())'));
 
         $this->replace->into(new TableIdentifier('foo'))// FIXME: SphinxQL does not support schema
-        ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()')));
+        ->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
 
         $this->replace->prepareStatement($mockAdapter, $mockStatement);
     }
@@ -72,7 +72,7 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
     public function testGetSqlString()
     {
         $this->replace->into('foo')
-            ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null));
+            ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
         $this->assertEquals(
             'REPLACE INTO `foo` (`bar`, `boo`, `bam`) VALUES (\'baz\', NOW(), NULL)',
@@ -82,7 +82,7 @@ class ReplaceTest extends \PHPUnit_Framework_TestCase
         // with TableIdentifier
         $this->replace = new Replace;
         $this->replace->into(new TableIdentifier('foo'))// FIXME: SphinxQL does not support schema
-        ->values(array('bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null));
+        ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
         $this->assertEquals(
             'REPLACE INTO `foo` (`bar`, `boo`, `bam`) VALUES (\'baz\', NOW(), NULL)',

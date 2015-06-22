@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -18,21 +18,6 @@ use Zend\Db\Sql\ExpressionInterface;
 use Zend\Db\Sql\TableIdentifier;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Version\Version;
-
-// Polyfill for ZF from 2.1.x to 2.3.x
-// @codeCoverageIgnoreStart
-if (Version::compareVersion('2.4.0') > 0) {
-    if (!class_exists('SphinxSearch\Db\Sql\Delete', true)) {
-        require_once realpath(
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR .
-            'compatibility' . DIRECTORY_SEPARATOR . 'Delete.php'
-        );
-    }
-    return;
-}
-// @codeCoverageIgnoreEnd
 
 /**
  * Class Delete

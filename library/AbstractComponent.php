@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014,
+ * @copyright   Copyright (c) 2014-2015
  *              Leo Di Donato <leodidonato at gmail dot com>,
  *              Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
@@ -51,7 +51,7 @@ abstract class AbstractComponent
      */
     public function setQueryMode($flag)
     {
-        $flags = array(self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE);
+        $flags = [self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE];
         if (!in_array($flag, $flags)) {
             throw new \InvalidArgumentException('Invalid execution mode. Must be one of: auto, prepared or query');
         }
@@ -70,13 +70,12 @@ abstract class AbstractComponent
     }
 
     /**
-     * @todo Use
-     * @param AbstractSql $sqlObject // TODO (for 0.8.x) use Zend\Db\Sql\SqlInterface
-     * @param null $usePreparedStatement
+     * @param SqlInterface $sqlObject
+     * @param bool|null $usePreparedStatement
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      * @throws Exception\InvalidArgumentException
      */
-    public function executeSqlObject(AbstractSql $sqlObject, $usePreparedStatement = null)
+    public function executeSqlObject(SqlInterface $sqlObject, $usePreparedStatement = null)
     {
         if ($usePreparedStatement === null) {
             $usePreparedStatement = $this->isPreparedStatementUsed();
@@ -87,17 +86,8 @@ abstract class AbstractComponent
             return $statement->execute();
         }
 
-        if ($sqlObject instanceof SqlInterface) {
-            $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
-            return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
-        }
-
-        // TODO (for 0.8.x) remove
-        // @codeCoverageIgnoreStart
-        throw new Exception\InvalidArgumentException(
-            '$sqlObject must be an instance of SqlInterface or PreparableSqlInterface'
-        );
-        // @codeCoverageIgnoreEnd
+        $sql = $this->getSql()->getSqlStringForSqlObject($sqlObject);
+        return $this->getAdapter()->getDriver()->getConnection()->execute($sql);
     }
 
     /**

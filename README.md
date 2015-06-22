@@ -1,10 +1,9 @@
 Sphinx Search
 =============
 
-[![Build Status](https://travis-ci.org/ripaclub/sphinxsearch.png?branch=master)](https://travis-ci.org/ripaclub/sphinxsearch)&nbsp;[![Latest Stable Version](https://poser.pugx.org/ripaclub/sphinxsearch/v/stable.png)](https://packagist.org/packages/ripaclub/sphinxsearch)&nbsp;[![Code Coverage](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/?branch=master)&nbsp;[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/badges/quality-score.png?s=ee5fd3ec2556ba441dc3ca598cee7ebdb41daa3c)](https://scrutinizer-ci.com/g/ripaclub/sphinxsearch/)&nbsp;[![Dependency Status](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5/badge.svg)](https://www.versioneye.com/user/projects/5432dbea84981f174e0000a5)&nbsp;[![Total Downloads](https://poser.pugx.org/ripaclub/sphinxsearch/downloads.svg)](https://packagist.org/packages/ripaclub/sphinxsearch)
+[![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Coveralls branch](https://img.shields.io/coveralls/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://coveralls.io/r/ripaclub/sphinxsearch) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
 
-
-Sphinx Search library provides SphinxQL indexing and searching features.
+> Sphinx Search library provides SphinxQL indexing and searching features.
 
 - [Introduction](#introduction)
 - [Installation](#installation)
@@ -25,10 +24,28 @@ Sphinx Search library provides SphinxQL indexing and searching features.
 
 This Library aims to provide:
 
- - A SphinxQL query builder based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
- - A simple `Search` class
- - An `Indexer` class to work with RT indices
+ - A **SphinxQL query builder** based upon [Zend\Db\Sql](http://framework.zend.com/manual/2.4/en/modules/zend.db.sql.html)
+ - A simple **Search** class
+ - An **Indexer** class to work with RT indices
  - Factories for SphinxQL connection through [Zend\Db\Adapter](http://framework.zend.com/manual/2.4/en/modules/zend.db.adapter.html)
+
+We have also prepared a set of **related useful tools**. You can use them in conjuction with this library.
+
+- [ripaclub/zf2-sphinxsearch-tool](https://github.com/ripaclub/zf2-sphinxsearch-tool)
+
+    A set of **tools** for SphinxSearch's **config files** creation and automation
+
+- [ripaclub/zf2-sphinxsearch](https://github.com/ripaclub/zf2-sphinxsearch)
+
+    A module for fast bootstrapping and integration of SphinxSearch library with **Zend Framework**
+
+- [ripaclub/sphinxsearch-bundle](https://github.com/ripaclub/sphinxsearch-bundle)
+
+    A bundle for fast bootstrapping and integration of SphinxSearch library with **Symfony**
+
+- [leodido/sphinxsearch](https://registry.hub.docker.com/u/leodido/sphinxsearch/)
+    
+    SphinxSearch **docker image** (tags for various SphinxSearch's releases and betas)
 
 ###### Note
 
@@ -42,45 +59,53 @@ Add the following to your `composer.json` file:
 
 ```json
 "require": {
-	"php": ">=5.3.3",
-	"ripaclub/sphinxsearch": "~0.7.1",
+	"php": ">=5.5",
+	"ripaclub/sphinxsearch": "~0.8.0",
 }
 ```
 
-Alternately with git submodules:
+###### Note
 
-```
-git submodule add https://github.com/ripaclub/sphinxsearch.git ripaclub/sphinxsearch
-```
+Starting from **0.8.x** series the minimum requirements are upgraded to PHP >= 5.5 and to the few Zend Framework dependencies >= 2.4.
+
+When forced to use a PHP version less (or equal) than 5.4 and/or a Zend Framework dependencies less (or equal) then 2.3 you can use **0.7.1** version.
 
 ## Configuration (simple)
 
-Register in the `ServiceManager` the provided factories through the `service_manager` configuration node:
+In order to work with library components you need an adapter instance. You can simply obtain configured adapter by using the built-in factory like the following example:
 
 ```php
-'service_manager' => array(
-	'factories' => array(
-  		'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
-	),
-	// Optionally
-	'aliases' => array(
-		'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-	),
-)
+use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
+
+$serviceManager = new ServiceManager(new Config([
+    'factories' => [
+        'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+    ],
+    'aliases' => [
+        'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+    ]
+]));
+
+$serviceManager->setService('Config', [
+    'sphinxql' => [
+        'driver'    => 'pdo_mysql',
+        'hostname'  => '127.0.0.1',
+        'port'      => 9306,
+        'charset'   => 'UTF8'
+    ]
+]);
+
+$adapter = $serviceManager->get('sphinxql');
 ```
 
-Then in your configuration add the `sphinxql` node and configure it with connection parameters as in example:
+###### Note
 
-```php
-'sphinxql' => array(
-	'driver'    => 'pdo_mysql',
-	'hostname'  => '127.0.0.1',
-	'port'      => 9306,
-	'charset'   => 'UTF8'
-)
-```
+Only two drivers are supported:
+- `pdo_mysql`
+- `mysqli`
 
-For more details see the "Adapter Service Factory" section.
+For more details see the [Adapter Service Factory](#adapter-service-factory) section.
 
 ## Usage
 
@@ -114,7 +139,7 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 $search = new Search($adapter);
 $rowset = $search->search('foo', function(Select $select) {
 	$select->where(new Match('?', 'ipsum dolor'))
-	       ->where(array('c1 > ?' => 5))
+	       ->where(['c1 > ?' => 5])
                ->limit(1);
 });
 ```
@@ -156,11 +181,11 @@ use SphinxSearch\Indexer;
 $indexer = new Indexer($adapter);
 $indexer->insert(
 	'foo',
-	array(
+	[
 		'id' => 1,
 		'short' => 'Lorem ipsum dolor sit amet',
 		'text' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit ...'
-	),
+	],
 	true
 );
 ```
@@ -178,19 +203,14 @@ This library come with two factories in bundle in order to properly configure th
 Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#configuration-simple) section above) for a single connection else if you need to use multiple connections use the shipped `SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory` registering it in the `ServiceManager` as below:
 
 ```php
-'service_manager' => array(
-	'abstract_factories' => array(
+'service_manager' => [
+	'abstract_factories' => [
   		'SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'
-	),
-)
+	],
+]
 ```
 
 For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.4/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
-
-Only two drivers are supported:
-
-- `PDO_MySQL`
-- `Mysqli`
 
 ### Prepared statement
 
@@ -275,9 +295,9 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 
 $update = new Update;
 $update->from('myindex')
-       ->set(array('bigattr' => 1000, 'fattr' => 3465.23))
+       ->set(['bigattr' => 1000, 'fattr' => 3465.23])
        ->where(new Match('?', 'hehe'))
-       ->where(array('enabled' => 1))
+       ->where(['enabled' => 1])
        ->option('strict', 1);
 ```
 
@@ -306,16 +326,16 @@ Some examples:
 ```php
 use SphinxSearch\Query\QueryExpression;
 
-$query = new QueryExpression('@title ? @body ?', array('hello', 'world'));
+$query = new QueryExpression('@title ? @body ?', ['hello', 'world']);
 echo $query->toString(); //outputs: @title hello @body world
 
 
 echo $query->setExpression('"?"/3')
-           ->setParameters(array('the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'))
+           ->setParameters(['the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'])
            ->toString(); //outputs: "the world is a wonderful place, but sometimes people uses spe\(ia\| ch\@rs"/3
 
 echo $query->setExpression('? NEAR/? ? NEAR/? "?"')
-           ->setParameters(array('hello', 3, 'world', 4, '"my test"'))
+           ->setParameters(['hello', 3, 'world', 4, '"my test"'])
            ->toString(); //outputs: hello NEAR/3 world NEAR/4 "my test"
 ```
 
@@ -328,8 +348,8 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 
 $select = new Select;
 $select->from('myindex')
-       ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
-       ->where(array('enabled' => 1));
+       ->where(new Match('? NEAR/? ? NEAR/? "?"', ['hello', 3, 'world', 4, '"my test"']))
+       ->where(['enabled' => 1]);
 
 //outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1
 echo $select->getSqlString(new SphinxQL());
@@ -343,30 +363,19 @@ The library source code (**on master**) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
+./vendor/bin/phpunit --exclude-group=integration
+```
+
+To run also our integration tests execute:
+
+```
 ./vendor/bin/phpunit
 ```
 
-Code quality
-------------
+###### Note
 
-Run [phpmd](https://github.com/phpmd/phpmd).
-
-```
-./vendor/bin/phpmd library/ text phpmd.xml.dist
-```
-
-Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
-
-```
-./vendor/bin/phpcs --standard=PSR2 library/
-```
-
-Run [pdepend](https://github.com/pdepend/pdepend).
-
-```
-./vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
-```
+To execute integration tests you need a running instance of SphinxSearch (e.g., using a correctly configured docker image).
 
 ---
 
-[![Analytics](https://ga-beacon.appspot.com/UA-49655829-1/ripaclub/sphinxsearch)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-49657176-3/sphinxsearch)](https://github.com/igrigorik/ga-beacon)

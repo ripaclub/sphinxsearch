@@ -3,7 +3,7 @@
  * Sphinx Search
  *
  * @link        https://github.com/ripaclub/sphinxsearch
- * @copyright   Copyright (c) 2014, Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
+ * @copyright   Copyright (c) 2014-2015 Leo Di Donato <leodidonato at gmail dot com>, Leonardo Grasso <me at leonardograsso dot com>
  * @license     http://opensource.org/licenses/BSD-2-Clause Simplified BSD License
  */
 namespace SphinxSearchTest\Db\Adapter;
@@ -28,9 +28,9 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function providerValidService()
     {
-        return array(
-            array('SphinxSearch\Db\Adapter\Adapter')
-        );
+        return [
+            ['SphinxSearch\Db\Adapter\Adapter']
+        ];
     }
 
     /**
@@ -38,9 +38,9 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function providerInvalidService()
     {
-        return array(
-            array('SphinxSearch\Db\Adapter\Unknown'),
-        );
+        return [
+            ['SphinxSearch\Db\Adapter\Unknown'],
+        ];
     }
 
     /**
@@ -74,8 +74,8 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
         // testing Mysqli driver
         $mockDriver = $this->getMock(
             '\Zend\Db\Adapter\Driver\Pdo\Pdo',
-            array('getDatabasePlatformName'),
-            array(),
+            ['getDatabasePlatformName'],
+            [],
             '',
             false
         );
@@ -84,9 +84,9 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $sManager = new ServiceManager();
         $sManager->setService(
             'Config',
-            array(
+            [
                 'sphinxql' => $mockDriver
-            )
+            ]
         );
 
         //Test exception by factory
@@ -105,23 +105,23 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->serviceManager = new ServiceManager(
             new Config(
-                array(
-                    'factories' => array(
+                [
+                    'factories' => [
                         'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
-                    ),
-                    'alias' => array(
+                    ],
+                    'alias' => [
                         'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-                    )
-                )
+                    ]
+                ]
             )
         );
         $this->serviceManager->setService(
             'Config',
-            array(
-                'sphinxql' => array(
+            [
+                'sphinxql' => [
                     'driver' => 'pdo_mysql',
-                ),
-            )
+                ],
+            ]
         );
     }
 
