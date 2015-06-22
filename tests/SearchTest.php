@@ -251,6 +251,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers SphinxSearch\Search::showStatus
+     * @covers SphinxSearch\Search::show
      */
     public function testShowStatus()
     {
