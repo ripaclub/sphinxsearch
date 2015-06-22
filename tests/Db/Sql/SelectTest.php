@@ -476,9 +476,54 @@ class SelectTest extends \PHPUnit_Framework_TestCase
         foreach ($internalTests as $method => $expected) {
             $mr = $selectReflect->getMethod($method);
             $mr->setAccessible(true);
-            $return = $mr->invokeArgs($select, array(new TrustedSphinxQL(), $mockDriver, $parameterContainer));
+            $return = $mr->invokeArgs($select, [new TrustedSphinxQL, $mockDriver, $parameterContainer]);
             $this->assertEquals($expected, $return);
         }
+    }
+
+    public function testProcessLimitOffsetWithoutOptionalParams()
+    {
+        $offset = 1;
+        $limit = 10;
+        $select = new Select;
+        $select->from('foo');
+        $select->offset($offset);
+        $select->limit($limit);
+
+        $selectReflect = new \ReflectionObject($select);
+        $method = $selectReflect->getMethod('processLimitOffset');
+        $method->setAccessible(true);
+        $return = $method->invokeArgs($select, [new TrustedSphinxQL]);
+        $this->assertEquals([$offset, $limit], $return);
+
+        $method->setAccessible(false);
+    }
+
+    public function testProcessOptionWithoutOptionalParams()
+    {
+        $opts = ['foo' => 'bar'];
+        $select = new Select;
+        $select->from('foo');
+        $select->option($opts);
+        $platform = new TrustedSphinxQL;
+
+        $selectReflect = new \ReflectionObject($select);
+        $method = $selectReflect->getMethod('processOption');
+        $method->setAccessible(true);
+        $return = $method->invokeArgs($select, [$platform]);
+        $this->assertEquals(
+            [
+                [
+                    [
+                        $platform->quoteIdentifier('foo'),
+                        $platform->quoteValue('bar')
+                    ]
+                ]
+            ],
+            $return
+        );
+
+        $method->setAccessible(false);
     }
 
     public function providerData()

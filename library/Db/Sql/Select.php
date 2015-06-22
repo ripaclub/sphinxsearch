@@ -463,7 +463,6 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                     $parameterContainer->offsetSet('option_' . $optName, $optValue);
                     $optionSql .= $driver->formatParameterName('option_' . $optName);
                 } else {
-
                     $optionSql .= $platform->quoteValue($optValue);
                 }
             }
