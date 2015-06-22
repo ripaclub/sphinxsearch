@@ -31,10 +31,21 @@ This Library aims to provide:
 
 We have also prepared a set of **related useful tools**. You can use them in conjuction with this library.
 
-- [ripaclub/zf2-sphinxsearch-tool](https://github.com/ripaclub/zf2-sphinxsearch-tool) - a set of **tools** for SphinxSearch's **config files** creation and automation
-- [ripaclub/zf2-sphinxsearch](https://github.com/ripaclub/zf2-sphinxsearch) - a module for fast bootstrapping and integration of SphinxSearch library with **Zend Framework**
-- [ripaclub/sphinxsearch-bundle](https://github.com/ripaclub/sphinxsearch-bundle) - a bundle for fast bootstrapping and integration of SphinxSearch library with **Symfony**
-- [leodido/sphinxsearch](https://registry.hub.docker.com/u/leodido/sphinxsearch/) - SphinxSearch **docker images**
+- [ripaclub/zf2-sphinxsearch-tool](https://github.com/ripaclub/zf2-sphinxsearch-tool)
+
+    A set of **tools** for SphinxSearch's **config files** creation and automation
+
+- [ripaclub/zf2-sphinxsearch](https://github.com/ripaclub/zf2-sphinxsearch)
+
+    A module for fast bootstrapping and integration of SphinxSearch library with **Zend Framework**
+
+- [ripaclub/sphinxsearch-bundle](https://github.com/ripaclub/sphinxsearch-bundle)
+
+    A bundle for fast bootstrapping and integration of SphinxSearch library with **Symfony**
+
+- [leodido/sphinxsearch](https://registry.hub.docker.com/u/leodido/sphinxsearch/)
+    
+    SphinxSearch **docker image** (tags for various SphinxSearch's releases and betas)
 
 ###### Note
 
