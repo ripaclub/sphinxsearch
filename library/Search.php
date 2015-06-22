@@ -80,6 +80,21 @@ class Search extends AbstractComponent
         return $resultSet;
     }
 
+    /**
+     * @param string $show
+     * @param string $like
+     * @return ResultInterface
+     */
+    protected function show($show, $like)
+    {
+        $show = $this->getSql()->show()->show($show)->like($like);
+        return $this->executeSqlObject($show);
+    }
+
+    /**
+     * @param string $like
+     * @return array
+     */
     public function showMeta($like = null)
     {
         $result = $this->show(Show::SHOW_META, $like);
@@ -92,14 +107,10 @@ class Search extends AbstractComponent
         return $return;
     }
 
-    protected function show($show, $like)
-    {
-        $show = $this->getSql()->show()->show($show)
-            ->like($like);
-
-        return $this->executeSqlObject($show);
-    }
-
+    /**
+     * @param string $like
+     * @return array
+     */
     public function showStatus($like = null)
     {
         $result = $this->show(Show::SHOW_STATUS, $like);
