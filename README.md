@@ -360,29 +360,16 @@ The library source code (**on master**) is 100% covered by unit tests.
 Once installed development dependencies through composer you can run `phpunit`.
 
 ```
+./vendor/bin/phpunit --exclude-group=integration
+```
+
+To run also our integration tests execute:
+
+```
 ./vendor/bin/phpunit
 ```
 
-Code quality
-------------
-
-Run [phpmd](https://github.com/phpmd/phpmd).
-
-```
-./vendor/bin/phpmd library/ text phpmd.xml.dist
-```
-
-Run [phpcs](https://github.com/squizlabs/PHP_CodeSniffer).
-
-```
-./vendor/bin/phpcs --standard=PSR2 library/
-```
-
-Run [pdepend](https://github.com/pdepend/pdepend).
-
-```
-./vendor/bin/pdepend --exclude=tests,vendor --summary-xml=pdepend.log library/
-```
+However note that to execute integration tests you need a running instance of SphinxSearch (e.g., using a correctly configured docker image).
 
 ---
 
