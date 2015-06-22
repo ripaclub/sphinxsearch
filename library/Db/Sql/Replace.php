@@ -18,7 +18,7 @@ class Replace extends Insert
     /**
      * @var array Specification array
      */
-    protected $specifications = array(
+    protected $specifications = [
         self::SPECIFICATION_INSERT => 'REPLACE INTO %1$s (%2$s) VALUES (%3$s)'
-    );
+    ];
 }

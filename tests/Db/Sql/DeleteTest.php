@@ -58,7 +58,7 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         //Test with an Expression
         $return = $mr->invokeArgs(
             $delete,
-            array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer)
+            [new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer]
         );
 
         $this->assertInternalType('string', $return);
@@ -66,12 +66,12 @@ class DeleteTest extends \PHPUnit_Framework_TestCase
         //Test with an ExpressionDecorator
         $return2 = $mr->invokeArgs(
             $delete,
-            array(
+            [
                 new ExpressionDecorator(new Expression('?', 10.1), new SphinxQL()),
                 new TrustedSphinxQL(),
                 $mockDriver,
                 $parameterContainer
-            )
+            ]
         );
 
         $this->assertInternalType('string', $return2);

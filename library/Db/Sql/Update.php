@@ -48,15 +48,15 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     const OPTIONS_SET = 'set';
     /**@#-**/
 
-    protected $specifications = array(
+    protected $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s SET %2$s',
         self::SPECIFICATION_WHERE => 'WHERE %1$s',
-        self::SPECIFICATION_OPTION => array(
-            'OPTION %1$s' => array(
-                array(2 => '%1$s = %2$s', 'combinedby' => ', ')
-            )
-        ),
-    );
+        self::SPECIFICATION_OPTION => [
+            'OPTION %1$s' => [
+                [2 => '%1$s = %2$s', 'combinedby' => ', ']
+            ]
+        ],
+    ];
 
     /**
      * @var string
@@ -66,7 +66,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
     /**
      * @var array
      */
-    protected $option = array();
+    protected $option = [];
 
     /**
      * Specify table for statement
@@ -100,7 +100,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
         }
 
         if ($flag == self::OPTIONS_SET) {
-            $this->option = array();
+            $this->option = [];
         }
 
         foreach ($values as $k => $v) {
@@ -143,7 +143,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $set = $this->set;
 
-        $setSql = array();
+        $setSql = [];
         foreach ($set as $column => $value) {
             if ($value instanceof Predicate\Expression) {
                 $exprData = $this->processExpression($value, $platform, $driver, $parameterContainer);
@@ -203,7 +203,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
             return null;
         }
         // process options
-        $options = array();
+        $options = [];
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
             if ($optValue instanceof Expression) {
@@ -218,10 +218,10 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
                     $optionSql .= $platform->quoteValue($optValue);
                 }
             }
-            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
+            $options[] = [$platform->quoteIdentifier($optName), $optionSql];
         }
 
-        return array($options);
+        return [$options];
     }
 
     /**
@@ -238,7 +238,7 @@ class Update extends ZendUpdate implements SqlInterface, PreparableSqlInterface
 
         $set = $this->set;
 
-        $setSql = array();
+        $setSql = [];
         foreach ($set as $col => $val) {
             if ($val instanceof Predicate\Expression) {
                 $exprData = $this->processExpression($val, $adapterPlatform);

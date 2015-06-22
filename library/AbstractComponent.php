@@ -51,7 +51,7 @@ abstract class AbstractComponent
      */
     public function setQueryMode($flag)
     {
-        $flags = array(self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE);
+        $flags = [self::QUERY_MODE_AUTO, self::QUERY_MODE_PREPARED, self::QUERY_MODE_EXECUTE];
         if (!in_array($flag, $flags)) {
             throw new \InvalidArgumentException('Invalid execution mode. Must be one of: auto, prepared or query');
         }

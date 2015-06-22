@@ -43,7 +43,7 @@ class SqlTest extends \PHPUnit_Framework_TestCase
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
             null,
-            array($mockDriver, new TrustedSphinxQL())
+            [$mockDriver, new TrustedSphinxQL()]
         ); // FIXME: give here the platform?
 
         $this->sql = new Sql($this->mockAdapter, 'foo'); // FIXME: append SphinxQL platform as 3 parameter ?

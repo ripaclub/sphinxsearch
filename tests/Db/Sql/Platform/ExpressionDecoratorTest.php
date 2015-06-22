@@ -60,17 +60,17 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $subject = new Expression('1 <> 0');
         $this->expr->setSubject($subject);
         $this->assertSame(
-            array('1 <> 0'),
+            ['1 <> 0'],
             $this->expr->getExpressionData()
         );
 
 
-        $subject = new Expression('? = ?', array(33.0, true));
+        $subject = new Expression('? = ?', [33.0, true]);
         $this->expr->setSubject($subject);
 
         $this->platform->enableFloatConversion(false);
         $this->assertSame(
-            array(array('%s = %s', array(33.0, 1), array(Expression::TYPE_VALUE, Expression::TYPE_VALUE))),
+            [['%s = %s', [33.0, 1], [Expression::TYPE_VALUE, Expression::TYPE_VALUE]]],
             $this->expr->getExpressionData()
         );
 
@@ -78,13 +78,13 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
         $platform->enableFloatConversion(true);
         $this->platform->enableFloatConversion(true);
         $this->assertSame(
-            array(
-                array(
+            [
+                [
                     '%s = %s',
-                    array($platform->quoteTrustedValue(33.0), 1),
-                    array(Expression::TYPE_LITERAL, Expression::TYPE_VALUE)
-                )
-            ),
+                    [$platform->quoteTrustedValue(33.0), 1],
+                    [Expression::TYPE_LITERAL, Expression::TYPE_VALUE]
+                ]
+            ],
             $this->expr->getExpressionData()
         );
     }

@@ -59,17 +59,17 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockAdapter = $this->getMock(
             '\Zend\Db\Adapter\Adapter',
             null,
-            array($mockDriver, new TrustedSphinxQL())
+            [$mockDriver, new TrustedSphinxQL()]
         );
 
         $this->mockSql = $this->getMock(
             '\SphinxSearch\Db\Sql\Sql',
-            array('select', 'show'),
-            array($this->mockAdapter, 'foo')
+            ['select', 'show'],
+            [$this->mockAdapter, 'foo']
         );
         $this->mockSql->expects($this->any())->method('select')->will(
             $this->returnValue(
-                $this->getMock('\SphinxSearch\Db\Sql\Select', array('where', 'getRawSate'), array('foo'))
+                $this->getMock('\SphinxSearch\Db\Sql\Select', ['where', 'getRawSate'], ['foo'])
             )
         );
 
@@ -157,9 +157,9 @@ class SearchTest extends \PHPUnit_Framework_TestCase
             ->method('getRawState')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'table' => 'foo',
-                    )
+                    ]
                 )
             );
 
@@ -183,9 +183,9 @@ class SearchTest extends \PHPUnit_Framework_TestCase
             ->method('getRawState')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'table' => 'foo',
-                    )
+                    ]
                 )
             );
 
@@ -215,7 +215,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(2))->method('current')->will(
             $this->returnValue(
-                array('Variable_name' => 'total', 'Value' => '0')
+                ['Variable_name' => 'total', 'Value' => '0']
             )
         );
         $this->mockResult->expects($this->at(3))->method('next');
@@ -267,7 +267,7 @@ class SearchTest extends \PHPUnit_Framework_TestCase
         $this->mockResult->expects($this->at(1))->method('valid')->will($this->returnValue(true));
         $this->mockResult->expects($this->at(2))->method('current')->will(
             $this->returnValue(
-                array('Counter' => 'uptime', 'Value' => '1392')
+                ['Counter' => 'uptime', 'Value' => '1392']
             )
         );
         $this->mockResult->expects($this->at(3))->method('next');

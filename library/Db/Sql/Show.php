@@ -34,10 +34,10 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     /**
      * @var array Specification array
      */
-    protected $specifications = array(
+    protected $specifications = [
         self::SHOW => 'SHOW %1$s',
         self::LIKE => 'LIKE %1$s',
-    );
+    ];
 
     /**
      * @var string
@@ -57,7 +57,7 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
     public function show($show)
     {
         $show = strtoupper($show);
-        if (!in_array($show, array(self::SHOW_META, self::SHOW_WARNINGS, self::SHOW_STATUS))) {
+        if (!in_array($show, [self::SHOW_META, self::SHOW_WARNINGS, self::SHOW_STATUS])) {
             throw new Exception\InvalidArgumentException(
                 'Show must be one of META, WARNING, or STATUS'
             );
@@ -83,10 +83,10 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function getRawState($key = null)
     {
-        $rawState = array(
+        $rawState = [
             self::SHOW => $this->show,
             self::LIKE => $this->like
-        );
+        ];
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
 
@@ -106,7 +106,7 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
             $statementContainer->setParameterContainer($parameterContainer);
         }
 
-        $sqls = array();
+        $sqls = [];
 
         $sqls[self::SHOW] = sprintf($this->specifications[static::SHOW], $this->show);
 
@@ -144,14 +144,14 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
         if ($driver && $pContainer) {
             $pContainer->offsetSet('like', $like, ParameterContainer::TYPE_STRING);
 
-            return array(
+            return [
                 $driver->formatParameterName('like'),
-            );
+            ];
         }
 
-        return array(
+        return [
             $platform->quoteValue($like)
-        );
+        ];
     }
 
     /**
@@ -165,7 +165,7 @@ class Show extends AbstractSql implements SqlInterface, PreparableSqlInterface
         // get platform, or create default
         $adapterPlatform = ($adapterPlatform) ? : new SphinxQL();
 
-        $sqls = array();
+        $sqls = [];
 
         $sqls[self::SHOW] = sprintf($this->specifications[static::SHOW], $this->show);
 

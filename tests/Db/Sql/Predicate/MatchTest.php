@@ -27,12 +27,12 @@ class MatchTest extends \PHPUnit_Framework_TestCase
     public function test__constuctor()
     {
         // Assume that '?' is the placeholder
-        $match = new Match('?', array('param'));
+        $match = new Match('?', ['param']);
 
         $queryExpression = $match->getQuery();
         $this->assertInstanceOf('\SphinxSearch\Query\QueryExpression', $queryExpression);
 
-        $this->assertEquals(array('param'), $queryExpression->getParameters());
+        $this->assertEquals(['param'], $queryExpression->getParameters());
         $this->assertEquals('?', $queryExpression->getExpression());
 
 
@@ -60,9 +60,9 @@ class MatchTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($queryExpression, $match->getQuery());
 
         $this->assertEquals(
-            array(
-                array('MATCH(%1$s)', array('test'), array(Match::TYPE_VALUE))
-            ),
+            [
+                ['MATCH(%1$s)', ['test'], [Match::TYPE_VALUE]]
+            ],
             $match->getExpressionData()
         );
     }
@@ -81,9 +81,9 @@ class MatchTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('TEST_SPECIFICATION', $match->getSpecification());
 
         $this->assertEquals(
-            array(
-                array('TEST_SPECIFICATION', array(''), array(Match::TYPE_VALUE))
-            ),
+            [
+                ['TEST_SPECIFICATION', [''], [Match::TYPE_VALUE]]
+            ],
             $match->getExpressionData()
         );
     }
@@ -95,7 +95,7 @@ class MatchTest extends \PHPUnit_Framework_TestCase
     {
         $match = new Match('foo');
         $this->assertEquals(
-            array(array($match->getSpecification(), array('foo'), array(Match::TYPE_VALUE))),
+            [[$match->getSpecification(), ['foo'], [Match::TYPE_VALUE]]],
             $match->getExpressionData()
         );
     }

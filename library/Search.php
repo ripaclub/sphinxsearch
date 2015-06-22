@@ -83,7 +83,7 @@ class Search extends AbstractComponent
     public function showMeta($like = null)
     {
         $result = $this->show(Show::SHOW_META, $like);
-        $return = array();
+        $return = [];
 
         foreach ($result as $row) {
             $return[$row['Variable_name']] = $row['Value'];
@@ -103,7 +103,7 @@ class Search extends AbstractComponent
     public function showStatus($like = null)
     {
         $result = $this->show(Show::SHOW_STATUS, $like);
-        $return = array();
+        $return = [];
         foreach ($result as $row) {
             $return[$row['Counter']] = $row['Value'];
         }

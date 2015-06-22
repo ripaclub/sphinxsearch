@@ -93,8 +93,8 @@ class Match implements PredicateInterface
      */
     public function getExpressionData()
     {
-        return array(
-            array($this->specification, array($this->query->toString()), array(self::TYPE_VALUE))
-        );
+        return [
+            [$this->specification, [$this->query->toString()], [self::TYPE_VALUE]]
+        ];
     }
 }

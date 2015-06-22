@@ -69,7 +69,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         }
 
         if (!$services->has('Config')) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }
@@ -78,7 +78,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         if (!isset($config['sphinxql'])
             || !is_array($config['sphinxql'])
         ) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }
@@ -87,7 +87,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         if (!isset($config['adapters'])
             || !is_array($config['adapters'])
         ) {
-            $this->config = array();
+            $this->config = [];
 
             return $this->config;
         }

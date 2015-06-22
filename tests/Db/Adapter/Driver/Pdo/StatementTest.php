@@ -37,11 +37,11 @@ class StatementTest extends \PHPUnit_Framework_TestCase
             $this->equalTo(null),
             $this->equalTo(\PDO::PARAM_NULL)
         );
-        $this->statement->execute(array('foo' => null));
+        $this->statement->execute(['foo' => null]);
         $paramContainer = new ParameterContainer();
         $paramContainer->offsetSet('foo', null, ParameterContainer::TYPE_NULL);
         $this->statement->setParameterContainer($paramContainer);
-        $this->statement->execute(array('foo' => null));
+        $this->statement->execute(['foo' => null]);
     }
 
     /**
@@ -54,7 +54,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
             $this->equalTo(false),
             $this->equalTo(null)
         );
-        $this->statement->execute(array('foo' => false));
+        $this->statement->execute(['foo' => false]);
     }
 
     /**
@@ -70,7 +70,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
         $paramContainer = new ParameterContainer();
         $paramContainer->offsetSet('foo', false, 'bool');
         $this->statement->setParameterContainer($paramContainer);
-        $this->statement->execute(array('foo' => false));
+        $this->statement->execute(['foo' => false]);
     }
 
     /**
@@ -83,7 +83,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
             $this->equalTo(3),
             $this->equalTo(null)
         );
-        $this->statement->execute(array('foo' => 3));
+        $this->statement->execute(['foo' => 3]);
     }
 
     /**
@@ -99,7 +99,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
         $paramContainer = new ParameterContainer();
         $paramContainer->offsetSet('foo', 3, ParameterContainer::TYPE_INTEGER);
         $this->statement->setParameterContainer($paramContainer);
-        $this->statement->execute(array('foo' => 3));
+        $this->statement->execute(['foo' => 3]);
     }
 
     /**
@@ -112,7 +112,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
             $this->equalTo(3.333),
             $this->equalTo(null) // Auto PDO type detection
         );
-        $this->statement->execute(array('foo' => 3.333));
+        $this->statement->execute(['foo' => 3.333]);
     }
 
     /**
@@ -128,7 +128,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
         $paramContainer = new ParameterContainer();
         $paramContainer->offsetSet('foo', 3.333, ParameterContainer::TYPE_DOUBLE);
         $this->statement->setParameterContainer($paramContainer);
-        $this->statement->execute(array('foo' => 3.333));
+        $this->statement->execute(['foo' => 3.333]);
     }
 
     /**
@@ -143,7 +143,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
             $this->equalTo($fp),
             $this->equalTo(null) // Auto PDO type detection
         );
-        $this->statement->execute(array('lob' => $fp));
+        $this->statement->execute(['lob' => $fp]);
     }
 
     /**
@@ -161,7 +161,7 @@ class StatementTest extends \PHPUnit_Framework_TestCase
         $paramContainer = new ParameterContainer();
         $paramContainer->offsetSet('lob', $fp, ParameterContainer::TYPE_LOB);
         $this->statement->setParameterContainer($paramContainer);
-        $this->statement->execute(array('lob' => $fp));
+        $this->statement->execute(['lob' => $fp]);
     }
 
     /**
@@ -174,17 +174,17 @@ class StatementTest extends \PHPUnit_Framework_TestCase
     {
         $statement = new ParametersBoundedAlreadyStatement();
         $statement->setDriver(
-            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', array(), array(), '', false)
+            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', [], [], '', false)
         );
         $statement->initialize(
             new TestAsset\CtorlessPdo(
-                $pdoStatementMock = $this->getMock('\PDOStatement', array('bindParam'))
+                $pdoStatementMock = $this->getMock('\PDOStatement', ['bindParam'])
             )
         );
 
         //bind param should be never called becaouse we set parametersBound = true in ParametersBounededAlteradStatement test asset
         $pdoStatementMock->expects($this->never())->method('bindParam');
-        $statement->execute(array('dummy' => 'dummy'));
+        $statement->execute(['dummy' => 'dummy']);
     }
 
     /**
@@ -195,11 +195,11 @@ class StatementTest extends \PHPUnit_Framework_TestCase
     {
         $this->statement = new Statement;
         $this->statement->setDriver(
-            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', array('createResult'), array(), '', false)
+            $this->getMock('\Zend\Db\Adapter\Driver\Pdo\Pdo', ['createResult'], [], '', false)
         );
         $this->statement->initialize(
             new TestAsset\CtorlessPdo(
-                $this->pdoStatementMock = $this->getMock('\PDOStatement', array('execute', 'bindParam'))
+                $this->pdoStatementMock = $this->getMock('\PDOStatement', ['execute', 'bindParam'])
             )
         );
     }

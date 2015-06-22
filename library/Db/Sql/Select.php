@@ -62,50 +62,50 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
      *
      * @var array Specifications
      */
-    protected $specifications = array(
-        self::SELECT => array(
-            'SELECT %1$s FROM %2$s' => array(
-                array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '),
+    protected $specifications = [
+        self::SELECT => [
+            'SELECT %1$s FROM %2$s' => [
+                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
                 null
-            ),
-            'SELECT %1$s' => array(
-                array(1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', ')
-            )
-        ),
+            ],
+            'SELECT %1$s' => [
+                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', ']
+            ]
+        ],
         self::WHERE => 'WHERE %1$s',
-        self::GROUP => array(
-            'GROUP BY %1$s' => array(
-                array(1 => '%1$s', 'combinedby' => ', ')
-            )
-        ),
-        self::WITHINGROUPORDER => array(
-            'WITHIN GROUP ORDER BY %1$s' => array(
-                array(1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ')
-            )
-        ),
+        self::GROUP => [
+            'GROUP BY %1$s' => [
+                [1 => '%1$s', 'combinedby' => ', ']
+            ]
+        ],
+        self::WITHINGROUPORDER => [
+            'WITHIN GROUP ORDER BY %1$s' => [
+                [1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ']
+            ]
+        ],
         self::HAVING => 'HAVING %1$s',
-        self::ORDER => array(
-            'ORDER BY %1$s' => array(
-                array(1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ')
-            )
-        ),
+        self::ORDER => [
+            'ORDER BY %1$s' => [
+                [1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', ']
+            ]
+        ],
         self::LIMITOFFSET => 'LIMIT %1$s,%2$s',
-        self::OPTION => array(
-            'OPTION %1$s' => array(
-                array(2 => '%1$s = %2$s', 'combinedby' => ', ')
-            )
-        )
-    );
+        self::OPTION => [
+            'OPTION %1$s' => [
+                [2 => '%1$s = %2$s', 'combinedby' => ', ']
+            ]
+        ]
+    ];
 
     /**
      * @var array
      */
-    protected $withinGroupOrder = array();
+    protected $withinGroupOrder = [];
 
     /**
      * @var array
      */
-    protected $option = array();
+    protected $option = [];
 
     /**
      * Create from clause
@@ -185,7 +185,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $withinGroupOrder = (array)$withinGroupOrder;
             }
         } elseif (!is_array($withinGroupOrder)) {
-            $withinGroupOrder = array($withinGroupOrder);
+            $withinGroupOrder = [$withinGroupOrder];
         }
         foreach ($withinGroupOrder as $k => $v) {
             if (is_string($k)) {
@@ -213,7 +213,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         }
 
         if ($flag == self::OPTIONS_SET) {
-            $this->option = array();
+            $this->option = [];
         }
 
         foreach ($values as $k => $v) {
@@ -244,15 +244,15 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 break;
 
             case self::WITHINGROUPORDER:
-                $this->withinGroupOrder = array();
+                $this->withinGroupOrder = [];
                 break;
 
             case self::OPTION:
-                $this->option = array();
+                $this->option = [];
                 break;
 
             case self::ORDER:
-                $this->order = array();
+                $this->order = [];
                 break;
 
             default:
@@ -264,7 +264,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
     public function getRawState($key = null)
     {
-        $rawState = array(
+        $rawState = [
             self::TABLE => $this->table,
             self::COLUMNS => $this->columns,
             self::WHERE => $this->where,
@@ -275,7 +275,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             self::LIMIT => $this->limit,
             self::OPTION => $this->option,
             self::OFFSET => $this->offset,
-        );
+        ];
 
         return (isset($key) && array_key_exists($key, $rawState)) ? $rawState[$key] : $rawState;
     }
@@ -296,12 +296,12 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         $expr = 1;
 
         // process table columns
-        $columns = array();
+        $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
 
             $colName = '';
             if ($column === self::SQL_STAR) {
-                $columns[] = array(self::SQL_STAR); // Sphinx doesn't not support prefix column with table, yet
+                $columns[] = [self::SQL_STAR]; // Sphinx doesn't not support prefix column with table, yet
                 continue;
             }
 
@@ -327,7 +327,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 $columnAs = 'Expression' . $expr++;
             }
 
-            $columns[] = isset($columnAs) ? array($colName, $platform->quoteIdentifier($columnAs)) : array($colName);
+            $columns[] = isset($columnAs) ? [$colName, $platform->quoteIdentifier($columnAs)] : [$colName];
         }
 
         if ($this->table) {
@@ -336,7 +336,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             if (is_string($tableList) && strpos($tableList, ',') !== false) {
                 $tableList = preg_split('#,\s+#', $tableList);
             } elseif (!is_array($tableList)) {
-                $tableList = array($tableList);
+                $tableList = [$tableList];
             }
 
             foreach ($tableList as &$table) {
@@ -351,10 +351,10 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
 
             $tableList = implode(', ', $tableList);
 
-            return array($columns, $tableList);
+            return [$columns, $tableList];
         }
 
-        return array($columns);
+        return [$columns];
     }
 
 
@@ -385,12 +385,12 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
         if (empty($this->withinGroupOrder)) {
             return null;
         }
-        $withinGroupOrders = array();
+        $withinGroupOrders = [];
         foreach ($this->withinGroupOrder as $k => $v) {
             if ($v instanceof Expression) {
                 /** @var $parts \Zend\Db\Adapter\StatementContainer */
                 $orderParts = $this->processExpression($v, $platform, $driver, $parameterContainer);
-                $withinGroupOrders[] = array($orderParts);
+                $withinGroupOrders[] = [$orderParts];
                 continue;
             }
             if (is_int($k)) {
@@ -402,13 +402,13 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                 }
             }
             if (strtoupper($v) == self::ORDER_DESCENDING) {
-                $withinGroupOrders[] = array($platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING);
+                $withinGroupOrders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING];
             } else {
-                $withinGroupOrders[] = array($platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING);
+                $withinGroupOrders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING];
             }
         }
 
-        return array($withinGroupOrders);
+        return [$withinGroupOrders];
     }
 
     /**
@@ -433,13 +433,13 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             $parameterContainer->offsetSet('limit', $limit, ParameterContainer::TYPE_INTEGER);
             $parameterContainer->offsetSet('offset', $offset, ParameterContainer::TYPE_INTEGER);
 
-            return array(
+            return [
                 $driver->formatParameterName('offset'),
                 $driver->formatParameterName('limit')
-            );
+            ];
         }
 
-        return array($offset, $limit);
+        return [$offset, $limit];
     }
 
     protected function processOption(
@@ -451,7 +451,7 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
             return null;
         }
         // process options
-        $options = array();
+        $options = [];
         foreach ($this->option as $optName => $optValue) {
             $optionSql = '';
             if ($optValue instanceof Expression) {
@@ -466,9 +466,9 @@ class Select extends ZendSelect implements SqlInterface, PreparableSqlInterface
                     $optionSql .= $platform->quoteValue($optValue);
                 }
             }
-            $options[] = array($platform->quoteIdentifier($optName), $optionSql);
+            $options[] = [$platform->quoteIdentifier($optName), $optionSql];
         }
 
-        return array($options);
+        return [$options];
     }
 }

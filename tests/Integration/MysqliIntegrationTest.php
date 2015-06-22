@@ -13,12 +13,12 @@ namespace SphinxSearchTest\IntegrationTest;
  */
 class MysqliIntegrationTest extends AbstractIntegrationTest
 {
-    protected $config = array(
+    protected $config = [
         'driver'    => 'Mysqli',
         'hostname'  => '127.0.0.1',
         'port'      => 9306,
         'charset'   => 'UTF8'
-    );
+    ];
 
     /**
      * {@inheritdoc}
