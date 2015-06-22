@@ -323,16 +323,16 @@ Some examples:
 ```php
 use SphinxSearch\Query\QueryExpression;
 
-$query = new QueryExpression('@title ? @body ?', array('hello', 'world'));
+$query = new QueryExpression('@title ? @body ?', ['hello', 'world']);
 echo $query->toString(); //outputs: @title hello @body world
 
 
 echo $query->setExpression('"?"/3')
-           ->setParameters(array('the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'))
+           ->setParameters(['the world is a wonderful place, but sometimes people uses spe(ia| ch@rs'])
            ->toString(); //outputs: "the world is a wonderful place, but sometimes people uses spe\(ia\| ch\@rs"/3
 
 echo $query->setExpression('? NEAR/? ? NEAR/? "?"')
-           ->setParameters(array('hello', 3, 'world', 4, '"my test"'))
+           ->setParameters(['hello', 3, 'world', 4, '"my test"'])
            ->toString(); //outputs: hello NEAR/3 world NEAR/4 "my test"
 ```
 
@@ -345,8 +345,8 @@ use SphinxSearch\Db\Sql\Predicate\Match;
 
 $select = new Select;
 $select->from('myindex')
-       ->where(new Match('? NEAR/? ? NEAR/? "?"', array('hello', 3, 'world', 4, '"my test"')))
-       ->where(array('enabled' => 1));
+       ->where(new Match('? NEAR/? ? NEAR/? "?"', ['hello', 3, 'world', 4, '"my test"']))
+       ->where(['enabled' => 1]);
 
 //outputs: SELECT * from `foo` WHERE MATCH('hello NEAR/3 world NEAR/4 "my test"') AND `enabled` = 1
 echo $select->getSqlString(new SphinxQL());
