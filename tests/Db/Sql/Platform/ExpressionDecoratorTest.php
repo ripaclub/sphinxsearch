@@ -57,6 +57,14 @@ class ExpressionDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExpressionData()
     {
+        $subject = new Expression('1 <> 0');
+        $this->expr->setSubject($subject);
+        $this->assertSame(
+            array('1 <> 0'),
+            $this->expr->getExpressionData()
+        );
+
+
         $subject = new Expression('? = ?', array(33.0, true));
         $this->expr->setSubject($subject);
 

@@ -143,12 +143,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
             array(new Expression('?', 10.1), new TrustedSphinxQL(), $mockDriver, $parameterContainer)
         );
 
-        if (Version::compareVersion('2.4.0') > 0) {
-            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return);
-            $return = $return->getSql();
-        } else {
-            $this->assertInternalType('string', $return);
-        }
+        $this->assertInternalType('string', $return);
 
         //Test with an ExpressionDecorator
         $return2 = $mr->invokeArgs(
@@ -161,12 +156,7 @@ class UpdateTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        if (Version::compareVersion('2.4.0') > 0) {
-            $this->assertInstanceOf('\Zend\Db\Adapter\StatementContainerInterface', $return2);
-            $return2 = $return2->getSql();
-        } else {
-            $this->assertInternalType('string', $return2);
-        }
+        $this->assertInternalType('string', $return2);
 
         $this->assertSame($return, $return2);
         $this->assertEquals('10.1', $return);
