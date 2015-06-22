@@ -3,7 +3,7 @@ Sphinx Search
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch) [![Build Status](https://img.shields.io/travis/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://travis-ci.org/ripaclub/sphinxsearch) [![Coveralls branch](https://img.shields.io/coveralls/ripaclub/sphinxsearch/master.svg?style=flat-square)](https://coveralls.io/r/ripaclub/sphinxsearch) [![Total Downloads](https://img.shields.io/packagist/dt/ripaclub/sphinxsearch.svg?style=flat-square)](https://packagist.org/packages/ripaclub/sphinxsearch)
 
-Sphinx Search library provides SphinxQL indexing and searching features.
+> Sphinx Search library provides SphinxQL indexing and searching features.
 
 - [Introduction](#introduction)
 - [Installation](#installation)
@@ -72,32 +72,40 @@ When forced to use a PHP version less (or equal) than 5.4 and/or a Zend Framewor
 
 ## Configuration (simple)
 
-Register in the `ServiceManager` the provided factories through the `service_manager` configuration node:
+In order to work with library components you need an adapter instance. You can simply obtain configured adapter by using the built-in factory like the following example:
 
 ```php
-'service_manager' => [
-	'factories' => [
-  		'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory',
-	],
-	// Optionally
-	'aliases' => [
-		'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-	],
-]
+use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
+
+$serviceManager = new ServiceManager(new Config([
+    'factories' => [
+        'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+    ],
+    'aliases' => [
+        'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+    ]
+]));
+
+$serviceManager->setService('Config', [
+    'sphinxql' => [
+        'driver'    => 'pdo_mysql',
+        'hostname'  => '127.0.0.1',
+        'port'      => 9306,
+        'charset'   => 'UTF8'
+    ]
+]);
+
+$adapter = $serviceManager->get('sphinxql');
 ```
 
-Then in your configuration add the `sphinxql` node and configure it with connection parameters as in example:
+###### Note
 
-```php
-'sphinxql' => [
-	'driver'    => 'pdo_mysql',
-	'hostname'  => '127.0.0.1',
-	'port'      => 9306,
-	'charset'   => 'UTF8'
-]
-```
+Only two drivers are supported:
+- `pdo_mysql`
+- `mysqli`
 
-For more details see the "Adapter Service Factory" section.
+For more details see the [Adapter Service Factory](#adapter-service-factory) section.
 
 ## Usage
 
@@ -203,11 +211,6 @@ Use `SphinxSearch\Db\Adapter\AdapterServiceFactory` (see [Configuration](#config
 ```
 
 For the abstract factory configuration refer to [Zend Db Adpater Abstract Factory documentation](http://framework.zend.com/manual/2.4/en/modules/zend.mvc.services.html#zend-db-adapter-adapterabstractservicefactory).
-
-Only two drivers are supported:
-
-- `PDO_MySQL`
-- `Mysqli`
 
 ### Prepared statement
 
