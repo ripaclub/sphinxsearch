@@ -369,8 +369,10 @@ To run also our integration tests execute:
 ./vendor/bin/phpunit
 ```
 
-However note that to execute integration tests you need a running instance of SphinxSearch (e.g., using a correctly configured docker image).
+###### Note
+
+To execute integration tests you need a running instance of SphinxSearch (e.g., using a correctly configured docker image).
 
 ---
 
-[![Analytics](https://ga-beacon.appspot.com/UA-49655829-1/ripaclub/sphinxsearch)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-49657176-3/sphinxsearch)](https://github.com/igrigorik/ga-beacon)
