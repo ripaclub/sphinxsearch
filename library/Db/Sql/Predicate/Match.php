@@ -46,10 +46,6 @@ class Match implements PredicateInterface
 
             $expression = new QueryExpression($expression, $parameters);
         }
-        //TODO:
-//         elseif ($parameters && method_exists($expression, 'setParameters')) {
-//             $expression->setParameters($parameters);
-//         }
 
         $this->setQuery($expression);
     }
