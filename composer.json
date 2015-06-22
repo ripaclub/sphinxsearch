@@ -14,7 +14,8 @@
         "phpunit/phpunit": "~4.2",
         "phpmd/phpmd": "~2.0",
         "pdepend/pdepend": "2.0.*",
-        "squizlabs/php_codesniffer": "1.5.*"
+        "squizlabs/php_codesniffer": "1.5.*",
+        "satooshi/php-coveralls": "dev-master"
     },
     "authors": [
         {
