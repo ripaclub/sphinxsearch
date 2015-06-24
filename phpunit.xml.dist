@@ -7,9 +7,6 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">library</directory>
-            <exclude>
-            	<directory suffix=".php">library/Db/Sql/compatibility</directory>
-            </exclude>
         </whitelist>
     </filter>
     <logging>
