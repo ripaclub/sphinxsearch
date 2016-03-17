@@ -18,7 +18,7 @@ branches:
 
 install:
   - composer self-update
-  - composer install --prefer-source $DEPENDENCIES
+  - composer update --prefer-source $DEPENDENCIES
 
 before_script:
   - mkdir -p build/coverage
