@@ -3,8 +3,13 @@ language: php
 php:
   - 5.5
   - 5.6
-  - 7
+  - 7.0
   - hhvm
+
+env:
+  matrix:
+    - DEPENDENCIES=""
+    - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
 branches:
   only:
@@ -13,7 +18,7 @@ branches:
 
 install:
   - composer self-update
-  - composer install --prefer-source
+  - composer update --prefer-source $DEPENDENCIES
 
 before_script:
   - mkdir -p build/coverage
