@@ -59,14 +59,15 @@ Add the following to your `composer.json` file:
 
 ```json
 "require": {
-	"php": ">=5.5",
 	"ripaclub/sphinxsearch": "~0.8.0",
 }
 ```
 
 ###### Note
 
-Starting from **0.8.x** series the minimum requirements are upgraded to PHP >= 5.5 and to the few Zend Framework dependencies >= 2.4.
+Since version **0.8.1**, PHP 7 and Zend Framework's components of 3.x series are fully supported.
+
+Starting from **0.8.x** series the minimum requirements are PHP >= 5.5 and Zend Framework dependencies >= 2.4.
 
 When forced to use a PHP version less (or equal) than 5.4 and/or a Zend Framework dependencies less (or equal) then 2.3 you can use **0.7.1** version.
 
