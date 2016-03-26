@@ -59,18 +59,19 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->serviceManager = new ServiceManager(
-            new Config(
-                [
-                    'factories' => [
-                        'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
-                    ],
-                    'aliases' => [
-                        'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-                    ]
+        $serviceManagerConfig = new Config(
+            [
+                'factories' => [
+                    'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+                ],
+                'aliases' => [
+                    'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
                 ]
-            )
-        );
+            ]
+        ); 
+        
+        $this->serviceManager = new ServiceManager();
+        $serviceManagerConfig->configureServiceManager($this->serviceManager);
         $this->serviceManager->setService(
             'Config',
             [
