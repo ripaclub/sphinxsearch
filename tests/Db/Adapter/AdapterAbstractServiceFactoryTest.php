@@ -121,13 +121,13 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testNullConfig($service)
     {
-        $sManager = new ServiceManager(
-            new Config(
-                [
-                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
-                ]
-            )
-        );
+        $sManagerConfig = new Config(
+            [
+                'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+            ]
+        ); 
+        $sManager = new ServiceManager();
+        $sManagerConfig->configureServiceManager($sManager);
         $sManager->get($service);
     }
 
@@ -139,13 +139,13 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyConfig($service)
     {
-        $sManager = new ServiceManager(
-            new Config(
-                [
-                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
-                ]
-            )
+        $sManagerConfig = new Config(
+            [
+                'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+            ]
         );
+        $sManager = new ServiceManager();
+        $sManagerConfig->configureServiceManager($sManager);
         $sManager->setService('Config', []);
         $sManager->get($service);
     }
@@ -158,13 +158,13 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptySphinxQLConfig($service)
     {
-        $sManager = new ServiceManager(
-            new Config(
-                [
-                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
-                ]
-            )
+        $sManagerConfig = new Config(
+            [
+                'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+            ]
         );
+        $sManager = new ServiceManager();
+        $sManagerConfig->configureServiceManager($sManager);
         $sManager->setService(
             'Config',
             [
@@ -181,13 +181,13 @@ class AdapterAbstractServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->serviceManager = new ServiceManager(
-            new Config(
-                [
-                    'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
-                ]
-            )
+        $sManagerConfig = new Config(
+            [
+                'abstract_factories' => ['SphinxSearch\Db\Adapter\AdapterAbstractServiceFactory'],
+            ]
         );
+        $this->serviceManager = new ServiceManager();
+        $sManagerConfig->configureServiceManager($this->serviceManager);
         $this->serviceManager->setService(
             'Config',
             [

@@ -9,8 +9,8 @@
 namespace SphinxSearchTest\Db\Adapter;
 
 use SphinxSearch\Db\Adapter\AdapterServiceFactory;
-use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\Config;
 
 /**
  * Class AdapterServiceFactoryTest
@@ -103,18 +103,17 @@ class AdapterServiceFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->serviceManager = new ServiceManager(
-            new Config(
-                [
-                    'factories' => [
-                        'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
-                    ],
-                    'alias' => [
-                        'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
-                    ]
-                ]
-            )
-        );
+        $serviceManagerConfig = new Config([
+            'factories' => [
+                'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
+            ],
+            'alias' => [
+                'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
+            ]
+        ]); 
+        
+        $this->serviceManager = new ServiceManager();
+        $serviceManagerConfig->configureServiceManager($this->serviceManager);
         $this->serviceManager->setService(
             'Config',
             [
