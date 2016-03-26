@@ -4,7 +4,7 @@
     "homepage": "https://github.com/ripaclub/sphinxsearch",
     "license": "BSD-2-Clause",
     "require": {
-        "php": ">=5.5",
+        "php": "^5.5 || ^7.0",
         "container-interop/container-interop": "~1.0",
         "zendframework/zend-db": "^2.4 || ^3.0",
         "zendframework/zend-servicemanager": "^2.4 || ^3.0"
