@@ -78,15 +78,16 @@ In order to work with library components you need an adapter instance. You can s
 use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\Config;
 
-$serviceManager = new ServiceManager(new Config([
+$serviceManagerConfig = new Config([
     'factories' => [
         'SphinxSearch\Db\Adapter\Adapter' => 'SphinxSearch\Db\Adapter\AdapterServiceFactory'
     ],
     'aliases' => [
         'sphinxql' => 'SphinxSearch\Db\Adapter\Adapter'
     ]
-]));
-
+]);
+$serviceManager = new ServiceManager();
+$serviceManagerConfig->configureServiceManager($serviceManager);
 $serviceManager->setService('Config', [
     'sphinxql' => [
         'driver'    => 'pdo_mysql',
