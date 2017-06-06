@@ -111,9 +111,10 @@ For more details see the [Adapter Service Factory](#adapter-service-factory) sec
 
 ## Usage
 
+
 ### Search
 
-Assuming `$adapter` has been retrivied via `ServiceManager`:
+> Assuming `$adapter` is an instance of `Zend\Db\Adapter\Adapter` that has been retrieved via `ServiceManager` using the [configuration](#configuration-simple) above or created using one of shipped [factory classes](#adapter-service-factory). Note that an instance of `Zend\Db\Adapter\Adapter` with no configuration **will not work** as expected.
 
 ```php
 use SphinxSearch\Search;
@@ -175,7 +176,9 @@ Instead `quantifier`, `join` and `combine` are just ignored because SphinxQL syn
 
 ### Indexer
 
-Assuming `$adapter` has been retrivied via `ServiceManager` we can perform indexing of documents, provided that the indices on which we act are [real time](http://sphinxsearch.com/docs/2.2.2/rt-overview.html).
+> Assuming `$adapter` is an instance of `Zend\Db\Adapter\Adapter` that has been retrieved via `ServiceManager` using the [configuration](#configuration-simple) above or created using one of shipped [factory classes](#adapter-service-factory). Note that an instance of `Zend\Db\Adapter\Adapter` with no configuration **will not work** as expected.
+
+The `Indexer` can perform indexing of documents, provided that the indices on which we act are [real time](http://sphinxsearch.com/docs/2.2.2/rt-overview.html).
 
 ```php
 use SphinxSearch\Indexer;
